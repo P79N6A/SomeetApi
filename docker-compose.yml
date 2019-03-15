@@ -1,0 +1,30 @@
+version: '2'
+services:
+  Someet:
+    image: codemix/yii2-base:2.0.7-php-fpm
+    volumes:
+        - ./:/var/www/html/
+    links:
+        - db:db
+    environment:
+        ENABLE_ENV_FILE: 1
+        API_TOKEN: "c9575fee817180194a64253fd63cd4dddd0f8220"
+  db:
+    image: daocloud.io/library/mysql:5.6.23
+    ports:
+        - "3306:3306"
+    expose:
+        - "3306"
+    environment:
+        MYSQL_ROOT_PASSWORD: secret-root
+        MYSQL_DATABASE: web
+        MYSQL_USER: web
+        MYSQL_PASSWORD: web
+  nginx:
+    build: ./nginx
+    ports:
+        - "8000:80"
+    links:
+        - Someet
+    volumes_from:
+        - Someet
