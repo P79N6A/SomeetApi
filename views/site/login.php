@@ -11,7 +11,6 @@
 <div class="loginPage-background">
     <div class="layui-anim layui-anim-up loginPage">
         <form class="layui-form" action="/">
-            <input type="hidden" name='_csrf' id='_csrf' value="<?= Yii::$app->request->csrfToken ?>" name="">
             <div class="layui-form-item loginPage-username">
                 <label class="layui-form-label"><i class="layui-icon layui-icon-username"></i></label>
                 <div class="layui-input-block">

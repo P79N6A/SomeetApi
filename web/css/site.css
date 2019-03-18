@@ -44,3 +44,12 @@ h1,h2,h3{font-size: 14px;}
 .site-demo-code{position: absolute; left: 0; top: 0; width: 100%; height: 100%; border: none; padding: 10px; resize: none; font-size: 12px; background-color: #F7FBFF; color: #881280; font-family: Courier New;}
 
 .site-demo-overflow{overflow: hidden;}
+.site-demo-title input{
+    border-top:none;border-left:none;border-right:none;
+}
+.address{
+    display: none;
+}
+.layui-layedit{
+    max-width: 70%
+}

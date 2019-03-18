@@ -9,5 +9,4 @@ use yii\di\Instance;
 class BaseController extends Controller
 {
 
-
 }

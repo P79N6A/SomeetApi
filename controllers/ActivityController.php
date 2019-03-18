@@ -11,43 +11,29 @@ use yii\base\ActionFilter;
 class ActivityController extends BaseController{
 	
 	public function behaviors(){
-        $behaviors = parent::behaviors();
-        $behaviors['access']=[
-            //登录用户和非登录用户的权限简单验证
-            'class' => AccessControl::className(),
-            'rules' =>[
-                [
-                    'allow' => true,//是否允许访问
-                    'actions' => ['index'],//允许访问的控制器
-                    'roles' => ['@'],//访问角色，只有@ 和 ？
-                ]
-            ]
-        ];
-		return $behaviors;
-
-	}
-	
-	public function actions()
-    {
         return [
-            'auth' => [
-                'class' => 'yii\authclient\AuthAction',
-                'successCallback' => [$this, 'onAuthSuccess'],
+            'access' => [
+                'class' => 'app\component\AccessControl',
+                'allowActions' => [
+                    'index',
+                    'add'
+                ],
             ],
         ];
+
     }
-	
+	/**
+     * 活动列表首页
+     */
 	public function actionIndex(){
 		return $this->render('index');
 	}
-    public function actionLogin(){
-        echo "this is login page";
-        die;
+    /**
+     * 添加活动页面
+     */
+    public function actionAdd(){
+        return $this->render('add');
     }
-	public function actionAuth($client=null){
-		echo $client;
-		die;
-	}
 	public function actionSignUp(){
 		$prefix = '/' . Yii::$app->id . '/';
         $admin = User::findOne(1);

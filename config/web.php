@@ -35,6 +35,11 @@ $config = [
         'authManager' => [
             'class' => 'yii\rbac\DbManager'
         ],
+        'qiniu' => [
+            'class' => 'app\component\QiniuComponent',
+            'accessKey' => 'jJuHkknaHQbKbX8i-WuazueI2g1yHwNnPaKLSOmX',
+            'secretKey' =>'aVAnrg6JqxBivDzbhKiJ5LM-8QubxvWtBud0vWC1',
+        ],
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
             'cookieValidationKey' => 'Someet',

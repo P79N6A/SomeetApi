@@ -9,8 +9,6 @@ use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
 use app\assets\AppAsset;
-
-AppAsset::register($this);
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
@@ -21,9 +19,11 @@ AppAsset::register($this);
   <title>Someet</title>
   <link rel="stylesheet" href="/layui/css/layui.css">
   <link rel="stylesheet" type="text/css" href="/css/site.css">
-  <script src="/layui/layui.js"></script>
+  <link rel="stylesheet" type="text/css" href="/layui/css/cropper.css">
+  <script src="/layui/layui.all.js"></script>
 </head>
 <body>
+    <input type="hidden" id='_csrf' value="<?= Yii::$app->request->csrfToken ?>" name="">
    <div class="layui-layout layui-layout-admin">
     <div class="layui-header header header-demo" spring>
         <div class="layui-main">
