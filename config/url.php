@@ -30,10 +30,14 @@ return [
 	[
 		'class' => 'yii\rest\UrlRule',
 		'controller' => [
-			'lark/token'
+			'lark/index'
 		],
 		'extraPatterns' => [
-			'POST token' =>'token'
+			'POST token' =>'token',
+			'GET get-token'=>'get-token',
+			'GET get-group-list'=>'get-group-list',
+			'GET send-to-group'=>'send-to-group',
+			'GET get-member'=>'get-member'
 		]
 	],
 ];
