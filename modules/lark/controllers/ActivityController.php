@@ -1,5 +1,5 @@
 <?php
-namespace app\modules\v1\controllers;
+namespace app\modules\lark\controllers;
 
 
 use yii\filters\auth\QueryParamAuth;
@@ -19,7 +19,7 @@ use app\models\UserSelectTags;
 use Yii;
 use yii\filters\VerbFilter;
 use yii\data\Pagination;
-use app\modules\v1\controllers\BaseController;
+use app\modules\lark\controllers\BaseController;
 
 class ActivityController extends BaseController
 {

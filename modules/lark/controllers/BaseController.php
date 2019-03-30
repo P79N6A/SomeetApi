@@ -1,5 +1,5 @@
 <?php
-namespace app\modules\v1\controllers;
+namespace app\modules\lark\controllers;
 
 use yii\rest\ActiveController;
 

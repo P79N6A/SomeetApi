@@ -13,7 +13,10 @@ $config = [
 	'modules' => [
         'v1' => [
             'class' => 'app\modules\v1\Module',
-        ]
+        ],
+		'lark' => [
+		    'class' => 'app\modules\lark\Module',
+		]
     ],
     'components' => [
 		'authClientCollection' => [
@@ -49,7 +52,7 @@ $config = [
 			'on beforeSend' => function ($event) {
                 /* @var \yii\web\Response $response */
                 $response = $event->sender;
-                if ($response->format == \yii\web\Response::FORMAT_JSON) {
+                if ($response->format == \yii\web\Response::FORMAT_JSON && Yii::$app->controller->module->id !=='lark') {
                     if ($response->isSuccessful) {
                         $data['success'] = "1";
                         $data['data'] = $response->data;
@@ -100,15 +103,7 @@ $config = [
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
-            'rules' => [
-					[
-						'class' => 'yii\rest\UrlRule',
-						'controller' => 'v1/activity',
-						'extraPatterns'=>[
-							'GET index' => 'index',
-						]
-					],
-				],
+            'rules' => require('url.php'),
         ],
        
     ],
@@ -121,14 +116,14 @@ if (YII_ENV_DEV) {
     $config['modules']['debug'] = [
         'class' => 'yii\debug\Module',
         // uncomment the following to add your IP if you are not connecting from localhost.
-        'allowedIPs' => ['127.0.0.1', '::1','192.168.99.*']
+        'allowedIPs' => ['127.0.0.1', '::1','192.168.99.*','222.128.161.163']
     ];
 
     $config['bootstrap'][] = 'gii';
     $config['modules']['gii'] = [
         'class' => 'yii\gii\Module',
         // uncomment the following to add your IP if you are not connecting from localhost.
-        'allowedIPs' => ['127.0.0.1', '::1','192.168.99.*']
+        'allowedIPs' => ['127.0.0.1', '::1','192.168.99.*','222.128.161.163']
     ];
 }
 

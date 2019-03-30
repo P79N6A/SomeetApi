@@ -84,6 +84,51 @@ use Yii;
  */
 class Activity extends \yii\db\ActiveRecord
 {
+	public $answer_list;
+	public $type;
+	public $is_collect;
+	public $is_black;
+    /* 删除 */
+    const STATUS_DELETE   = 0;
+    /* 不通过的发起人创建的活动 */
+    const STATUS_REFUSE = 3;
+    /* 通过的发起人创建的活动 */
+    const STATUS_PASS = 12;
+    /* 发起人创建的活动的草稿 */
+    const STATUS_FOUNDER_DRAFT = 5;
+    /* 草稿 */
+    const STATUS_DRAFT    = 10;
+    /* 预发布 */
+    const STATUS_PREVENT  = 15;
+    /* 发布 */
+    const STATUS_RELEASE  = 20;
+    /* 关闭 */
+    const STATUS_SHUT  = 30;
+    /* 取消 */
+    const STATUS_CANCEL = 40;
+    /* 待审核 */
+    const STATUS_CHECK = 8;
+    /* 好评 */
+    const GOOD_SCORE = 1;
+    /* 中评 */
+    const MIDDLE_SCORE = 2;
+    /* 差评 */
+    const BAD_SCORE = 3;
+
+    /* 报名已满 */
+    const IS_FULL_YES = 1;
+    /* 报名未满 */
+    const IS_FULL_NO = 0;
+
+    /* 显示 */
+    const DISPLAY_YES =  1;
+    /* 不显示 */
+    const DISPLAY_NO =  0;
+    //收藏数
+    public $collect;
+    public $new_collect;
+    // 标签名, 用于标签行为使用此属性
+    public $tagNames;
     /**
      * {@inheritdoc}
      */
@@ -114,94 +159,183 @@ class Activity extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
-    {
-        return [
-            'id' => 'ID',
-            'city_id' => 'City ID',
-            'city' => 'City',
-            'type_id' => 'Type ID',
-            'title' => 'Title',
-            'desc' => 'Desc',
-            'poster' => 'Poster',
-            'week' => 'Week',
-            'start_time' => 'Start Time',
-            'end_time' => 'End Time',
-            'area' => 'Area',
-            'address' => 'Address',
-            'address_assign' => 'Address Assign',
-            'details' => 'Details',
-            'group_code' => 'Group Code',
-            'longitude' => 'Longitude',
-            'latitude' => 'Latitude',
-            'cost' => 'Cost',
-            'cost_list' => 'Cost List',
-            'peoples' => 'Peoples',
-            'ideal_number' => 'Ideal Number',
-            'ideal_number_limit' => 'Ideal Number Limit',
-            'is_volume' => 'Is Volume',
-            'is_digest' => 'Is Digest',
-            'is_top' => 'Is Top',
-            'principal' => 'Principal',
-            'pma_type' => 'Pma Type',
-            'review' => 'Review',
-            'created_at' => 'Created At',
-            'created_by' => 'Created By',
-            'updated_at' => 'Updated At',
-            'updated_by' => 'Updated By',
-            'status' => 'Status',
-            'edit_status' => 'Edit Status',
-            'display_order' => 'Display Order',
-            'content' => 'Content',
-            'apply_rate' => 'Apply Rate',
-            'field1' => 'Field1',
-            'field2' => 'Field2',
-            'field3' => 'Field3',
-            'field4' => 'Field4',
-            'field5' => 'Field5',
-            'field6' => 'Field6',
-            'field7' => 'Field7',
-            'field8' => 'Field8',
-            'co_founder1' => 'Co Founder1',
-            'co_founder2' => 'Co Founder2',
-            'co_founder3' => 'Co Founder3',
-            'co_founder4' => 'Co Founder4',
-            'is_full' => 'Is Full',
-            'join_people_count' => 'Join People Count',
-            'space_spot_id' => 'Space Spot ID',
-            'sequence_id' => 'Sequence ID',
-            'version_number' => 'Version Number',
-            'group_id' => 'Group ID',
-            'is_display' => 'Is Display',
-            'allow_vip' => 'Allow Vip',
-            'want_allow_vip' => 'Want Allow Vip',
-            'is_rfounder' => 'Is Rfounder',
-            'reject_reason' => 'Reject Reason',
-            'tag_id' => 'Tag ID',
-            'act_tag_id' => 'Act Tag ID',
-            'district' => 'District',
-            'detail_header' => 'Detail Header',
-            'first_publish_date' => 'First Publish Date',
-            'cancel_reason' => 'Cancel Reason',
-            'push_check_time' => 'Push Check Time',
-            'update_groupCode_time' => 'Update Group Code Time',
-            'collect_num' => 'Collect Num',
-            'is_recommend' => 'Is Recommend',
-            'is_set_question' => 'Is Set Question',
-            'is_prevent_push' => 'Is Prevent Push',
-            'is_push_on' => 'Is Push On',
-            'is_new' => 'Is New',
-        ];
-    }
-	public function fields()
+    public function fields()
     {
         $fields = parent::fields();
+
         unset(
-            $fields['details'],
-			$fields['field2'],
-            $fields['review']
+            $fields['allow_vip'],
+            $fields['apply_rate'],
+            $fields['cancel_reason'],
+            $fields['edit_status'],
+            $fields['first_publish_date'],
+            $fields['is_digest'],
+            $fields['is_display'],
+            $fields['is_prevent_push'],
+            $fields['is_push_on'],
+            $fields['is_top'],
+            $fields['is_volume'],
+            $fields['pma_type'],
+            $fields['push_check_time'],
+			$fields['update_groupCode_time'],
+			$fields['updated_at'],
+			$fields['updated_by'],
+			$fields['version_number'],
+			$fields['want_allow_vip'],
+			$fields['reject_reason']
         );
 
         return $fields;
+    }
+	// 活动标签
+    public function getTags()
+    {
+        return $this->hasMany(ActivityTag::className(), ['id' => 'tag_id'])->viaTable('r_tag_activity', ['activity_id' => 'id']);
+    }
+
+    // PMA
+    public function getPma()
+    {
+        return $this->hasOne(User::className(), ['id' => 'principal']);
+    }
+
+    // DTS
+    public function getDts()
+    {
+        return $this->hasOne(User::className(), ['id' => 'updated_by']);
+    }
+
+    // 发起人
+    public function getUser()
+    {
+        return $this->hasOne(User::className(), ['id' => 'created_by']);
+    }
+
+
+    // 联合发起人1
+    public function getCofounder1()
+    {
+        return $this->hasOne(User::className(), ['id' => 'co_founder1']);
+    }
+    // 发起人选择的标签
+    public function getFounderTags()
+    {
+        return $this->hasMany(UserSelectTags::className(), ['user_id' => 'created_by']);
+    }
+    // 联合发起人2
+    public function getCofounder2()
+    {
+        return $this->hasOne(User::className(), ['id' => 'co_founder2']);
+    }
+    // 联合发起人3
+    public function getCofounder3()
+    {
+        return $this->hasOne(User::className(), ['id' => 'co_founder3']);
+    }
+    // 联合发起人4
+    public function getCofounder4()
+    {
+        return $this->hasOne(User::className(), ['id' => 'co_founder4']);
+    }
+
+    /**
+     * 类型
+     * @return \yii\db\ActiveQuery
+     */
+    public function getType()
+    {
+        return $this->hasOne(ActivityType::className(), ['id' => 'type_id'])->select(['id','status','name','img']);
+    }
+
+    // 活动的场地
+    public function getSpace()
+    {
+        return $this->hasOne(SpaceSpot::className(), ['id' => 'space_spot_id']);
+    }
+
+    /**
+     * 活动问题
+     * @return \yii\db\ActiveQuery
+     */
+    public function getQuestion()
+    {
+        return $this->hasOne(Question::className(), ['activity_id' => 'id']);
+    }
+
+    /**
+     * 报名列表
+     * @return \yii\db\ActiveQuery
+     */
+    public function getAnswerList()
+    {
+        return $this->hasMany(Answer::className(), ['activity_id' => 'id']);
+    }
+
+    /**
+     * 反馈列表
+     * @return \yii\db\ActiveQuery
+     */
+    public function getFeedbackList()
+    {
+        return $this->hasMany(ActivityFeedback::className(), ['activity_id' => 'id']);
+    }
+
+    /**
+     * 黄牌列表
+     * @return \yii\db\ActiveQuery
+     */
+    public function getYellowCardList()
+    {
+        return $this->hasMany(YellowCard::className(), ['activity_id' => 'id']);
+    }
+
+    /**
+     * 签到列表
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCheckInList()
+    {
+        return $this->hasMany(ActivityCheckIn::className(), ['activity_id' => 'id']);
+    }
+
+    /**
+     * 联合发起人列表
+     * @return \yii\db\ActiveQuery
+     */
+    public function getRActivityFounder()
+    {
+        return $this->hasMany(RActivityFounder::className(), ['activity_id' => 'id']);
+    }
+
+    /**
+     * 场地
+     * @return \yii\db\ActiveQuery
+     */
+    public function getSpot()
+    {
+        return $this->hasOne(SpaceSpot::className(), ['id' => 'space_spot_id']);
+    }
+
+    public function getFounders()
+    {
+        return $this->hasMany(User::className(), ['id' => 'founder_id'])->viaTable('r_activity_founder', ['activity_id' => 'id']);
+    }
+
+    /**
+     * 活动对应的日志列表
+     * @return $this
+     */
+    public function getLogs()
+    {
+        return $this->hasMany(AdminLog::className(), ['handle_id' => 'id'])->where(['controller' => 'activity'])->orderBy(['id' => SORT_DESC]);
+    }
+
+    /**
+     * 标签和活动对应列表
+     * @return \yii\db\ActiveQuery
+     */
+    public function getRTagActivity()
+    {
+        return $this->hasOne(RTagActivity::className(), ['activity_id' => 'id']);
     }
 }
