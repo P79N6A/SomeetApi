@@ -59,7 +59,6 @@ class IndexController extends BaseController
 			return false;
 		}
 		$data = $request->post();
-		$data = json_decode($data,true);
 		return isset($data['challenge'])?$data['challenge']:false;
 	}
 
