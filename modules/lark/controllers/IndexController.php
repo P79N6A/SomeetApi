@@ -87,8 +87,10 @@ class IndexController extends BaseController
 		}
 		$data = $request->getRawBody();
 		$data = json_decode(stripslashes($data), true);
+		file_put_contents('/var/www/html/web/data.txt',$data);
 		if(isset($data['challenge'])) return Yii::$app->formatter->asRaw(['challenge'=>$data['challenge']]);
 		$event = $data['event'];
+		file_put_contents('/var/www/html/web/events.txt',$event);
 		$type = $event['type'];
 		$room_id = $event['open_chat_id'];
 		$send_user_id = $event['user_open_id'];
@@ -167,6 +169,7 @@ class IndexController extends BaseController
 	 * 获取token值
 	 */
 	public function actionGetToken(){
+		Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 		$cache = Yii::$app->cache; 
 		$token = $cache->get('app_access_token');
 		if($token){

@@ -35,7 +35,7 @@ class CommonFunction extends Component
 		//设置获取的信息以文件流的形式返回，而不是直接输出。
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		//设置头文件的信息作为数据流输出
-		curl_setopt($ch, CURLOPT_HEADER, 1);
+		curl_setopt($ch, CURLOPT_HEADER, 0);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 		if($method == 'post'){
 			//设置post方式提交
