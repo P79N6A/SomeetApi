@@ -35,18 +35,24 @@ class IndexController extends BaseController
 			],
 			//暂时解除限制或者未登录就可以访问的方法
 			'optional' => [
-				'index'
+				'token'
 			]
 		];
 		$behaviors['access'] = [
                 'class' => 'app\component\AccessControl',
                 'allowActions' => [
-                    'index',
+                    'token',
+                ],
+            ];
+		$behaviors['verbs'] = [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                    'token' => ['POST','GET','HEAD'],
                 ],
             ];
 		return $behaviors;
 	}
-	public function actionIndex(){
+	public function actionToken(){
 		Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 		$request = Yii::$app->request;
 		if(!$request->isPost){

@@ -1,27 +1,40 @@
 <?php
 return [
 	[
-		'class' => 'yii\rest\UrlRule',
-		'controller' => [
+        'class' => 'yii\rest\UrlRule',
+        'controller' => [
 			'v1/activity',
 			'v1/wechat',
-			'v2/index'
+			'lark/index'
+        ]
+    ],
+	[
+		'class' => 'yii\rest\UrlRule',
+		'controller' => [
+			'v1/activity'
 		],
-		'extraPatterns'=>[
-			'GET index' => 'index',
+		'extraPatterns' => [
+			'GET index' => 'index'
+		]
+	],
+	[
+		'class' => 'yii\rest\UrlRule',
+		'controller' => [
+			'v1/wechat'
 		],
-		'extraPatterns'=>[
+		'extraPatterns' => [
 			'GET get-access-token' =>'get-access-token'
+		]
+	],
+	//lark 回调地址
+	[
+		'class' => 'yii\rest\UrlRule',
+		'controller' => [
+			'lark/token'
 		],
-		
-		
-		
-		//lark 回调地址
-		'extraPatterns'=>[
-			'GET index' =>'index'
-		],
-		'extraPatterns'=>[
-			'POST index' =>'index'
+		'extraPatterns' => [
+			'GET token' =>'token',
+			'POST token' =>'token'
 		]
 	],
 ];
