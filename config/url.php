@@ -19,6 +19,9 @@ return [
 		//lark 回调地址
 		'extraPatterns'=>[
 			'GET index' =>'index'
+		],
+		'extraPatterns'=>[
+			'POST index' =>'index'
 		]
 	],
 ];
