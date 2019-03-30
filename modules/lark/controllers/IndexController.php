@@ -85,7 +85,9 @@ class IndexController extends BaseController
 		if(!$request->isPost){
 			return false;
 		}
-		$data = $request->getRawBody();
+		$data = trim(json_encode(file_get_contents('php://input')),'"');
+		file_put_contents('/var/www/html/web/rawData.txt',$data);
+		//$data = '{\"uuid\":\"98efa5f14933efbe41a404e84c506d75\",\"event\":{\"type\":\"message\",\"root_id\":\"\",\"parent_id\":\"\",\"open_chat_id\":\"oc_7dd10d706d248ffed6445f981e6429d7\",\"msg_type\":\"text\",\"user_open_id\":\"ou_facf44bac1b1ee63bc6106f88de35130\",\"open_id\":\"ou_facf44bac1b1ee63bc6106f88de35130\",\"open_message_id\":\"om_ffe454a2a91ea59dad3eb122c8e9b72a\",\"is_mention\":true,\"chat_type\":\"group\",\"text\":\"\\u003cat open_id=\\\"ou_590c1ff814a495b0d3841d6223806160\\\"\\u003e@Someet\u673a\u5668\u4eba\\u003c\/at\\u003e dasdasda\",\"user_agent\":\"Mozilla\/5.0 (Macintosh; Intel Mac OS X 10_14_3) AppleWebKit\/537.36 (KHTML, like Gecko) Lark\/1.17.0 Chrome\/58.0.3029.110 Electron\/1.7.9 Safari\/537.36\"},\"token\":\"Xf8AevWWSWR090cisewrlg8ViiLcw4n7\",\"ts\":\"1553954077.639504\",\"type\":\"event_callback\"}';
 		$data = json_decode(stripslashes($data), true);
 		file_put_contents('/var/www/html/web/data.txt',$data);
 		if(isset($data['challenge'])) return Yii::$app->formatter->asRaw(['challenge'=>$data['challenge']]);
@@ -100,7 +102,7 @@ class IndexController extends BaseController
 		$is_mention = $event['is_mention'];
 		switch($type){
 			case 'message':
-			if($is_mention && $chat_type == 'group'){
+			if($is_mention){
 				$data=[
 					'open_chat_id'=>$room_id,
 					'msg_type'=>'text',
