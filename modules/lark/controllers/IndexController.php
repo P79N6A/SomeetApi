@@ -81,15 +81,15 @@ class IndexController extends BaseController
     }
 	public function actionToken(){
 		Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-		$request = Yii::$app->request;
-		if(!$request->isPost){
-			return false;
-		}
-		$data = $request->getRawBody();
+// 		$request = Yii::$app->request;
+// 		if(!$request->isPost){
+// 			return false;
+// 		}
+// 		$data = $request->getRawBody();
+// 		$data = json_decode($data,true);
+// 		if(isset($data['challenge'])) return Yii::$app->formatter->asRaw(['challenge'=>$data['challenge']]);
+		$data = '{"uuid":"001ac9e6acfbb36e138f02ee60d11508","event":{"type":"message","root_id":"","parent_id":"","open_chat_id":"oc_99674dcbea3fa8714a1ea498d3376d50","msg_type":"text","user_open_id":"ou_facf44bac1b1ee63bc6106f88de35130","open_id":"ou_facf44bac1b1ee63bc6106f88de35130","open_message_id":"om_5bf2b254998ff412a711e97e885296d3","is_mention":true,"chat_type":"group","text":"\u003cat open_id=\"ou_590c1ff814a495b0d3841d6223806160\"\u003e@Someet机器人\u003c/at\u003e ?","user_agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_3) AppleWebKit/537.36 (KHTML, like Gecko) Lark/1.17.0 Chrome/58.0.3029.110 Electron/1.7.9 Safari/537.36"},"token":"Xf8AevWWSWR090cisewrlg8ViiLcw4n7","ts":"1553942465.686809","type":"event_callback"}';
 		$data = json_decode($data,true);
-		if(isset($data['challenge'])) return Yii::$app->formatter->asRaw(['challenge'=>$data['challenge']]);
-		// $data = '{"uuid":"001ac9e6acfbb36e138f02ee60d11508","event":{"type":"message","root_id":"","parent_id":"","open_chat_id":"oc_99674dcbea3fa8714a1ea498d3376d50","msg_type":"text","user_open_id":"ou_facf44bac1b1ee63bc6106f88de35130","open_id":"ou_facf44bac1b1ee63bc6106f88de35130","open_message_id":"om_5bf2b254998ff412a711e97e885296d3","is_mention":true,"chat_type":"group","text":"\u003cat open_id=\"ou_590c1ff814a495b0d3841d6223806160\"\u003e@Someet机器人\u003c/at\u003e ?","user_agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_3) AppleWebKit/537.36 (KHTML, like Gecko) Lark/1.17.0 Chrome/58.0.3029.110 Electron/1.7.9 Safari/537.36"},"token":"Xf8AevWWSWR090cisewrlg8ViiLcw4n7","ts":"1553942465.686809","type":"event_callback"}';
-		
 		$event = $data['event'];
 		$type = $event['type'];
 		$room_id = $event['open_chat_id'];
@@ -104,7 +104,7 @@ class IndexController extends BaseController
 				$data=[
 					'open_chat_id'=>$room_id,
 					'msg_type'=>'text',
-					'content'=>'Sorry,我现在还不知道怎么回答你啦',
+					'content'=>["text"=>'Sorry,我现在还不知道怎么回答你啦'],
 					'root_id'=>$message_id
 				];
 				return self::actionSendToGroup($data);
