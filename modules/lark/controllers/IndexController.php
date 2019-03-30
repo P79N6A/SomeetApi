@@ -104,7 +104,7 @@ class IndexController extends BaseController
 				$data=[
 					'open_chat_id'=>$room_id,
 					'msg_type'=>'text',
-					'content'=>'你真棒，可是我还不知道怎么回答你鸭',
+					'content'=>'Sorry,我现在还不知道怎么回答你啦',
 					'root_id'=>$message_id
 				];
 				return self::actionSendToGroup($data);
