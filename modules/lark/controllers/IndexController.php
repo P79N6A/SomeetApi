@@ -72,7 +72,7 @@ class IndexController extends BaseController
 		}
 		$data = $request->getRawBody();
 		$data = json_decode($data,true);
-		return isset($data['challenge'])?$data['challenge']:false;
+		return Yii::$app->formatter->asRaw(['challenge'=>$data['challenge']]);
 	}
 
 }
