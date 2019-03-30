@@ -88,10 +88,7 @@ class IndexController extends BaseController
 		$data = $request->getRawBody();
 		$data = json_decode(stripslashes($data), true);
 		if(isset($data['challenge'])) return Yii::$app->formatter->asRaw(['challenge'=>$data['challenge']]);
-		// $data = '{"uuid":"f252bdf1812e782c45e7ab6481d6aecf","event":{"type":"message","root_id":"","parent_id":"","open_chat_id":"oc_0d422b37255709f95a5dbca14791b2ce","msg_type":"text","user_open_id":"ou_facf44bac1b1ee63bc6106f88de35130","open_id":"ou_facf44bac1b1ee63bc6106f88de35130","open_message_id":"om_557b8d1de135e96e28715853d41ab6fe","is_mention":false,"chat_type":"private","text":"123456","user_agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_3) AppleWebKit/537.36 (KHTML, like Gecko) Lark/1.17.0 Chrome/58.0.3029.110 Electron/1.7.9 Safari/537.36"},"token":"Xf8AevWWSWR090cisewrlg8ViiLcw4n7","ts":"1553949035.036890","type":"event_callback"}';
-		// $data = json_decode(stripslashes($data), true);
 		$event = $data['event'];
-		file_put_contents('/var/www/html/web/events.txt',$event);
 		$type = $event['type'];
 		$room_id = $event['open_chat_id'];
 		$send_user_id = $event['user_open_id'];
