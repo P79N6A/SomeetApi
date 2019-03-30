@@ -37,7 +37,8 @@ return [
 			'GET get-token'=>'get-token',
 			'GET get-group-list'=>'get-group-list',
 			'GET send-to-group'=>'send-to-group',
-			'GET get-member'=>'get-member'
+			'GET get-member'=>'get-member',
+			'GET send-to-single'=>'send-to-single'
 		]
 	],
 ];
