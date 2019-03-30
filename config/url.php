@@ -33,7 +33,6 @@ return [
 			'lark/token'
 		],
 		'extraPatterns' => [
-			'GET token' =>'token',
 			'POST token' =>'token'
 		]
 	],

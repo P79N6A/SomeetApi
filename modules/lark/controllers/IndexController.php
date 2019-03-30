@@ -47,18 +47,31 @@ class IndexController extends BaseController
 		$behaviors['verbs'] = [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'token' => ['POST','GET','HEAD'],
+                    'token' => ['POST'],
                 ],
             ];
 		return $behaviors;
 	}
+	/**
+     * {@inheritdoc}
+     */
+    public function beforeAction($action)
+    {
+        if ($action->id == 'token') {
+            // 当用户完成交易后 Ping++ 会以 POST 方式把数据发送到你的 hook 地址
+            // 所以这时候需要临时关闭掉 Yii 的 CSRF 验证
+            Yii::$app->controller->enableCsrfValidation = false;
+        }
+        return parent::beforeAction($action);
+    }
 	public function actionToken(){
 		Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 		$request = Yii::$app->request;
 		if(!$request->isPost){
 			return false;
 		}
-		$data = $request->post();
+		$data = $request->getRawBody();
+		$data = json_decode($data,true);
 		return isset($data['challenge'])?$data['challenge']:false;
 	}
 
