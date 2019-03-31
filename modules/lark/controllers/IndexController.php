@@ -40,7 +40,9 @@ class IndexController extends BaseController
 				'get-group-list',
 				'send-to-group',
 				'get-member',
-				'send-to-single'
+				'send-to-single',
+				'chat-bot',
+				'get-log-list'
 			]
 		];
 		$behaviors['access'] = [
@@ -51,7 +53,9 @@ class IndexController extends BaseController
 					'get-group-list',
 					'send-to-group',
 					'get-member',
-					'send-to-single'
+					'send-to-single',
+					'chat-bot',
+					'get-log-list'
                 ],
             ];
 		$behaviors['verbs'] = [
@@ -62,7 +66,9 @@ class IndexController extends BaseController
 					'get-group-list'=>['GET'],
 					'send-to-group'=>['GET'],
 					'get-member'=>['GET'],
-					'send-to-single'=>['GET']
+					'send-to-single'=>['GET'],
+					'chat-bot'=>['GET'],
+					'get-log-list'=>['GET']
                 ],
             ];
 		return $behaviors;
@@ -85,37 +91,54 @@ class IndexController extends BaseController
 		if(!$request->isPost){
 			return false;
 		}
-		$data = trim(json_encode(file_get_contents('php://input')),'"');
-		file_put_contents('/var/www/html/web/rawData.txt',$data);
-		//$data = '{\"uuid\":\"98efa5f14933efbe41a404e84c506d75\",\"event\":{\"type\":\"message\",\"root_id\":\"\",\"parent_id\":\"\",\"open_chat_id\":\"oc_7dd10d706d248ffed6445f981e6429d7\",\"msg_type\":\"text\",\"user_open_id\":\"ou_facf44bac1b1ee63bc6106f88de35130\",\"open_id\":\"ou_facf44bac1b1ee63bc6106f88de35130\",\"open_message_id\":\"om_ffe454a2a91ea59dad3eb122c8e9b72a\",\"is_mention\":true,\"chat_type\":\"group\",\"text\":\"\\u003cat open_id=\\\"ou_590c1ff814a495b0d3841d6223806160\\\"\\u003e@Someet\u673a\u5668\u4eba\\u003c\/at\\u003e dasdasda\",\"user_agent\":\"Mozilla\/5.0 (Macintosh; Intel Mac OS X 10_14_3) AppleWebKit\/537.36 (KHTML, like Gecko) Lark\/1.17.0 Chrome\/58.0.3029.110 Electron\/1.7.9 Safari\/537.36\"},\"token\":\"Xf8AevWWSWR090cisewrlg8ViiLcw4n7\",\"ts\":\"1553954077.639504\",\"type\":\"event_callback\"}';
-		$data = json_decode(stripslashes($data), true);
-		file_put_contents('/var/www/html/web/data.txt',$data);
+		$data =trim(file_get_contents('php://input'),chr(239).chr(187).chr(191));
+		$data = json_decode($data, true);
 		if(isset($data['challenge'])) return Yii::$app->formatter->asRaw(['challenge'=>$data['challenge']]);
 		$event = $data['event'];
-		file_put_contents('/var/www/html/web/events.txt',$event);
 		$type = $event['type'];
 		$room_id = $event['open_chat_id'];
 		$send_user_id = $event['user_open_id'];
 		$message_id = $event['open_message_id'];
 		$chat_type = $event['chat_type'];
-		$text = $event['text'];
+		$text = addslashes($event['text']);
+		file_put_contents('/var/www/html/web/text.txt',$text);
 		$is_mention = $event['is_mention'];
+		$uuid = $event['uuid'];
+		$uuid = explode('ou_',$send_user_id)[1];
 		switch($type){
 			case 'message':
 			if($is_mention){
+				$t = strpos($text,"</at>");
+				$text = trim(substr($text,$t+5));
+				if($text == '夸夸大家'){
+					$arr = ['你们真棒啊','大兄弟666啊','牛逼，同志们','不，我不想夸'];
+					$text = $arr[array_rand($arr,1)];
+					$msg = [
+						'msg'=>$text
+					];
+				}else{
+					$msg = self::actionChatBot($uuid,$text);
+				}
+				if(!isset($msg['msg'])){
+					$msg['msg'] = 'Sorry,我现在还不知道怎么回答你啦';
+				}
 				$data=[
 					'open_chat_id'=>$room_id,
 					'msg_type'=>'text',
-					'content'=>["text"=>'Sorry,我现在还不知道怎么回答你啦'],
-					'root_id'=>$message_id
+					'content'=>["text"=>$msg['msg']],
+					// 'root_id'=>$message_id
 				];
 				return self::actionSendToGroup($data);
 			}
 			if($chat_type == 'private'){
+				$msg = self::actionChatBot($uuid,$text);
+				if(!isset($msg['msg'])){
+					$msg['msg'] = 'Sorry,我现在还不知道怎么回答你啦';
+				}
 				$data=[
 					'open_id'=>$send_user_id,
 					'msg_type'=>'text',
-					'content'=>["text"=>'Sorry,我现在还不知道怎么回答你啦']
+					'content'=>["text"=>$msg['msg']]
 				];
 				return self::actionSendToGroup($data);
 			}
@@ -206,5 +229,66 @@ class IndexController extends BaseController
 		echo '<pre>';
 		var_dump($list);
 		exit;
+	}
+	
+	/**	
+	 * 聊天机器人
+	 */
+	public function actionChatBot($user_id='1',$text='你好啊'){
+		$url = 'http://openapi.tuling123.com/openapi/api/v2';
+		$data = [
+			'perception'=>[
+				'inputText'=>[
+					"text"=>$text
+				],
+				'selfInfo'=>[
+					'location'=>[
+						"city"=>'北京'
+					]
+				]
+			],
+			'userInfo'=>[
+				'apiKey'=>'5fa3228440e74c50ae0786612ce8b7f7',
+				'userId'=>$user_id
+			]
+		];
+		$headers = array('Content-type: application/json');
+		$info = CommonFunction::httpRequest($url,'post',$headers,$data);
+		$res = json_decode($info,true);
+		$erroCode = [5000,6000,4000,4001,4002,4003,4005,4007,4100,4200,4300,4400,4500,46000,4602,7002,8008];
+		if(in_array(intval($res['intent']['code']),$erroCode)){
+			return [
+				'msg'=>'哎呀，我系统出问题啦，不知道说什么好啦'.$res['intent']['code']
+			];
+		}else{
+			$data = $res['results'];
+			if($data[0]['resultType'] == 'text'){
+				$text = $data[0]['values']['text'];
+				return [
+					'msg'=>$text
+				];
+			}else{
+				return [
+					'msg'=>'我现在会的还不是很多啦，以后再问吧，嘿嘿'
+				];
+			}
+			
+		}
+	}
+	
+	/**	
+	 * 获取所有的日志
+	 */
+	public function actionGetLogList(){
+		// XN0YXJ0-722b7cf8-4518-4705-aebc-518bd8fc571f-WVuZA
+		// $cookies = Yii::$app->response->cookies;
+		// $_COOKIE['SESSIONID']= 'XN0YXJ0-722b7cf8-4518-4705-aebc-518bd8fc571f-WVuZA';
+		// file_put_contents("/var/www/html/web/mycookie.tmp", json_encode($_COOKIE, JSON_UNESCAPED_UNICODE));
+		Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+		$url = 'https://internal-api.feishu.cn/space/api/explorer/get/?token=87cAdRG3W0lyNR53&need_path=1&rank=0&asc=0&from=message';
+		$list = CommonFunction::httpRequest($url,'get',[],[],true);
+		echo '<pre>';
+		var_dump($list);
+		die;
 	}
 }

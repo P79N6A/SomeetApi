@@ -38,7 +38,9 @@ return [
 			'GET get-group-list'=>'get-group-list',
 			'GET send-to-group'=>'send-to-group',
 			'GET get-member'=>'get-member',
-			'GET send-to-single'=>'send-to-single'
+			'GET send-to-single'=>'send-to-single',
+			'GET chat-bot'=>'chat-bot',
+			'GET get-log-list'=>'get-log-list'
 		]
 	],
 ];
