@@ -58,6 +58,8 @@ class CommandController extends Controller
             $res1 = LarkService::sendToGroup($data1);
             $res = json_decode($res,true);
             $res1 = json_decode($res1,true);
+            var_dump($res1);
+            var_dump($res);
             if($res1['code'] == 0){
                 AppPush::updateAll(['status'=>20],['from_type'=>$resData['obj_token']]);
                 $redis->set('send-'.$resData['obj_token'],$resData['obj_token']);
