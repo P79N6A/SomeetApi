@@ -76,7 +76,7 @@ $config = [
         ],
         'redis' => [
             'class' => 'yii\redis\Connection',
-            'hostname' => '192.168.99.100',
+            'hostname' => '123.56.179.91',
             'port' => 6379,
             'password' => 'Someet',
             'database' => 0,
