@@ -72,7 +72,14 @@ $config = [
             }
 		],
         'cache' => [
-            'class' => 'yii\caching\FileCache',
+            'class' => 'yii\redis\Cache',
+        ],
+        'redis' => [
+            'class' => 'yii\redis\Connection',
+            'hostname' => '192.168.99.100',
+            'port' => 6379,
+            'password' => 'Someet',
+            'database' => 0,
         ],
         'user' => [
             'identityClass' => 'app\models\User',

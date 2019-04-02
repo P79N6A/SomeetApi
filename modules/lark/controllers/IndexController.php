@@ -15,6 +15,7 @@ use app\models\Answer;
 use app\models\ActivityBlack;
 use app\models\CollectAct;
 use app\models\ActivityType;
+use app\common\service\LarkService;
 use app\models\UserSelectTags;
 use Yii;
 use yii\filters\VerbFilter;
@@ -128,7 +129,7 @@ class IndexController extends BaseController
 					'content'=>["text"=>$msg['msg']],
 					// 'root_id'=>$message_id
 				];
-				return self::actionSendToGroup($data);
+				return LarkService::sendToGroup($data);
 			}
 			if($chat_type == 'private'){
 				$msg = self::actionChatBot($uuid,$text);
@@ -140,48 +141,17 @@ class IndexController extends BaseController
 					'msg_type'=>'text',
 					'content'=>["text"=>$msg['msg']]
 				];
-				return self::actionSendToGroup($data);
+				return LarkService::sendToGroup($data);
 			}
 			break;
 		}
 	}
 	
-	public function actionSendToGroup($data){
-		$url = 'https://open.feishu.cn/open-apis/message/v3/send/';
-		$token = self::actionGetToken();
-		$headers = array("Authorization:Bearer ".$token,'Content-type: application/json');
-		if(empty($data)){
-			$data = [
-				'open_chat_id'=>'oc_99674dcbea3fa8714a1ea498d3376d50',
-				"msg_type"=>"text",
-				"content"=>["text"=>'嘿嘿']
-			];
-		}
-		$info = CommonFunction::httpRequest($url,'post',$headers,$data);
-		echo '<pre>';
-		var_dump($info);
-		exit;
-	}
-	public function actionSendToSingle($data){
-		$url = 'https://open.feishu.cn/open-apis/message/v3/send/';
-		$token = self::actionGetToken();
-		$headers = array("Authorization:Bearer ".$token,'Content-type: application/json');
-		if(empty($data)){
-			$data = [
-				'open_id'=>'ou_facf44bac1b1ee63bc6106f88de35130',
-				"msg_type"=>"text",
-				"content"=>["text"=>'嘿嘿']
-			];
-		}
-		$info = CommonFunction::httpRequest($url,'post',$headers,$data);
-		echo '<pre>';
-		var_dump($info);
-		exit;
-	}
+	
 	
 	public function actionGetMember(){
 		$url = 'https://open.feishu.cn/open-apis/chat/v3/info/';
-		$token = self::actionGetToken();
+		$token = LarkService::getToken();
 		$headers = array("Authorization:Bearer ".$token,'Content-type: application/json');
 		$data['open_chat_id'] = 'oc_99674dcbea3fa8714a1ea498d3376d50';
 		$info = CommonFunction::httpRequest($url,'post',$headers,$data);
@@ -190,39 +160,13 @@ class IndexController extends BaseController
 		exit;
 	}
 	
-	/**	
-	 * 获取token值
-	 */
-	public function actionGetToken(){
-		Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-		$cache = Yii::$app->cache; 
-		$token = $cache->get('app_access_token');
-		if($token){
-			return $token;
-		}
-// 		$data = '{"app_access_token":"t-8664db79888680b8d0e668ec2397829248322af1","code":0,"expire":7200,"tenant_access_token":"t-8664db79888680b8d0e668ec2397829248322af1"}';
-// 		return json_decode($data,true)['app_access_token'];
-		$url = 'https://open.feishu.cn/open-apis/auth/v3/app_access_token/internal';
-		$headers = array('Content-type: application/json');
-		$data = array(
-			"app_id" => "cli_9c14a73e0a381108",
-			"app_secret" => "tx48Duv1luptHFHHSeKrjfpPhFQeYGeY"
-			);
-		$token = CommonFunction::httpRequest($url,'post',$headers,$data);
-		$rawData = json_decode($token,true);
-		$token = $rawData['app_access_token'];
-		$cache->set('app_access_token',$token,7200);
-		return $cache->get('app_access_token');
-		exit;
-	}
+	
 	/**	
 	 * 获取群列表
 	 */
 	public function actionGetGroupList(){
-		$data ='{"chats":[{"id":"oc_99674dcbea3fa8714a1ea498d3376d50","name":"Someet","owner_id":"ou_e1e40c24b73f9be06be9d2b379908d8b"}],"code":0,"has_more":false}';
-		return json_decode($data,true);
 		$url ='https://open.feishu.cn/open-apis/chat/v3/list/';
-		$token = self::actionGetToken();
+		$token = LarkService::getToken();
 		$headers = array("Authorization:Bearer ".$token,'Content-type: application/json');
 		$data['page']=1;
 		$list = CommonFunction::httpRequest($url,'post',$headers,$data);
@@ -280,15 +224,10 @@ class IndexController extends BaseController
 	 * 获取所有的日志
 	 */
 	public function actionGetLogList(){
-		// XN0YXJ0-722b7cf8-4518-4705-aebc-518bd8fc571f-WVuZA
-		// $cookies = Yii::$app->response->cookies;
-		// $_COOKIE['SESSIONID']= 'XN0YXJ0-722b7cf8-4518-4705-aebc-518bd8fc571f-WVuZA';
-		// file_put_contents("/var/www/html/web/mycookie.tmp", json_encode($_COOKIE, JSON_UNESCAPED_UNICODE));
-		Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-		$url = 'https://internal-api.feishu.cn/space/api/explorer/get/?token=87cAdRG3W0lyNR53&need_path=1&rank=0&asc=0&from=message';
-		$list = CommonFunction::httpRequest($url,'get',[],[],true);
+		$redis = Yii::$app->redis;
+		$res = LarkService::getLogList();
 		echo '<pre>';
-		var_dump($list);
+		print_r($redis->lrange('fileList',0,-1));
 		die;
 	}
 }

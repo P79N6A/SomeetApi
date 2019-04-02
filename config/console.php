@@ -27,7 +27,17 @@ $config = [
 		'authManager' => [
 		    'class' => 'yii\rbac\DbManager'
 		],
-        'db' => $db
+        'db' => $db,
+        'cache' => [
+            'class' => 'yii\redis\Cache',
+        ],
+        'redis' => [
+            'class' => 'yii\redis\Connection',
+            'hostname' => '192.168.99.100',
+            'port' => 6379,
+            'password' => 'Someet',
+            'database' => 0,
+        ],
     ],
     'params' => $params,
     /*
