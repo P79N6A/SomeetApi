@@ -42,6 +42,10 @@ class CommandController extends Controller
         }
         $resData = unserialize($list);
         if(!$redis->get('send-'.$resData['obj_token']) && $resData){
+            $is_exists = AppPush::find()->where(['from_type'=>$resData['obj_token']])->one();
+            if($is_exists->status == 20){
+                return 'ok';
+            }
             $data=[
                 'open_chat_id'=>'oc_7dd10d706d248ffed6445f981e6429d7',
                 'msg_type'=>'text',
