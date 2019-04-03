@@ -101,6 +101,10 @@ class LarkService extends BaseService{
 						$is_exists = AppPush::find()->where(['from_type'=>$key])->exists();
 						if(!$redis->get('child-'.$key) && !$is_exists){
 							if($value['type'] == 2){
+								$is_exists = AppPush::find()->where(['from_type'=>$value['obj_token']])->exists();
+								if($is_exists){
+									continue;
+								}
 								$fileList['obj_token'] = $value['obj_token'];
 								$fileList['name'] = $value['name'];
 								$fileList['url'] = $value['url'];
