@@ -229,4 +229,7 @@ class IndexController extends BaseController
 		print_r($redis->lrange('fileList',0,-1));
 		die;
 	}
+	public function actionGetToken(){
+		return LarkService::getToken();
+	}
 }
