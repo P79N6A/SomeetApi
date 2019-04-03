@@ -98,7 +98,8 @@ class LarkService extends BaseService{
 				$fileList=[];
 				if(count($cdata['entities']['nodes'])>0){
 					foreach ($cdata['entities']['nodes'] as $key1 => $value) {
-						if(!$redis->get('child-'.$key)){
+						$is_exists = AppPush::find()->where(['from_type'=>$key])->exists();
+						if(!$redis->get('child-'.$key) && !$is_exists){
 							if($value['type'] == 2){
 								$fileList['obj_token'] = $value['obj_token'];
 								$fileList['name'] = $value['name'];
@@ -114,6 +115,16 @@ class LarkService extends BaseService{
 								$push->status = 0;
 								if(!$push->save()){
 									var_dump($push->getErrors());
+								}
+								$floder = new AppPush();
+								$floder->user_id = 285;
+								$floder->jiguang_id = '285';
+								$floder->content = '所属目录';
+								$floder->from_type = $key;
+								$floder->created_at = time();
+								$floder->status = 0;
+								if(!$floder->save()){
+									var_dump($floder->getErrors());
 								}
 								$redis->set('child-'.$key,$key);
 							}
