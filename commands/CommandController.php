@@ -52,7 +52,7 @@ class CommandController extends Controller
             $data1=[
                 'open_chat_id'=>'oc_7dd10d706d248ffed6445f981e6429d7',
                 'msg_type'=>'text',
-                'content'=>["text"=>$resData['url']],
+                'content'=>["text"=>$resData['name'].': '.$resData['url']],
                 // 'root_id'=>$message_id
             ];
             $res1 = LarkService::sendToGroup($data1);
