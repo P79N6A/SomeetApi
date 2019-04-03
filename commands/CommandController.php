@@ -30,6 +30,7 @@ class CommandController extends Controller
      * Someet 群ID --  oc_99674dcbea3fa8714a1ea498d3376d50  
      * 测试群id --  oc_7dd10d706d248ffed6445f981e6429d7
      * 我的ID --  ou_facf44bac1b1ee63bc6106f88de35130
+     * 日志群ID --- oc_d7e116f8d6fe7d78d5e04fdbf8f02ee5
      */
     public function actionIndex()
     {
@@ -47,14 +48,14 @@ class CommandController extends Controller
                 return 'ok';
             }
             $data=[
-                'open_chat_id'=>'oc_7dd10d706d248ffed6445f981e6429d7',
+                'open_chat_id'=>'oc_d7e116f8d6fe7d78d5e04fdbf8f02ee5',
                 'msg_type'=>'text',
                 'content'=>["text"=>'<at open_id="ou_9862e218c5d9b706dbc376da8b8b5d38">@李迪</at><at open_id="ou_e1e40c24b73f9be06be9d2b379908d8b">@白惠泽</at> 有小伙伴发布日志啦，去看看吧！！！'],
                 // 'root_id'=>$message_id
             ];
             $res = LarkService::sendToGroup($data);
             $data1=[
-                'open_chat_id'=>'oc_7dd10d706d248ffed6445f981e6429d7',
+                'open_chat_id'=>'oc_d7e116f8d6fe7d78d5e04fdbf8f02ee5',
                 'msg_type'=>'text',
                 'content'=>["text"=>$resData['name'].': '.$resData['url']],
                 // 'root_id'=>$message_id
