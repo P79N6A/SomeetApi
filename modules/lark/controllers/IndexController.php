@@ -102,7 +102,6 @@ class IndexController extends BaseController
 		$message_id = $event['open_message_id'];
 		$chat_type = $event['chat_type'];
 		$text = addslashes($event['text']);
-		file_put_contents('/var/www/html/web/text.txt',$text);
 		$is_mention = $event['is_mention'];
 		$uuid = $event['uuid'];
 		$uuid = explode('ou_',$send_user_id)[1];
