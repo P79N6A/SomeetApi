@@ -1,5 +1,5 @@
 <?php
-namespace app\modules\v1\controllers;
+namespace app\modules\back\controllers;
 
 
 use yii\filters\auth\QueryParamAuth;
@@ -15,6 +15,7 @@ use app\models\Answer;
 use app\models\ActivityBlack;
 use app\models\CollectAct;
 use app\models\ActivityType;
+use app\common\service\ActivityService;
 use app\models\UserSelectTags;
 use Yii;
 use yii\filters\VerbFilter;
@@ -37,7 +38,6 @@ class ActivityController extends BaseController
 			'optional' => [
 				'index',
 				'view',
-				
 			]
 		];
 		$behaviors['access'] = [
@@ -49,52 +49,25 @@ class ActivityController extends BaseController
             ];
 		return $behaviors;
 	}
-	public function actionIndex(){
+	public function actionIndex($page=1,$status=20,$is_history=0){
 		Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-		$city_id = [2,3,4];
-		$data = Activity::find()
-            ->joinWith('type')
-            ->where(
-                ['and',
-                    ['activity.city_id' => $city_id],
-                    ['activity.is_new' => [0, 2]],
-                    ['activity_type.status' => ActivityType::STATUS_NORMAL],
-                    ['>', 'activity.end_time', getLastEndTime()],
-                    ['is_display' => Activity::DISPLAY_YES],
-                    ['or',
-                        ['activity.status' => Activity::STATUS_RELEASE],
-                        ['activity.status' => Activity::STATUS_SHUT],
-                    ],
-                ]
-            );
-		$pages = new Pagination(['totalCount' => $data->count()]);
-        $activities = $data->offset($pages->offset)->limit($pages->limit)
-			->select([
-				'activity.title',
-				'activity.poster',
-				'activity.desc',
-				'activity.id',
-				'activity.type_id',
-				'activity.status',
-				'activity.is_full',
-				'activity.display_order',
-				'activity.apply_rate',
-				'activity.is_top',
-				'activity.city_id'
-				])
-            ->asArray()
-            ->orderBy(
-                [
-                'activity.is_full' => SORT_ASC, //是否报满正序
-                'case when `activity`.`status` = 30 then 0 else 1 end' => SORT_DESC, //活动关闭沉底
-                'activity.is_top' => SORT_DESC, //置顶降序
-                'activity.display_order' => SORT_ASC, //手动排序正序
-                'activity.apply_rate' => SORT_ASC, //报名率
-                'activity.id' => SORT_DESC, //编号排序倒序
-                ]
-            )
-            ->all();
-		return $activities;
+		$data['page'] = $page;
+        $data['status'] = $status;
+        $data['is_history'] = $is_history;
+        if($data['is_history'] == 0){
+            unset($data['status']);
+        }
+        $list = ActivityService::getActlist($data);
+        if(!empty($list)){
+            foreach ($list['data'] as $key=>$row) {
+                //获取活动的发起人姓名
+                $user = User::find()->select(['username','id'])->where(['id'=>$row['created_by']])->asArray()->one();
+                if($user && isset($user['username'])){
+                    $list['data'][$key]['username'] = $user['username'];
+                }
+            }
+        }
+        return $list;
 	}
 	/**
 	 * 获取单个活动的详细内容

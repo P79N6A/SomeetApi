@@ -9,6 +9,8 @@ use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
 use app\assets\AppAsset;
+$controller = Yii::$app->controller->id;
+$query = Yii::$app->request->getQueryParam('status')?Yii::$app->request->getQueryParam('status'):1;
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
@@ -35,32 +37,26 @@ use app\assets\AppAsset;
                 <li class="layui-nav-item ">
                     <a href="javascript:;">活动分类</a> 
                 </li>
-                <li class="layui-nav-item layui-this">
-                    <a href="javascript:;">活动</a>
+                <li class="layui-nav-item <?php echo $controller == 'activity' && $query == 1?'layui-this':'';?>">
+                    <a href="/activity/index?status=1">活动</a>
                 </li>
-                <li class="layui-nav-item layui-hide-xs">
-                    <a href="//fly.layui.com/" target="_blank">活动审核</a>
+                <li class="layui-nav-item layui-hide-xs <?php echo $controller == 'activity' && $query == 8?'layui-this':'';?>">
+                    <a href="/activity/check?status=8">活动审核</a>
                 </li>
-                <li class="layui-nav-item">
-                    <a href="javascript:;">联系人</a>
-                    <dl class="layui-nav-child">
-                        <dd lay-unselect>
-                            <a href="//fly.layui.com/extend/" target="_blank">扩展组件</a>
-                        </dd>
-                        <dd lay-unselect>
-                            <a href="//fly.layui.com/store/" target="_blank">模板市场 <span class="layui-badge-dot"></span>
-                            </a>
-                        </dd>
-                    </dl>
+                <li class="layui-nav-item <?php echo $controller == 'member'?'layui-this':'';?>">
+                    <a href="/member/index?status=1">用户</a>
                 </li>
-                <li class="layui-nav-item layui-hide-xs" lay-unselect>
-                    <a href="javascript:;/">场地<span class="layui-badge-dot" style="margin-top: -5px;"></span></a>
+                <li class="layui-nav-item layui-hide-xs <?php echo $controller == 'space'?'layui-this':'';?>" lay-unselect>
+                    <a href="/space/index">场地<span class="layui-badge-dot" style="margin-top: -5px;"></span></a>
                 </li>
-                <li class="layui-nav-item ">
-                    <a href="javascript:;">DTS</a> 
+                <li class="layui-nav-item <?php echo $controller == 'dts'?'layui-this':'';?>">
+                    <a href="/dts/index">DTS</a> 
                 </li>
-                <li class="layui-nav-item ">
-                    <a href="javascript:;">举报</a> 
+                <li class="layui-nav-item <?php echo $controller == 'feedback'?'layui-this':'';?>">
+                    <a href="/feedback/index">举报</a> 
+                </li>
+                <li class="layui-nav-item <?php echo $controller == 'chat'?'layui-this':'';?>">
+                    <a href="/activity/msg" target="_blank">人工客服</a>
                 </li>
             </ul>
         </div>

@@ -16,7 +16,10 @@ $config = [
         ],
 		'lark' => [
 		    'class' => 'app\modules\lark\Module',
-		]
+		],
+        'back' => [
+            'class' => 'app\modules\back\Module',
+        ]
     ],
     'components' => [
 		'authClientCollection' => [

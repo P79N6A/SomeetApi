@@ -3,10 +3,8 @@
     	<div class="layui-container" style="width:100%;">  
 		<div class="layui-row">
 		<div class="layui-col-md10 active-index-menu-button">
-			<button class="layui-btn" id="addNew">新建活动</button>
-			<button id='week-act-button' class="layui-btn layui-btn-normal activity-index-button-active">本周活动</button>
-			<button id='history-act-button' class="layui-btn layui-btn-normal">历史活动</button>
-			<button id='release-act-button' class="layui-btn layui-btn-normal">预发布活动</button>
+			<button id='week-act-button' class="layui-btn layui-btn-normal activity-index-button-active">未审核活动</button>
+			<button id='history-act-button' class="layui-btn layui-btn-normal">已审核活动</button>
 			<button style='display:none;' id='uploadImage'>上传</button>
 		</div>
     </div>
@@ -16,8 +14,8 @@
     <input type="hidden" name="number" value="0" id='groupCodeId'>
     <input type="" name="">
 	<script type="text/html" id="barDemo">
-		<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-		<a class="layui-btn layui-btn-xs" lay-event="answer">报名管理</a>
+		<a class="layui-btn layui-btn-xs" lay-event="edit">编辑查看</a>
+		<a class="layui-btn layui-btn-xs" lay-event="reject">取消通过</a>
 		<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
 		<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event='release'>
 			发布
@@ -25,6 +23,11 @@
 		<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event='group_code'>
 			群二维码
 		</a>
+	</script>
+	<script type='text/html' id='barDemoForCheck'>
+		<a class="layui-btn layui-btn-xs" lay-event="edit">编辑查看</a>
+		<a class="layui-btn layui-btn-xs" lay-event="pass">通过</a>
+		<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="reject">拒绝</a>
 	</script>
 	
 </div>
@@ -57,7 +60,7 @@ var index = layer.load(4);
 var options = {
 	elem: '#actList',
 	where:{
-		is_history:0
+		is_history:1
 	},
 	text: {
 	    none: '暂无相关数据'
@@ -77,7 +80,7 @@ var options = {
 	  ,{field:'username', title:'用户名',width:100 ,edit: 'text'}
 	  ,{field:'title', title:'标题', width:120 }
 	  ,{field:'desc', title:'描述', width:180,edit: 'text'}
-	  ,{fixed: 'right', title:'操作', toolbar: '#barDemo',width:400}
+	  ,{fixed: 'right', title:'操作', toolbar: '#barDemoForCheck',width:400}
 	]]
 	,page: true,
 	done:function(res, curr, count){
@@ -111,6 +114,27 @@ table.on('tool(actList)', function(obj){
 			layer.close(index);
 		});
 		break;
+		case 'pass':
+		layer.confirm('通过再改得收费了啊', {icon: 6, title:'提示'}, function(index){
+			layer.msg('好的,如你所愿', {icon: 6}); 
+			obj.del();
+			layer.close(index);
+		});
+		break;
+		case 'reject':
+		layer.confirm('真的要拒绝人家嘛？', {icon: 6, title:'提示'}, function(index){
+			layer.prompt({
+			  formType: 2,
+			  title: '拒绝人家总得有个理由吧',
+			  area: ['800px', '350px'] //自定义文本域宽高
+			}, function(value, index, elem){
+			  alert(value); //得到value
+			  layer.msg('明智之选', {icon: 6}); 
+			  obj.del();
+			  layer.close(index);
+			});
+		});
+		break;
 		case 'group_code':
 			$('#groupCodeId').val(obj.data.id);
 			if(!$('#groupCodeId').val()){
@@ -135,24 +159,31 @@ $('.active-index-menu-button button').click(function(){
 	$('.active-index-menu-button button').removeClass('activity-index-button-active')
 	$(this).addClass('activity-index-button-active');
 })
-//切换本周活动
+//切换未审核活动
 $('#week-act-button').click(function(){
 	var index4 = layer.load(4);
 	table.reload('actList',{
 		where:{
-			is_history:0,
+			is_history:1,
 			status:0
 		},
 		page: {
 		    curr: 1 //重新从第 1 页开始
 		},
+		cols: [[
+		  {field:'id', title:'ID编号', width:100,sort: true}
+		  ,{field:'username', title:'用户名',width:100 ,edit: 'text'}
+		  ,{field:'title', title:'标题', width:120 }
+		  ,{field:'desc', title:'描述', width:180,edit: 'text'}
+		  ,{fixed: 'right', title:'操作', toolbar: '#barDemoForCheck',width:400}
+		]],
 		done:function(res, curr, count){
 			layer.close(index4)
 		}
 	})
 	
 })
-//切换历史活动
+//切换已审核活动
 $('#history-act-button').click(function(){
 	var index4 = layer.load(4);
 	table.reload('actList',{
@@ -163,22 +194,13 @@ $('#history-act-button').click(function(){
 		page: {
 		    curr: 1 //重新从第 1 页开始
 		},
-		done:function(res, curr, count){
-			layer.close(index4)
-		}
-	})
-	
-})
-//预发布活动
-$('#release-act-button').click(function(){
-	var index4 = layer.load(4);
-	table.reload('actList',{
-		where:{
-			status:15
-		},
-		page: {
-		    curr: 1 //重新从第 1 页开始
-		},
+		cols: [[
+		  {field:'id', title:'ID编号', width:100,sort: true}
+		  ,{field:'username', title:'用户名',width:100 ,edit: 'text'}
+		  ,{field:'title', title:'标题', width:120 }
+		  ,{field:'desc', title:'描述', width:180,edit: 'text'}
+		  ,{fixed: 'right', title:'操作', toolbar: '#barDemo',width:400}
+		]],
 		done:function(res, curr, count){
 			layer.close(index4)
 		}

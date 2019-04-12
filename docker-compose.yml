@@ -1,9 +1,14 @@
+#biuild  名称要小写
 version: '2'
 services:
   Someet:
-    image: codemix/yii2-base:2.0.7-php-fpm
+    image: daocloud.io/boxplay/docker-php7
     volumes:
         - ./:/var/www/html/
+    ports:
+        - "9501:9501"
+    expose:
+        - "9501"
     links:
         - db:db
     environment:

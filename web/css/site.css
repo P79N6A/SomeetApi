@@ -53,3 +53,8 @@ h1,h2,h3{font-size: 14px;}
 .layui-layedit{
     max-width: 70%
 }
+
+/*自定义页面css样式*/
+.activity-index-button-active{
+	border-bottom:4px solid red;
+}

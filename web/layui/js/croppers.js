@@ -3,7 +3,7 @@
  */
 
 layui.config({
-    base: '/layui/js/' //layui自定义layui组件目录
+    base: '/layui/js/modules/' //layui自定义layui组件目录
 }).define(['jquery','layer','cropper'],function (exports) {
     var $ = layui.jquery
         ,layer = layui.layer;
@@ -16,7 +16,7 @@ layui.config({
         "            </label>\n" +
         "            <input class=\"layui-upload-file\" id=\"cropper_avatarImgUpload\" type=\"file\" value=\"选择图片\" name=\"file\">\n" +
         "        </div>\n" +
-        "        <div class=\"layui-form-mid layui-word-aux\">头像的尺寸限定150x150px,大小在50kb以内</div>\n" +
+        "        <div class=\"layui-form-mid layui-word-aux\">图片的尺寸限定150x150px,大小在100kb以内</div>\n" +
         "    </div>\n" +
         "    <div class=\"layui-row layui-col-space15\">\n" +
         "        <div class=\"layui-col-xs9\">\n" +
@@ -42,7 +42,7 @@ layui.config({
         "            </div>\n" +
         "        </div>\n" +
         "        <div class=\"layui-col-xs3\">\n" +
-        "            <button class=\"layui-btn layui-btn-fluid\" cropper-event=\"confirmSave\" type=\"button\"> 保存修改</button>\n" +
+        "            <button class=\"layui-btn layui-btn-fluid\" cropper-event=\"confirmSave\" type=\"button\"> 确定</button>\n" +
         "        </div>\n" +
         "    </div>\n" +
         "\n" +
@@ -58,15 +58,16 @@ layui.config({
                 area = e.area,
                 url = e.url,
                 done = e.done;
-
+                extEle= e.extEle
             var content = $('.showImgEdit')
                 ,image = $(".showImgEdit .readyimg img")
                 ,preview = '.showImgEdit .img-preview'
                 ,file = $(".showImgEdit input[name='file']")
                 , options = {aspectRatio: mark,preview: preview,viewMode:1};
-
+            var index = 0;
             $(elem).on('click',function () {
-                layer.open({
+                image.cropper('destroy')
+                index = layer.open({
                     type: 1
                     , content: content
                     , area: area
@@ -81,7 +82,6 @@ layui.config({
             });
             $(".layui-btn").on('click',function () {
                 var event = $(this).attr("cropper-event");
-                console.log(event)
                 //监听确认保存图像
                 if(event === 'confirmSave'){
                     var data = image.cropper('getCroppedCanvas',{
@@ -90,19 +90,23 @@ layui.config({
                     });
                     var imageSource = data.toDataURL('image/jpeg',0.7);
                     var _csrf = $('#_csrf').val();
+                    var extData ={};
+                    extData.imgData = imageSource
+                    extData._csrf = _csrf
+                    extData.id = $(extEle).val();
+                    if(!extData.id){
+                        layer.msg('获取编辑数据失败', {icon: 6}); 
+                        return false;
+                    }
                     $.ajax({
                         method:"post",
                         url: url, //用于文件上传的服务器端请求地址
-                        data: {
-                            'imgData':imageSource,
-                            '_csrf': _csrf
-                        },
+                        data: extData,
                         success:function(result){
-                            console.log(result)
                             var result = result.data
                             if(result.status == 200){
                                 layer.msg('上传成功',{icon: 1});
-                                layer.closeAll('page');
+                                layer.close(index);
                                 return done(result.url);
                             }else if(result.status == 0){
                                 layer.alert('上传失败',{icon: 2});
@@ -110,6 +114,7 @@ layui.config({
 
                         }
                     });
+                    image.cropper('destroy');
                     //监听旋转
                 }else if(event === 'rotate'){
                     var option = $(this).attr('data-option');
@@ -123,8 +128,9 @@ layui.config({
                     var r= new FileReader();
                     var f=this.files[0];
                     r.readAsDataURL(f);
+                    image.cropper('destroy')
                     r.onload=function (e) {
-                        image.cropper('destroy').attr('src', this.result).cropper(options);
+                        image.attr('src', this.result).cropper(options);
                     };
                 });
             });

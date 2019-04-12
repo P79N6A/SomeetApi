@@ -5,9 +5,11 @@ return [
         'controller' => [
 			'v1/activity',
 			'v1/wechat',
-			'lark/index'
+			'lark/index',
+			'back/activity'
         ]
     ],
+    //前端api
 	[
 		'class' => 'yii\rest\UrlRule',
 		'controller' => [
@@ -17,6 +19,7 @@ return [
 			'GET index' => 'index'
 		]
 	],
+	//前端微信sdk
 	[
 		'class' => 'yii\rest\UrlRule',
 		'controller' => [
@@ -41,6 +44,27 @@ return [
 			'GET send-to-single'=>'send-to-single',
 			'GET chat-bot'=>'chat-bot',
 			'GET get-log-list'=>'get-log-list'
+		]
+	],
+	//后台api
+	//前端api
+	[
+		'class' => 'yii\rest\UrlRule',
+		'controller' => [
+			'back/activity'
+		],
+		'extraPatterns' => [
+			'GET index' => 'index'
+		]
+	],
+	[
+		'class' => 'yii\rest\UrlRule',
+		'controller' => [
+			'back/member'
+		],
+		'extraPatterns' => [
+			'GET get-list' => 'get-list',
+			'POST update-status' => 'update-status'
 		]
 	],
 ];

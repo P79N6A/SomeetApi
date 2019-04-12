@@ -88,6 +88,7 @@ class Activity extends \yii\db\ActiveRecord
 	public $type;
 	public $is_collect;
 	public $is_black;
+    public $username;
     /* 删除 */
     const STATUS_DELETE   = 0;
     /* 不通过的发起人创建的活动 */
