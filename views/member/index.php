@@ -267,5 +267,6 @@ $('#addNew').click(function(){
 //点击单行数据
 table.on('row(all)', function(obj){
   console.log(obj.data) //得到当前行数据
+  window.location.href='/member/'+obj.data.id
 });
 </script>

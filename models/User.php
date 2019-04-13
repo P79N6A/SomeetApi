@@ -6,6 +6,13 @@ use Yii;
 class User extends BaseUser
 {
     public $sex;
+    public $profile;
+    public $tags;
+    public $is_admin;
+    public $is_founder;
+    public $answers;
+    public $activity;
+    public $yellowCard;
     /** * 用户状态是删除 */
     const STATUS_DELETED = 0;
     /** * 用户状态是正常 */

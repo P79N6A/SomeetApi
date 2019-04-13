@@ -37,14 +37,16 @@ class MemberController extends BaseController
 			//暂时解除限制或者未登录就可以访问的方法
 			'optional' => [
 				'get-list',
-				'update-status'
+				'update-status',
+				'get-info'
 			]
 		];
 		$behaviors['access'] = [
                 'class' => 'app\component\AccessControl',
                 'allowActions' => [
                     'get-list',
-                    'update-status'
+                    'update-status',
+                    'get-info'
                 ],
             ];
 		return $behaviors;
@@ -84,5 +86,17 @@ class MemberController extends BaseController
 			'status'=>0,
 			'msg'=>'操作失败'
 		];
+	}
+	/**
+	 * 获取单个用户详情
+	 */
+	public function actionGetInfo(){
+		$request = Yii::$app->request;
+		$params = $request->post();
+		if(!in_array('user_id', array_keys($params))){
+			return ['status'=>0,'msg'=>'数据错误'];
+		}
+		$id = $params['user_id'];
+		return MemberService::getInfo($id,['profile','tags','is_admin','is_founder','yellowCard','answers','activty']);
 	}
 }

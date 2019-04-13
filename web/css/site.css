@@ -58,3 +58,66 @@ h1,h2,h3{font-size: 14px;}
 .activity-index-button-active{
 	border-bottom:4px solid red;
 }
+/*用户详情页*/
+.view-detail{
+	width: 70%;
+	margin:0 auto;
+	margin-top: 2rem;
+	/*background-color: pink;*/
+	border:1px solid black;
+	box-shadow: 2px 2px 2px 2px gray;
+}
+.view-detail-button{
+	text-align: right;
+}
+.view-detail-button>button{
+	margin: 10px;
+}
+.view-detail-info-title>span{
+	font-size: 2rem;
+}
+.view-detail-left{
+	padding-left: 2rem;
+	font-size: 1rem;
+}
+.view-detail-headimg{
+	width: 6rem;
+	height: 6rem;
+	border-radius: 50%;
+}
+.view-detail-tag-div{
+    /*background-color: #FF5722;*/
+    line-height: 3rem;
+    text-align: center;
+    border-radius: 7px;
+}
+.list-group-item-info{
+	color: #31708f;
+    background-color: #d9edf7;
+}
+.view-detail-tag-ul{
+	list-style: none;
+}
+.view-detail-tag-ul>li:first-child{
+	border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+}
+.view-detail-tag-ul li{
+	display: flex;
+	text-align: center;
+	position: relative;
+    padding: 3px 15px;
+    margin-bottom: -1px;
+    border: 1px solid #ddd;
+    margin-top: 0px;
+}
+.list-group-item-success{
+	color: #3c763d;
+    background-color: #dff0d8;
+}
+.view-detail-layui-card{
+	border:1px solid red;
+}
+
+
+

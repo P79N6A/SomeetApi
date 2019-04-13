@@ -15,7 +15,8 @@ class MemberController extends BaseController{
             'access' => [
                 'class' => 'app\component\AccessControl',
                 'allowActions' => [
-                    'index'
+                    'index',
+                    'view'
                 ],
             ],
         ];
@@ -27,4 +28,12 @@ class MemberController extends BaseController{
 	public function actionIndex(){
 		return $this->render('index');
 	}
+
+    /**
+     * 用户详情信息
+     */
+    public function actionView(){
+        $this->layout = "view";
+        return $this->render('view');
+    }
 }

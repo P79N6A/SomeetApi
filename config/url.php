@@ -1,5 +1,6 @@
 <?php
 return [
+	'member/<id:\d+>' => 'member/view', //活动详情
 	[
         'class' => 'yii\rest\UrlRule',
         'controller' => [
@@ -64,7 +65,8 @@ return [
 		],
 		'extraPatterns' => [
 			'GET get-list' => 'get-list',
-			'POST update-status' => 'update-status'
+			'POST update-status' => 'update-status',
+			'POST get-info' => 'get-info'
 		]
 	],
 ];
