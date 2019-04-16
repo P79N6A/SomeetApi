@@ -61,3 +61,128 @@ function getWeekBefore()
     $get_week_before = $last_end_time - 604800;
     return $get_week_before;
 }
+/**
+ * 获取 对应的城市名
+ * @return mixed
+ */
+function getIpCity()
+{
+        $session = Yii::$app->session;
+        $city = $session->get('city')?$session->get('city'):'';
+        if($city){
+            return $city;
+        }
+        $ip = $_SERVER['REMOTE_ADDR'];
+        if($ip == '222.128.161.156'){
+            $session->set('city','北京');
+            return '北京';
+        }
+        // http://ip.taobao.com/service/getIpInfo.php?ip=123.54.23.56
+        $ipContent = @file_get_contents('http://ip.taobao.com/service/getIpInfo.php?ip='.$ip);
+        if(!$ipContent){
+            $session->set('city','北京');
+            return '北京';
+        }
+        $data = json_decode($ipContent,true);
+        $city = isset($data['data']['region'])?$data['data']['region']:'北京';
+        $city = $city!='北京'?'北京':$city;
+        $session->set('city',$city);
+}
+
+/**
+ * 获取城市编号
+ * @return mixed
+ */
+function getCityId()
+{
+    $session = Yii::$app->session;
+    $city_id = $session->get('city_id');
+    return $city_id?$city_id:2;
+}
+
+/**
+ * 设置城市编号
+ * @param int $city_id
+ */
+function setCityId($city_id=2)
+{
+    $session = Yii::$app->session;
+    $session->set('city_id', $city_id);
+}
+/**
+ * 设置周数
+ * @param int $city_id
+ */
+function setWeek($week='')
+{   
+    $session = Yii::$app->session;
+    $user_id = Yii::$app->user->id;
+    $week = is_numeric($week)?$week:date('W');
+    $session->set($user_id.'week', $week);
+}
+/**
+ * 获取周数
+ * @return int $city_id
+ */
+function getWeek()
+{
+    $session = Yii::$app->session;
+    $user_id = Yii::$app->user->id;
+    $week = $session->get($user_id.'week') > 0?$session->get($user_id.'week'):0;
+    return $week; 
+}
+/**
+ * 获取城市名称
+ * @return mixed
+ */
+function getCity()
+{
+    $session = Yii::$app->session;
+    return $session->get('city', '北京');
+}
+
+/**
+ * 设置城市
+ * @param string $city
+ */
+function setCity($city = '北京')
+{
+    $session = Yii::$app->session;
+    $session->set('city', $city);
+}
+
+function hasCityId()
+{
+    $session = Yii::$app->session;
+    return $session->has('city_id');
+}
+
+/**
+ * 前台获取用户选择的城市
+ * @return int
+ */
+function getUserCityId()
+{
+    $user_id = Yii::$app->user->id;
+    if (!$user_id) {
+        return 2;
+    }
+
+    $user = \someet\common\models\User::findOne($user_id);
+    if (!$user) {
+        return 2;
+    }
+    return $user->city_id;
+}
+
+/**
+ * 前台设置用户选择的城市
+ * @param int $city_id
+ */
+function setUserCityId($city_id = 2)
+{
+    $user_id = Yii::$app->user->id;
+    if ($user_id > 0 && $city_id!=getUserCityId()) {
+        \someet\common\models\User::updateAll(['city_id' => $city_id], ['id' => $user_id]);
+    }
+}

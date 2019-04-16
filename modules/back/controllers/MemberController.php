@@ -38,7 +38,9 @@ class MemberController extends BaseController
 			'optional' => [
 				'get-list',
 				'update-status',
-				'get-info'
+				'get-info',
+				'role-update',
+				'get-user-search'
 			]
 		];
 		$behaviors['access'] = [
@@ -46,7 +48,9 @@ class MemberController extends BaseController
                 'allowActions' => [
                     'get-list',
                     'update-status',
-                    'get-info'
+                    'get-info',
+                    'role-update',
+                    'get-user-search'
                 ],
             ];
 		return $behaviors;
@@ -97,6 +101,48 @@ class MemberController extends BaseController
 			return ['status'=>0,'msg'=>'数据错误'];
 		}
 		$id = $params['user_id'];
-		return MemberService::getInfo($id,['profile','tags','is_admin','is_founder','yellowCard','answers','activty']);
+		return MemberService::getInfo($id,['profile','tags','is_admin','is_founder','yellowCard','answers','activity','realname']);
 	}
+	/**
+	 * 授权用户角色
+	 */
+	public function actionRoleUpdate(){
+		$request = Yii::$app->request;
+		$data = $request->post();
+		if(!isset($data['user_id'])){
+			return ['status'=>0,'msg'=>'用户获取失败'];
+		}
+		$auth = Yii::$app->authManager;
+		if($data['type'] == 'founder'){
+			$role = $auth->getRole('founder');
+		}
+		if($data['type'] == 'admin'){
+			$role = $auth->getRole('admin');
+		}
+		if($data['status'] == 'auth'){
+			$auth->assign($role,$data['user_id']);
+		}else{
+			$auth->revoke($role,$data['user_id']);
+		}
+		return ['status'=>1,'msg'=>'ok'];
+	}
+	/**
+	 * 根据用户的输入搜索发起人信息
+	 */
+	public function actionGetUserSearch(){
+		$request = Yii::$app->request;
+		$data =$request->get();
+		if(!$data['type'] || !$data['val']){
+			return ['status'=>0,'msg'=>'数据操作错误'];
+		}
+		return MemberService::getUserBySearch($data);
+	}
+
+
+
+
+
+
+
+
 }

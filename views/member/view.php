@@ -10,19 +10,19 @@
 					<h3 class="layui-timeline-title">信息</h3>
 					<div class="view-detail-left">
 						<div>
-							微信昵称：王雅欣
+							微信昵称： <span id='view-detail-nickname'><?php echo $data['username'];?></span>
 						</div>
 						<div>
-							生日:1993-10-07
+							生日:<?php echo $data['profile']['birth_year'].'年'.$data['profile']['birth_month'].'月'.$data['profile']['birth_day'].'日';?>
 						</div>
 						<div>
-							性别：女
+							性别：<?php echo $data['profile']['sex'] == 1?'男':'女';?>
 						</div>
 						<div>
-							授权时间：2017-10-09
+							授权时间：<?php echo date('Y-m-d',$data['created_at']);?>
 						</div>
 						<div>
-							上次登录时间：2017-10-09
+							上次登录时间：<?php echo date('Y-m-d',$data['last_login_at']);?>
 						</div>
 					</div>
 				</div>
@@ -33,19 +33,19 @@
 					<h3 class="layui-timeline-title">资料</h3>
 					<div class="view-detail-left">
 						<div>
-							<img class="view-detail-headimg" src="http://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTJeV2bt7jQqxg8jmqyQfXBWc6ypV9I0epw6HaWgt7KGDNibzrPXUhpKIib0ZQ4X4KPlAB666PVgicxgw/132">
+							<img class="view-detail-headimg" src="<?php echo $data['profile']['headimgurl'];?>">
 						</div>
 						<div>
-							用户名：小喵喵
+							用户名：<?php echo $data['username'];?>
 						</div>
 						<div>
-							真实姓名：大喵喵
+							真实姓名：<?php echo $data['realname'];?>
 						</div>
 						<div>
-							手机号：18516986557	
+							手机号：<?php echo $data['mobile'];?>
 						</div>
 						<div>
-							微信号：db7752134
+							<?php echo $data['wechat_id'];?>
 						</div>
 					</div>
 				</div>
@@ -59,15 +59,19 @@
 					      <div class="view-detail-tag-div">
 					      	<ul class="view-detail-tag-ul">
 					      		<li class="list-group-item-success">职业</li>
-					      		<li class="list-group-item-info">22222</li>
+					      		<?php if(isset($data['tags']['zy']) && !empty($data['tags']['zy'])){foreach($data['tags']['zy'] as $row){?>
+					      			<li class="list-group-item-info"><?php echo $row['tag_title'];?></li>
+					      		<?php }}?>
 					      	</ul>
 					      </div>
 					    </div>
 					    <div class="layui-col-xs2">
 					      <div class="view-detail-tag-div">
 					      	<ul class="view-detail-tag-ul">
-					      		<li class="list-group-item-success">职业技能</li>
-					      		<li class="list-group-item-info">22222</li>
+					      		<li class="list-group-item-success">个人技能</li>
+					      		<?php if(isset($data['tags']['grjn']) && !empty($data['tags']['grjn'])){foreach($data['tags']['grjn'] as $row){?>
+					      			<li class="list-group-item-info"><?php echo $row['tag_title'];?></li>
+					      		<?php }}?>
 					      	</ul>
 					      </div>
 					    </div>
@@ -75,7 +79,9 @@
 					      <div class="view-detail-tag-div">
 					      	<ul class="view-detail-tag-ul">
 					      		<li class="list-group-item-success">个人属性</li>
-					      		<li class="list-group-item-info">22222</li>
+					      		<?php if(isset($data['tags']['grsx']) && !empty($data['tags']['grsx'])){foreach($data['tags']['grsx'] as $row){?>
+					      			<li class="list-group-item-info"><?php echo $row['tag_title'];?></li>
+					      		<?php }}?>
 					      	</ul>
 					      </div>
 					    </div>
@@ -83,7 +89,9 @@
 					      <div class="view-detail-tag-div">
 					      	<ul class="view-detail-tag-ul">
 					      		<li class="list-group-item-success">特殊经历</li>
-					      		<li class="list-group-item-info">22222</li>
+					      		<?php if(isset($data['tags']['tsjl']) && !empty($data['tags']['tsjl'])){foreach($data['tags']['tsjl'] as $row){?>
+					      			<li class="list-group-item-info"><?php echo $row['tag_title'];?></li>
+					      		<?php }}?>
 					      	</ul>
 					      </div>
 					    </div>
@@ -91,7 +99,9 @@
 					      <div class="view-detail-tag-div">
 					      	<ul class="view-detail-tag-ul">
 					      		<li class="list-group-item-success">人生态度</li>
-					      		<li class="list-group-item-info">22222</li>
+					      		<?php if(isset($data['tags']['rstd']) && !empty($data['tags']['rstd'])){foreach($data['tags']['rstd'] as $row){?>
+					      			<li class="list-group-item-info"><?php echo $row['tag_title'];?></li>
+					      		<?php }}?>
 					      	</ul>
 					      </div>
 					    </div>
@@ -99,7 +109,9 @@
 					      <div class="view-detail-tag-div">
 					      	<ul class="view-detail-tag-ul">
 					      		<li class="list-group-item-success">偏好</li>
-					      		<li class="list-group-item-info">22222</li>
+					      		<?php if(isset($data['tags']['ph']) && !empty($data['tags']['ph'])){foreach($data['tags']['ph'] as $row){?>
+					      			<li class="list-group-item-info"><?php echo $row['tag_title'];?></li>
+					      		<?php }}?>
 					      	</ul>
 					      </div>
 					    </div>
@@ -114,12 +126,12 @@
 						<input type="hidden" value="297962" id='user_id'  name="id">
 						<div class="layui-form-item">
 						    <label class="layui-form-label">用户身份</label>
-						    <input value="founder" lay-filter='founder' type="checkbox" name="" title="发起人">
-						    <input value="admin" lay-filter='founder' type="checkbox" name="" title="管理员"> 
+						    <input value="founder" <?php echo $data['is_founder']?'checked':'';?> lay-filter='founder' type="checkbox" name="" title="发起人">
+						    <input value="admin" <?php echo $data['is_admin']?'checked':'';?> lay-filter='founder' type="checkbox" name="" title="管理员"> 
 						</div>
 					</div>
 					<div class="view-detail-left">
-						发起人简介：大萨达撒大撒大
+						发起人简介：<?php echo $data['founder_desc'];?>
 					</div>
 				</div>
 			</li>
@@ -152,47 +164,36 @@
 					  </ul>
 					  <div class="layui-tab-content">
 					    <div class="layui-tab-item layui-show">
-					    	<div class="layui-card view-detail-layui-card">
-							  <div class="layui-card-header">卡片面板</div>
-							  <div class="layui-card-body">
-							    卡片式面板面板通常用于非白色背景色的主体内<br>
-							    从而映衬出边框投影
-							  </div>
-							</div>
-							<div class="layui-card view-detail-layui-card">
-							  <div class="layui-card-header">卡片面板</div>
-							  <div class="layui-card-body">
-							    卡片式面板面板通常用于非白色背景色的主体内<br>
-							    从而映衬出边框投影
-							  </div>
-							</div>
-							<div class="layui-card view-detail-layui-card">
-							  <div class="layui-card-header">卡片面板</div>
-							  <div class="layui-card-body">
-							    卡片式面板面板通常用于非白色背景色的主体内<br>
-							    从而映衬出边框投影
-							  </div>
-							</div>
-							<div class="layui-card">
-							  <div class="layui-card-header">卡片面板</div>
-							  <div class="layui-card-body">
-							    卡片式面板面板通常用于非白色背景色的主体内<br>
-							    从而映衬出边框投影
-							  </div>
-							</div>
+					    	<?php if(isset($data['activity']) && !empty($data['activity'])){foreach($data['activity'] as $row){?>
+						    	<div class="layui-card view-detail-layui-card">
+								  <div class="layui-card-header"><?php echo $row['title'];?></div>
+								  <div class="layui-card-body">
+								    <?php echo date('Y-m-d H:i:s',$row['start_time']);?>
+								  </div>
+								</div>
+							<?php }}?>
 					    </div>
 					    <div class="layui-tab-item">
-					    	
+					    	<?php if(isset($data['answers']) && !empty($data['answers'])){foreach($data['answers'] as $row){?>
+						    	<div class="layui-card view-detail-layui-card">
+								  <div class="layui-card-header"><?php echo $row['title'];?></div>
+								  <div class="layui-card-body">
+								    <?php echo date('Y-m-d H:i:s',$row['start_time']);?>
+								  </div>
+								</div>
+							<?php }}?>
 					    </div>
 					    <div class="layui-tab-item">
-					    	<div class="layui-card view-detail-layui-card">
-							  <div class="layui-card-header">卡片面板</div>
-							  <div class="layui-card-body">
-							    卡片式面板面板通常用于非白色背景色的主体内<br>
-							    从而映衬出边框投影
-							  </div>
-							</div>
-							
+					    	<?php if(isset($data['yellowCard']) && !empty($data['yellowCard'])){foreach($data['yellowCard'] as $row){?>
+						    	<div class="layui-card view-detail-layui-card">
+								  <div class="layui-card-header"><?php echo $row['title'];?></div>
+								  <div class="layui-card-body">
+								    <?php echo date('Y-m-d H:i:s',$row['start_time']);?>
+								  </div>
+								</div>
+							<?php }}else{?>
+								暂时没有数据
+							<?php }?>
 					    </div>
 					  </div>
 					</div>
@@ -221,7 +222,17 @@ form.on('checkbox(founder)', function(data){
   	}else{
   		obj.status = 'cancel'
   	}
-  	console.log(obj)
+  	$.ajax({
+  		url:'/back/member/role-update',
+  		type:'post',
+  		data:obj,
+  		success:function(res){
+  			console.log(res)
+  		},
+  		error:function(){
+  			console.log('error')
+  		}
+  	})
 });
 //向服务器请求数据
 $(function(){
@@ -229,16 +240,16 @@ $(function(){
 		_csrf:_csrf,
 		user_id:user_id
 	}
-	$.ajax({
-		url:'/back/member/get-info',
-		type:'post',
-		data:data,
-		success:function(res){
-			console.log(res)
-		},
-		error:function(){
-			layui.msg('出错了')
-		}
-	})
+	// $.ajax({
+	// 	url:'/back/member/get-info',
+	// 	type:'post',
+	// 	data:data,
+	// 	success:function(res){
+	// 		console.log(res)
+	// 	},
+	// 	error:function(){
+	// 		layui.msg('出错了')
+	// 	}
+	// })
 })
 </script>

@@ -8,7 +8,7 @@ use app\models\User;
 use yii\filters\AccessControl;
 use yii\base\ActionFilter;
 
-class MemberController extends BaseController{
+class FeedbackController extends BaseController{
 	
 	public function behaviors(){
         return [

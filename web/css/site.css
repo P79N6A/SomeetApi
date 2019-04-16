@@ -33,14 +33,25 @@ h1,h2,h3{font-size: 14px;}
 .header-index[autumn]{background-color: #100903}
 .header-index[winter]{background-color: #110F25/*#06041C*/}
 
-.header-demo{height: 60px; border-bottom: none;}
+.header-demo{height: 60px; border-bottom: none;    top: 0px;}
 .header-demo .logo{left: 40px;}
 .header-demo .layui-nav{top: 0;}
 .header-demo .layui-nav .layui-nav-item{margin: 0 10px;}
 
 .header-demo .layui-nav .layui-this a{padding: 0 30px;}
 .layui-layout-admin .site-demo-body{top: 106px;}
-.site-demo-title{position: fixed; left: 200px; right: 0; top: 65px;}
+.header-demo{
+	position: fixed;
+    left: 0;
+    width: 100%;
+}
+/*.site-demo-title{position: absolute; left: 200px; right: 0; top: 65px;}*/
+.site-demo-title{
+	width: 83%;
+    position: absolute;
+    left: 200px;
+    top: 5rem;
+}
 .site-demo-code{position: absolute; left: 0; top: 0; width: 100%; height: 100%; border: none; padding: 10px; resize: none; font-size: 12px; background-color: #F7FBFF; color: #881280; font-family: Courier New;}
 
 .site-demo-overflow{overflow: hidden;}
@@ -87,7 +98,7 @@ h1,h2,h3{font-size: 14px;}
 }
 .view-detail-tag-div{
     /*background-color: #FF5722;*/
-    line-height: 3rem;
+    line-height: 2rem;
     text-align: center;
     border-radius: 7px;
 }

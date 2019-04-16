@@ -5,6 +5,7 @@ use app\component\BaseController;
 use yii\web\Response;
 use app\models\Activity;
 use app\models\User;
+use app\common\service\MemberService;
 use yii\filters\AccessControl;
 use yii\base\ActionFilter;
 
@@ -32,8 +33,9 @@ class MemberController extends BaseController{
     /**
      * 用户详情信息
      */
-    public function actionView(){
+    public function actionView($id){
         $this->layout = "view";
-        return $this->render('view');
+        $data = MemberService::getInfo($id,['profile','tags','is_admin','is_founder','yellowCard','answers','activity']);
+        return $this->render('view',['data'=>$data]);
     }
 }

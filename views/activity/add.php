@@ -1,35 +1,25 @@
 <div class="site-demo-title">
-	<form class="layui-form" action="">
+	<form class="layui-form" action="/">
 		<div>
 			<!-- dts开始 -->
 			<div class="layui-form-item">
 			    <div class="layui-inline">
 			      <label class="layui-form-label">DTS:</label>
 			      <div class="layui-input-inline">
-			        <select name="modules" lay-verify="required" lay-search="">
+			        <select name="updated_by" lay-verify="required" lay-search="">
 			          <option value="">选择DTS</option>
-			          <option value="1">layer</option>
-			          <option value="2">form</option>
-			        </select>
-			      </div>
-			    </div>
-			    <div class="layui-inline">
-			      <label class="layui-form-label">PMA:</label>
-			      <div class="layui-input-inline">
-			        <select name="modules" lay-verify="required" lay-search="">
-			          <option value="">选择PMA</option>
-			          <option value="1">layer</option>
-			          <option value="2">form</option>
+			          <?php if($data['xhb']){foreach($data['xhb'] as $row){?>
+				          <option value="<?php echo $row['id'];?>"><?php echo $row['username'];?></option>
+				      <?php }}?>
 			        </select>
 			      </div>
 			    </div>
 			    <div class="layui-inline">
 			      <label class="layui-form-label">PMA类型:</label>
 			      <div class="layui-input-inline">
-			        <select name="modules" lay-verify="required" lay-search="">
-			          <option value="">选择pma类型</option>
-			          <option value="1">layer</option>
-			          <option value="2">form</option>
+			        <select name="pma_type" lay-verify="required" lay-search="">
+			          <option value="1">线上</option>
+			          <option value="2">线下</option>
 			        </select>
 			      </div>
 			    </div>
@@ -42,12 +32,19 @@
 			    <div class="layui-inline">
 			      <label class="layui-form-label">发起人:</label>
 			      <div class="layui-input-inline">
-			        <select name="modules" lay-verify="required" lay-search="">
+			        <select name="created_by" lay-verify="required" lay-filter='founder' id="founder" lay-search="">
 			          <option value="">选择发起人</option>
-			          <option value="1">layer</option>
-			          <option value="2">form</option>
 			        </select>
 			      </div>
+			    </div>
+			    <div class="layui-inline">
+			      <label class="layui-form-label">搜索发起人:</label>
+			      <div class="layui-input-block">
+				      <input type="text" id='searchFounderInput' autocomplete="off" placeholder="昵称,ID,手机号,微信ID" class="layui-input" style='max-width: 10rem;'>
+				  </div>
+			    </div>
+			    <div class="layui-inline">
+			    	<div class="layui-btn" id='searchFounder'>搜索</div>
 			    </div>
 			</div>
 		</div>
@@ -57,13 +54,9 @@
 			<div class="layui-form-item">
 			    <div class="layui-inline">
 			      <label class="layui-form-label">联合发起人:</label>
-			      <div class="layui-input-inline">
-			        <select name="modules" lay-verify="required" lay-search="">
-			          <option value="">选择联合发起人</option>
-			          <option value="1">layer</option>
-			          <option value="2">form</option>
-			        </select>
-			      </div>
+			      <div class="layui-input-block">
+				      <input type="text"  lay-verify="title" autocomplete="off" placeholder="请输入联合发起人" class="layui-input" style='max-width: 10rem;'>
+				  </div>
 			    </div>
 			</div>
 		</div>
@@ -94,7 +87,7 @@
 	                            <input type="hidden" name="guestHead" id='guestHead' value=''>
 	                            <br>
 	                            <div class="layui-input-inline layui-btn-container">
-		                            <div class="layui-btn layui-btn-primary" id="editimg">上传头像</div >
+		                            <div class="layui-btn layui-btn-primary uploadButton" data-type='jiabin' id="editimg">上传头像</div >
 		                        </div>
 	                        </div>
 	                        <div class="layui-form-item layui-form-text">
@@ -116,20 +109,19 @@
 			    <div class="layui-inline">
 			      <label class="layui-form-label">一级分类:</label>
 			      <div class="layui-input-inline">
-			        <select name="modules" lay-verify="required" lay-search="">
+			        <select name="modules" lay-verify="required" lay-filter='parentType' lay-search="">
 			          <option value="">选择一级分类</option>
-			          <option value="1">layer</option>
-			          <option value="2">form</option>
+			          <?php if($data['typelist']){foreach($data['typelist'] as $row){?>
+				          <option value="<?php echo $row['id'];?>"><?php echo $row['name'];?></option>
+				      <?php }}?>
 			        </select>
 			      </div>
 			    </div>
 			    <div class="layui-inline">
 			      <label class="layui-form-label">二级分类:</label>
 			      <div class="layui-input-inline">
-			        <select name="modules" lay-verify="required" lay-search="">
+			        <select name="modules" lay-verify="required" id='childType' lay-filter='childType' lay-search="">
 			          <option value="">选择二级分类</option>
-			          <option value="1">layer</option>
-			          <option value="2">form</option>
 			        </select>
 			      </div>
 			    </div>
@@ -139,8 +131,10 @@
 		<!-- 开始上传活动图片 -->
 		<div>
 			<label class="layui-form-label"></label>
-			<div class="layui-btn demoMore" lay-data="{url: '/a/'}">上传活动图片</div>
-			<div class="layui-btn demoMore" lay-data="{url: '/c/', accept: 'file',size:10}">上传群二维码</div>
+			<div class="layui-btn demoMore uploadButton" data-type='poster' id='posterUpload'>上传活动图片</div>
+			<input type="hidden" name="poster" id='poster' value="">
+			<div class="layui-btn demoMore uploadButton" data-type='group_code'  id='groupCodeUpload'>上传群二维码</div>
+			<input type="hidden" name="group_code" id='group_code' value="">
 		</div>
 		<br>
 		<!-- 开始上传活动图片结束 -->
@@ -149,20 +143,15 @@
 			<div class="layui-form-item">
 				<label class="layui-form-label">活动系列:</label>
 				<div class="layui-input-block">
-					<select name="interest" lay-filter="aihao">
+					<select name="sequence_id" id='sequence' lay-filter='sequence' lay-filter="aihao">
 						<option value="">选择活动系列</option>
-						<option value="0">写作</option>
-						<option value="1">阅读</option>
-						<option value="2">游戏</option>
-						<option value="3">音乐</option>
-						<option value="4">旅行</option>
 					</select>
 				</div>
 			</div>
 		</div>
 		<!-- 选择系列结束 -->
 		<!-- 活动所属组 -->
-		<div>
+		<!-- <div>
 			<div class="layui-form-item">
 				<label class="layui-form-label">活动组:</label>
 				<div class="layui-input-block">
@@ -176,7 +165,7 @@
 					</select>
 				</div>
 			</div>
-		</div>
+		</div> -->
 		<!-- 活动所属组结束 -->
 		<!-- 活动标题开始 -->
 		<div>			  
@@ -184,13 +173,13 @@
 			    <div class="layui-inline">
 			      <label class="layui-form-label">标题:</label>
 			      <div class="layui-input-inline">
-			        <input type="tel" name="phone" required class="layui-input">
+			        <input type="text" name="title" required class="layui-input">
 			      </div>
 			    </div>
 			    <div class="layui-inline">
 			      <label class="layui-form-label">副标题:</label>
 			      <div class="layui-input-inline">
-			        <input type="text" name="email" required class="layui-input">
+			        <input type="text" name="desc" required class="layui-input">
 			      </div>
 			    </div>
 			</div>
@@ -201,7 +190,7 @@
 			<div class="layui-form-item">
 			    <label class="layui-form-label">文案:</label>
 			    <div class="layui-input-block">
-			      <input type="text" name="identity" placeholder="" autocomplete="off" class="layui-input">
+			      <input type="text" name="content" placeholder="输入活动文案" autocomplete="off" class="layui-input">
 			    </div>
 			</div>
 		</div>
@@ -212,19 +201,19 @@
 			    <div class="layui-inline">
 			      <label class="layui-form-label">报名名额:</label>
 			      <div class="layui-input-inline">
-			        <input type="tel" name="number" value="0" required class="layui-input">
+			        <input type="number" name="peoples" value="0" required class="layui-input">
 			      </div>
 			    </div>
 			    <div class="layui-inline">
 			      <label class="layui-form-label">理想人数:</label>
 			      <div class="layui-input-inline">
-			        <input type="text" name="number" value="0" required class="layui-input">
+			        <input type="number" name="ideal_number" value="0" required class="layui-input">
 			      </div>
 			    </div>
 			    <div class="layui-inline">
 			      <label class="layui-form-label">人数上限:</label>
 			      <div class="layui-input-inline">
-			        <input type="text" name="number" value="0" required class="layui-input">
+			        <input type="number" name="ideal_number_limit" value="0" required class="layui-input">
 			      </div>
 			    </div>
 			</div>
@@ -235,13 +224,13 @@
 			<div class="layui-inline">
 		      <label class="layui-form-label">开始时间</label>
 		      <div class="layui-input-inline">
-		        <input type="text" class="layui-input" id="start_time" placeholder="yyyy-MM-dd HH:mm:ss">
+		        <input type="text" class="layui-input" name='start_time' id="start_time" placeholder="yyyy-MM-dd HH:mm:ss">
 		      </div>
 		    </div>
 		    <div class="layui-inline">
 		      <label class="layui-form-label">结束时间</label>
 		      <div class="layui-input-inline">
-		        <input type="text" class="layui-input" id="end_time" placeholder="yyyy-MM-dd HH:mm:ss">
+		        <input type="text" class="layui-input" name='end_time' id="end_time" placeholder="yyyy-MM-dd HH:mm:ss">
 		      </div>
 		    </div>
 		</div>
@@ -251,8 +240,8 @@
 			<div class="layui-form-item">
 			    <label class="layui-form-label">选择场地</label>
 			    <div class="layui-input-block">
-			      <input type="radio" name="sex" lay-filter='address' checked="" value="1" title="有">
-			      <input type="radio" name="sex" lay-filter='address' value="0" title="无">
+			      <input type="radio" name="space_spot_id" lay-filter='address' checked="" value="1" title="有">
+			      <input type="radio" name="space_spot_id" lay-filter='address' value="0" title="无">
 			    </div>
 			</div>
 			<div class="haveAddress">
@@ -275,13 +264,13 @@
 			    <div class="layui-inline">
 			      <label class="layui-form-label">商圈:</label>
 			      <div class="layui-input-inline">
-			        <input type="tel" name="phone" class="layui-input">
+			        <input type="text" name="area" class="layui-input">
 			      </div>
 			    </div>
 			    <div class="layui-inline">
 			      <label class="layui-form-label">场地:</label>
 			      <div class="layui-input-inline">
-			        <input type="text" name="email" class="layui-input">
+			        <input type="text" name="address" class="layui-input">
 			      </div>
 			    </div>
 			</div>
@@ -293,7 +282,7 @@
 			<div class="layui-inline">
 		      <label class="layui-form-label">活动费用:</label>
 		      <div class="layui-input-inline">
-		        <input type="tel" name="number" value="0" required class="layui-input">
+		        <input type="number" name="cost" value="0" required class="layui-input">
 		      </div>
 		    </div>
 		</div>
@@ -303,7 +292,7 @@
 			<div class="layui-form-item">
 			    <label class="layui-form-label">收费明细:</label>
 			    <div class="layui-input-block">
-			      <input type="text" name="identity" placeholder="" autocomplete="off" class="layui-input">
+			      <input type="text" name="cost_list" placeholder="" autocomplete="off" class="layui-input">
 			    </div>
 			</div>
 		</div>
@@ -311,11 +300,11 @@
 		<!-- 活动详情开头 -->
 		<div>
 			<div class="layui-form-item">
-				<label class="layui-form-label">收费明细:</label>
+				<label class="layui-form-label">开头详情:</label>
 				<div class="layui-input-block">
 					<br>
-			    这是Someet活动发起人，发起的#       <input style="max-width: 15rem;" type="text" name="identity" placeholder="" autocomplete="off" class="layui-input">        #活动
-			    我期待遇见       <input style="max-width: 15rem;" type="text" name="identity" placeholder="" autocomplete="off" class="layui-input">        的小伙伴！
+			    这是Someet活动发起人，发起的#       <input style="max-width: 15rem;" type="text" name="header_title" placeholder="" autocomplete="off" class="layui-input">        #活动
+			    我期待遇见       <input style="max-width: 15rem;" type="text" name="header_people" placeholder="" autocomplete="off" class="layui-input">        的小伙伴！
 			    </div>
 			</div>
 		</div>
@@ -324,10 +313,20 @@
 		<div>
 			<label class="layui-form-label">活动详情:</label>
 			<div class="layui-input-block">
-				<textarea style="max-width: 20rem;" id="detail" style="display: none;"></textarea>
+				<textarea name="detail" style="max-width: 20rem;" id="detail"></textarea>
 			</div>
 		</div>
 		<!-- 活动详情 -->
+		<br>
+		<br>
+		<div>
+			<div class="layui-form-item">
+				<label class="layui-form-label"> </label>
+				<div class="layui-inline">
+					<button lay-filter='activityForm' lay-submit class="layui-btn layui-btn-lg">提交审核</button>
+				</div>
+			</div>
+		</div>
 	</form>
 </div>
 <script type="text/javascript" src='/layui/js/modules/cropper.js'></script>
@@ -347,7 +346,8 @@ dateHtml.render({
 	,type: 'datetime'
 });
 var $ = layui.$
-form.render();
+var _csrf = $('#_csrf').val();
+
 //图片上传
 layui.config({
     base: '/layui/js/' //layui自定义layui组件目录
@@ -359,19 +359,50 @@ layui.config({
 
     //创建一个头像上传组件
     croppers.render({
-        elem: '#editimg'
+         elem: '.uploadButton'
         ,saveW:150     //保存宽度
         ,saveH:150
         ,mark:1/1    //选取比例
         ,area:'900px'  //弹窗宽度
-        ,url: "/upload/upload-image"  //图片上传接口返回和（layui 的upload 模块）返回的JOSN一样
-        ,done: function(url){ //上传完毕回调
-            // $("#inputimgurl").val(url);
-            $('#guestHead').val(url);
-            $("#srcimgurl").attr('src',url);
-        }
+        ,url: "/back/upload/upload-image"  //图片上传接口返回和（layui 的upload 模块）返回的JOSN一样
+        ,done: function(url,type){ //上传完毕回调
+        	if(type=='jiabin'){
+        		$('#guestHead').val(url);
+            	$("#srcimgurl").attr('src',url);
+        	}else if(type == 'poster'){
+        		$("#poster").val(url);
+        	}else if(type == 'group_code'){
+        		$('#group_code').val(url);
+        	}
+            
+        },
+        extEle:''
     });
+    // croppers.render({
+    //     elem: '#posterUpload'
+    //     ,saveW:150     //保存宽度
+    //     ,saveH:150
+    //     ,mark:1/1    //选取比例
+    //     ,area:'900px'  //弹窗宽度
+    //     ,url: "/upload/upload-image"  //图片上传接口返回和（layui 的upload 模块）返回的JOSN一样
+    //     ,done: function(url){ //上传完毕回调
+    //         $("#poster").val(url);
+    //     }
+    // });
+    // croppers.render({
+    //     elem: '#groupCodeUpload'
+    //     ,saveW:150     //保存宽度
+    //     ,saveH:150
+    //     ,mark:1/1    //选取比例
+    //     ,area:'900px'  //弹窗宽度
+    //     ,url: "/upload/upload-image"  //图片上传接口返回和（layui 的upload 模块）返回的JOSN一样
+    //     ,done: function(url){ //上传完毕回调
+    //         // $("#inputimgurl").val(url);
+    //         $('#group_code').val(url);
+    //     }
+    // });
 });
+form.render();
 //是否有活动嘉宾
 form.on('checkbox(haveGuest)', function(data){
   if(data.elem.checked){
@@ -390,4 +421,94 @@ form.on('radio(address)', function(data){
 		$('.haveAddress').slideUp();
 	}
 }); 
+//分类选择框
+form.on('select(parentType)', function(data){
+  var pid = data.value;
+  var data ={
+  	data:{
+  		id:pid
+  	},
+  	obj:'#childType',
+  	type:'get',
+  	url:'/back/activity/get-tag',
+  	act:'typeAndTag'
+  }
+  httpRequest(data);
+});
+//监听发起人选择
+form.on('select(founder)', function(data){
+	var id = data.value;
+	console.log(id)
+	//请求该发起人的系列活动
+	var data ={
+		data:{
+			user_id:id
+	  	},
+	  	obj:'#sequence',
+	  	type:'get',
+	  	url:'/back/activity/get-sequence',
+  		act:'sequence'
+	}
+	httpRequest(data);  
+});
+//监听搜索发起人信息
+$('#searchFounder').click(function(){
+	var val = $('#searchFounderInput').val();
+	var data ={
+		  	data:{
+		  		type:'founder',
+				val:val
+		  	},
+		  	obj:'#founder',
+		  	type:'get',
+		  	url:'/back/member/get-user-search',
+		  	act:'founder'
+		  }
+	httpRequest(data);  
+})
+//监听提交
+form.on('submit(activityForm)', function(data){
+	console.log(data.field)
+	console.log(JSON.stringify(data.field))
+	return false;
+});
+function httpRequest(data){
+	$.ajax({
+		url:data.url,
+		type:data.type,
+		data:data.data,
+		success:function(res){
+			if(data.act == 'sequence'){
+				var str ='<option value="0">未找到系列</option>';
+			}else{
+				var str ='<option value="0">选择确认的选项</option>';
+			}
+			$(data.obj).html(str)
+			str = '';
+			$.each(res.data,function(index,val){
+				if(data.act == 'typeAndTag'){
+					str+='<option value="'+val.id+'">'+val.name+'</option>'
+				}else if(data.act == 'sequence'){
+					console.log(val)
+				}else if(data.act == 'founder'){
+
+					if(index == 0){
+						str+='<option value="'+val.id+'">'+val.username+'</option>'
+					}else{
+						str+='<option value="'+val.id+'">'+val.username+'</option>'
+					}
+					
+				}
+				
+			})
+			
+			$(data.obj).append(str)
+			form.render('select');
+			// form.render();
+		},
+		error:function(){
+			layer.msg('抱歉，出错了', {icon: 2}); 
+		}
+	})
+}     
 </script>

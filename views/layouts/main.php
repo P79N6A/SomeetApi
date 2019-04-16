@@ -19,7 +19,7 @@ $query = Yii::$app->request->getQueryParam('status')?Yii::$app->request->getQuer
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <title>Someet</title>
-  <link rel="stylesheet" href="/layui/css/layui.css">
+  <link rel="stylesheet" type="text/css" href="/layui/css/layui.css">
   <link rel="stylesheet" type="text/css" href="/css/site.css">
   <link rel="stylesheet" type="text/css" href="/layui/css/cropper.css">
   <script src="/layui/layui.all.js"></script>
@@ -79,16 +79,9 @@ $query = Yii::$app->request->getQueryParam('status')?Yii::$app->request->getQuer
 </div>
 </body>
 <?php $this->beginBody() ?>
-
-<div class="wrap">
-    <div class="container">
-        <?= Breadcrumbs::widget([
-            'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
-        ]) ?>
-        <?= Alert::widget() ?>
+<div class="container">
         <?= $content ?>
     </div>
-</div>
 <?php $this->endBody() ?>
 </body>
 </html>

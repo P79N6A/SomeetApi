@@ -7,8 +7,7 @@ layui.config({
 }).define(['jquery','layer','cropper'],function (exports) {
     var $ = layui.jquery
         ,layer = layui.layer;
-    var html = "<link rel=\"stylesheet\" href=\"/layui/css/cropper.css\">\n" +
-        "<div class=\"layui-fluid showImgEdit\" style=\"display: none\">\n" +
+    var html = "<div class=\"layui-fluid showImgEdit\" style=\"display: none\">\n" +
         "    <div class=\"layui-form-item\">\n" +
         "        <div class=\"layui-input-inline layui-btn-container\" style=\"width: auto;\">\n" +
         "            <label for=\"cropper_avatarImgUpload\" class=\"layui-btn layui-btn-primary\">\n" +
@@ -29,7 +28,7 @@ layui.config({
         "            </div>\n" +
         "        </div>\n" +
         "    </div>\n" +
-        "    <div class=\"layui-row layui-col-space15\">\n" +
+        "    <div class=\"layui-row layui-col-space15\" style=\"margin:0px;\">\n" +
         "        <div class=\"layui-col-xs9\">\n" +
         "            <div class=\"layui-row\">\n" +
         "                <div class=\"layui-col-xs6\">\n" +
@@ -65,7 +64,9 @@ layui.config({
                 ,file = $(".showImgEdit input[name='file']")
                 , options = {aspectRatio: mark,preview: preview,viewMode:1};
             var index = 0;
+            var type='';
             $(elem).on('click',function () {
+                type = $(this).data('type');
                 image.cropper('destroy')
                 index = layer.open({
                     type: 1
@@ -93,10 +94,12 @@ layui.config({
                     var extData ={};
                     extData.imgData = imageSource
                     extData._csrf = _csrf
-                    extData.id = $(extEle).val();
-                    if(!extData.id){
-                        layer.msg('获取编辑数据失败', {icon: 6}); 
-                        return false;
+                    if(extEle != ''){
+                        extData.id = $(extEle).val();
+                        if(!extData.id){
+                            layer.msg('获取编辑数据失败', {icon: 6}); 
+                            return false;
+                        }
                     }
                     $.ajax({
                         method:"post",
@@ -107,7 +110,8 @@ layui.config({
                             if(result.status == 200){
                                 layer.msg('上传成功',{icon: 1});
                                 layer.close(index);
-                                return done(result.url);
+                                image.cropper('destroy')
+                                return done(result.url,type);
                             }else if(result.status == 0){
                                 layer.alert('上传失败',{icon: 2});
                             }

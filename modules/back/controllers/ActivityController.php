@@ -16,6 +16,7 @@ use app\models\ActivityBlack;
 use app\models\CollectAct;
 use app\models\ActivityType;
 use app\common\service\ActivityService;
+use app\common\service\ActivityTagService;
 use app\models\UserSelectTags;
 use Yii;
 use yii\filters\VerbFilter;
@@ -38,13 +39,17 @@ class ActivityController extends BaseController
 			'optional' => [
 				'index',
 				'view',
+				'get-tag',
+				'get-sequence'
 			]
 		];
 		$behaviors['access'] = [
                 'class' => 'app\component\AccessControl',
                 'allowActions' => [
                     'index',
-					'view'
+					'view',
+					'get-tag',
+					'get-sequence'
                 ],
             ];
 		return $behaviors;
@@ -96,5 +101,19 @@ class ActivityController extends BaseController
 		$model['answers'] = $answers;
 		return $model;
 	}
+
+	/**
+     * 获取二级标签
+     */
+    public function actionGetTag($id){
+        $tag = ActivityTagService::getTags($id);
+        return $tag;
+    }
+    /**
+     * 获取该发起人的系列活动
+     */
+    public function actionGetSequence($user_id){
+    	return ActivityService::getSequence($user_id);
+    }
 
 }

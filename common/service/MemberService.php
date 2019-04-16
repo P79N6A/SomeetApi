@@ -5,6 +5,7 @@ use app\models\Activity;
 use app\models\User;
 use app\models\Answer;
 use app\models\profile;
+use app\models\UserIdcardCheck;
 use app\models\UserSelectTags;
 use app\models\YellowCard;
 use app\models\AuthAssignment;
@@ -126,15 +127,13 @@ class MemberService extends BaseService{
 		$user['tags'] =[];
 		$user['yellowCard']=[];
 		$user['profile']=[];
-		$user['is_admin'] = 0;
-		$user['is_founder'] = 0;
 		$user = User::find()->select(['id','username','wechat_id','mobile','created_at','last_login_at','founder_desc'])->where(['id'=>$id])->asArray()->one();
 		if(in_array('profile', $fields)){
 			$profile = Profile::find()->select(['headimgurl','sex','birth_year','birth_month','birth_day'])->where(['user_id'=>$id])->asArray()->one();
 			$user['profile'] = $profile;
 		}
 		if(in_array('tags', $fields)){
-			$tags = UserSelectTags::find()->select(['id','tag_title'])->where(['user_id'=>$id])->asArray()->all();
+			$tags = self::getTags($id);
 			$user['tags'] = $tags;
 		}
 		if(in_array('is_admin', $fields) || in_array('is_founder', $fields)){
@@ -142,10 +141,10 @@ class MemberService extends BaseService{
 			if($role){
 				foreach($role as $row){
 					if($row['item_name'] == 'admin'){
-						$user['is_admin']=1;
+						$user['is_admin'] = 1;
 					}
 					if($row['item_name'] == 'founder'){
-						$user['is_founder']=1;
+						$user['is_founder'] = 1;
 					}
 				}
 			}
@@ -157,11 +156,11 @@ class MemberService extends BaseService{
 				array_push($aid,$row['activity_id']);
 			}
 			if(!empty($aid)){
-				$user['answes'] = Activity::find()->select(['title','start_time'])->where(['in','id',$aid])->asArray()->all();
+				$user['answers'] = Activity::find()->select(['title','start_time'])->where(['in','id',$aid])->asArray()->orderBy("id desc")->limit(5)->all();
 			}
 		}
 		if(in_array('activity', $fields)){
-			$user['activity'] = Activity::find()->select(['title','start_time'])->where(['created_by'=>$id])->asArray()->all();
+			$user['activity'] = Activity::find()->select(['title','start_time'])->where(['created_by'=>$id])->asArray()->orderBy("id desc")->limit(5)->all();
 		}
 		if(in_array('yellowCard', $fields)){
 			$yid=[];
@@ -173,6 +172,160 @@ class MemberService extends BaseService{
 				$user['yellowCard'] = Activity::find()->select(['title','start_time'])->where(['in','id',$yid])->asArray()->all();
 			}
 		}
+		$user['realname'] ='未设置';
+		if(in_array('realname', $fields)){
+			$idcard = UserIdcardCheck::find()->select(['realname'])->where(['user_id'=>$id])->asArray()->one();
+			if($idcard && isset($user['realname'])){
+				$user['realname'] = $idcard['realname'];
+			}
+		}
+		$user['is_admin'] = !isset($user['is_admin'])?0:$user['is_admin'];
+		$user['is_founder'] = !isset($user['is_founder'])?0:$user['is_founder'];
 		return $user;
 	}
+	 /**
+     * 获取用户标签
+     *
+     * @param string $unionid UNIONID
+     * @return array
+     */
+    public static function getTags($user_id)
+    {
+        $tags = UserSelectTags::find()
+                    ->select(['tag_title','type_pid'])
+                    ->where(['user_id' => $user_id])
+                    ->orderBy("id desc")
+                    ->asArray()
+                    ->all();
+        if(!empty($tags)){
+            $userTagsData = [
+            	'zy'=>[],
+            	'tsjn'=>[],
+            	'tsjl'=>[],
+            	'grsx'=>[],
+            	'rstd'=>[],
+            	'ph'=>[],
+            ];
+            $tsjn = $grsx = $tsjl = $rstd = 0;
+            foreach ($tags as $row) {
+            	switch ($row['type_pid']) {
+            		case 1:
+            			array_push($userTagsData['zy'],$row);
+            			break;
+            		case 2:
+            			array_push($userTagsData['tsjn'],$row);
+            			break;
+            		case 3:
+            			array_push($userTagsData['grsx'],$row);
+            			break;
+            		case 4:
+            			array_push($userTagsData['tsjl'],$row);
+            			break;
+            		case 5:
+            			array_push($userTagsData['rstd'],$row);
+            			break;
+            		case 6:
+            			array_push($userTagsData['ph'],$row);
+            			break;
+            	}
+            }
+            $tags = $userTagsData;
+        }
+        return $tags;
+    }
+    /**
+     * 根据unionid获取用户编号和access token
+     *
+     * @param string $unionid UNIONID
+     * @return array
+     */
+    public static function getUserinfoByUnionId($unionid)
+    {
+        $user = User::find()
+            ->where(['unionid' => $unionid])
+            ->one();
+        if (!$user) {
+            $this->setError('用户不存在');
+            return false;
+        }
+
+        if ($user->access_token) {
+            return $user;
+        }
+
+        //生成access_token
+        $time = time();
+        $access_token = md5($user->id . md5($time . 'Someet'));
+
+        $user->access_token = $access_token;
+        if (!$user->save()) {
+            $this->setError('更新用户Token失败');
+            return false;
+        }
+
+        return $user;
+    }
+
+    public static function checkRegist($mobile){
+        $user = User::find()
+                    ->select(['unionid','username','id','mobile','access_token'])
+                    ->where(['mobile'=>$mobile])
+                    ->one();
+        return $user;
+    }
+
+    /**
+     * 获取所有小海豹的信息
+     */
+    public static function getServiceMan(){
+    	$user_id = [2961,45388,50575,71887,71904];
+    	$list = User::find()->select(['username','id'])->where(['in','id',$user_id])->asArray()->all();
+    	return $list;
+    }
+
+    /**
+     * 获取所有发起人的信息
+     */
+    public function getFounders($id){
+    	$redis = Yii::$app->redis;
+    	$data = $redis->get('founder-'.$id);
+    	if(!$data){
+    		$user = User::find()->select(['wechat_id','mobile','id','founder_desc','username'])->where(['id'=>$id])->asArray()->one();
+    		$profile = Profile::find()->select(['headimgurl','sex','birth_year','birth_month','birth_day','bio','occupation'])->where(['user_id'=>$id])->asArray()->one();
+    		$user['profile'] = $user;
+    		$redis->set('founder-'.$id,serialize($user));
+    		$data = $redis->get('founder-'.$id);
+    	}
+    	return unserialize($data);
+    }
+    /**
+     * 搜索指定用户
+     */
+    public function getUserBySearch($data){
+    	$type = $data['type'];
+    	$val = $data['val'];
+    	$user = User::find()->select(['username','id']);
+    	if(is_numeric($val)){
+    		$user->where(['id'=>$val])->orWhere(['mobile'=>$val])->orWhere(['wechat_id'=>$val]);
+    	}else{
+    		$user->where([
+    			'like','username',$val
+    		]);
+    	}
+    	return $user->asArray()->all();
+    	
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

@@ -55,7 +55,9 @@ return [
 			'back/activity'
 		],
 		'extraPatterns' => [
-			'GET index' => 'index'
+			'GET index' => 'index',
+			'GET get-tag'=>'get-tag',
+			'GET get-sequence'=>'get-sequence'
 		]
 	],
 	[
@@ -66,7 +68,19 @@ return [
 		'extraPatterns' => [
 			'GET get-list' => 'get-list',
 			'POST update-status' => 'update-status',
-			'POST get-info' => 'get-info'
+			'POST get-info' => 'get-info',
+			'POST role-update'=>'role-update',
+			'GET get-user-search'=>'get-user-search',
+			
+		]
+	],
+	[
+		'class' => 'yii\rest\UrlRule',
+		'controller' => [
+			'back/upload'
+		],
+		'extraPatterns' => [
+			'POST upload-image' => 'upload-image',
 		]
 	],
 ];

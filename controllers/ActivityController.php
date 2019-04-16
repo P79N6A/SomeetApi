@@ -5,7 +5,10 @@ use app\component\BaseController;
 use yii\web\Response;
 use app\models\Activity;
 use app\common\service\ActivityService;
+use app\common\service\ActivityTagService;
 use app\models\User;
+use app\common\service\MemberService;
+use app\common\service\ActivityTypeService;
 use yii\filters\AccessControl;
 use yii\base\ActionFilter;
 
@@ -19,7 +22,8 @@ class ActivityController extends BaseController{
                     'index',
                     'add',
                     'msg',
-                    'check'
+                    'check',
+                    'get-tag'
                 ],
             ],
         ];
@@ -57,8 +61,18 @@ class ActivityController extends BaseController{
      * 添加活动页面
      */
     public function actionAdd(){
-        return $this->render('add');
+        //获取所有小海豹的信息 2961,45388,50575,71887,71904
+        $data['xhb'] = MemberService::getServiceMan();
+        //获取所有发起人的信息
+        $data['founder'] = MemberService::getFounders(71904);
+        //获取所有可用的活动类型
+        $data['typelist'] = ActivityTypeService::GetList();
+        // echo '<pre>';
+        // var_dump($data['tags']);
+        // die;
+        return $this->render('add',['data'=>$data]);
     }
+
 	public function actionSignUp(){
 		$prefix = '/' . Yii::$app->id . '/';
         $admin = User::findOne(1);

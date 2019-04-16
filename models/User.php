@@ -13,6 +13,7 @@ class User extends BaseUser
     public $answers;
     public $activity;
     public $yellowCard;
+    public $realname;
     /** * 用户状态是删除 */
     const STATUS_DELETED = 0;
     /** * 用户状态是正常 */

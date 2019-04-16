@@ -37,4 +37,39 @@ class ActivityService extends BaseService{
 		$list['count'] = $count;
 		return $list;
 	}
+
+	/**
+	 * 获取活动系列
+	 */
+	public static function getSequence($user_id){
+		$activity = Activity::find()
+                    ->where(
+                        ['and',
+                            ['created_by' => $user_id],
+                            ['>', 'sequence_id', 0],
+                        ]
+                    )
+                    ->groupBy('sequence_id')
+                    ->asArray()
+                    ->all();
+        $activity2 = Activity::find()
+                    ->where(
+                        ['and',
+                            ['created_by' => $user_id],
+                            ['=', 'sequence_id', 0],
+                        ]
+                    )
+                    ->asArray()
+                    ->all();
+        $activities = array_merge($activity, $activity2);
+
+        for ($i = 0; $i < count($activities); ++$i) {
+            $sequence_title = $activities[$i]['sequence_id'] > 0 ? '（系列'.$activities[$i]['sequence_id'].')' : '';
+            $activities[$i]['title'] = $activities[$i]['title'].$sequence_title;
+            $activities[$i]['start_time'] = date('Y-m-d H:i', $activities[$i]['start_time']);
+            $activities[$i]['end_time'] = date('Y-m-d H:i', $activities[$i]['end_time']);
+        }
+
+        return $activities;
+	}
 }
