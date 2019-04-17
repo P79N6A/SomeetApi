@@ -43,6 +43,7 @@ class ActivityService extends BaseService{
 	 */
 	public static function getSequence($user_id){
 		$activity = Activity::find()
+					->select(['title','sequence_id','start_time','id','end_time','created_by'])
                     ->where(
                         ['and',
                             ['created_by' => $user_id],
@@ -53,6 +54,7 @@ class ActivityService extends BaseService{
                     ->asArray()
                     ->all();
         $activity2 = Activity::find()
+        			->select(['title','sequence_id','start_time','id','end_time','created_by'])
                     ->where(
                         ['and',
                             ['created_by' => $user_id],

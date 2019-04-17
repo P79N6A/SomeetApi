@@ -22,7 +22,14 @@ class UploadController extends BaseController{
 
     }
 
-
+    /**
+     * {@inheritdoc}
+     */
+    public function beforeAction($action)
+    {
+        Yii::$app->controller->enableCsrfValidation = false;
+        return parent::beforeAction($action);
+    }
     /**
      * 上传图片
      */

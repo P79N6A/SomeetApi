@@ -45,6 +45,10 @@ h1,h2,h3{font-size: 14px;}
     left: 0;
     width: 100%;
 }
+.grid-demo{padding: 10px; line-height: 50px; text-align: center; background-color: #79C48C; color: #fff;}
+.grid-demo-bg1{background-color: #63BA79;}
+.grid-demo-bg2{background-color: #49A761;}
+.grid-demo-bg3{background-color: #38814A;}
 /*.site-demo-title{position: absolute; left: 200px; right: 0; top: 65px;}*/
 .site-demo-title{
 	width: 83%;
@@ -64,7 +68,15 @@ h1,h2,h3{font-size: 14px;}
 .layui-layedit{
     max-width: 70%
 }
-
+.actImgBoxDiv{
+	margin-left: 7rem;
+}
+.actImgBox{
+	height: 6rem;
+	width: 6rem;
+	float: left;
+	margin:1px;
+}
 /*自定义页面css样式*/
 .activity-index-button-active{
 	border-bottom:4px solid red;

@@ -131,10 +131,10 @@
 		<!-- 开始上传活动图片 -->
 		<div>
 			<label class="layui-form-label"></label>
-			<div class="layui-btn demoMore uploadButton" data-type='poster' id='posterUpload'>上传活动图片</div>
+			<div class="layui-btn demoMore uploadButton" data-type='poster' id='posterUpload'>上传活动海报</div>
 			<input type="hidden" name="poster" id='poster' value="">
-			<div class="layui-btn demoMore uploadButton" data-type='group_code'  id='groupCodeUpload'>上传群二维码</div>
-			<input type="hidden" name="group_code" id='group_code' value="">
+			<!-- <div class="layui-btn demoMore uploadButton" data-type='group_code'  id='groupCodeUpload'>上传群二维码</div>
+			<input type="hidden" name="group_code" id='group_code' value=""> -->
 		</div>
 		<br>
 		<!-- 开始上传活动图片结束 -->
@@ -248,7 +248,7 @@
 				<div class="layui-form-item">
 				<label class="layui-form-label">选择场地</label>
 				<div class="layui-input-block">
-					<select name="interest" lay-filter="aihao">
+					<select name="address" lay-filter="address">
 						<option value="">选择活动场地</option>
 						<option value="0">写作</option>
 						<option value="1">阅读</option>
@@ -313,10 +313,89 @@
 		<div>
 			<label class="layui-form-label">活动详情:</label>
 			<div class="layui-input-block">
-				<textarea name="detail" style="max-width: 20rem;" id="detail"></textarea>
+				<textarea placeholder="请输入内容" class="layui-textarea" name="detail"></textarea>
+			</div>
+			<div>
+				<label class="layui-form-label">1234</label>
+				<div class="layui-row actImgBoxDiv">
+				    <div class="actImgBox grid-demo-bg1">
+				    	<img src="" width="100%">
+				    </div>
+				    <div class="actImgBox grid-demo-bg1">
+				    	<img src="" width="100%">
+				    </div>
+				    <div class="actImgBox grid-demo-bg1">
+				    	<img src="" width="100%">
+				    </div>
+				    <div class="actImgBox grid-demo-bg1">
+				    	<img src="" width="100%">
+				    </div>
+				    <div class="actImgBox grid-demo-bg1">
+				    	<img src="" width="100%">
+				    </div>
+				    <div class="actImgBox grid-demo-bg1">
+				    	<img src="" width="100%">
+				    </div>
+				    <div class="actImgBox grid-demo-bg1">
+				    	<img src="" width="100%">
+				    </div>
+				    <div class="actImgBox grid-demo-bg1">
+				    	<img src="" width="100%">
+				    </div>
+				    <div class="actImgBox grid-demo-bg1">
+				    	<img src="" width="100%">
+				    </div>
+				</div>
+			</div>
+			<br>
+			<div>
+				<label class="layui-form-label"></label>
+				<div type="button" class="layui-btn" id="actImg">
+				  <i class="layui-icon">&#xe67c;</i>上传活动图片
+				</div>
+				<input type="hidden" name="poster" id='poster' value="">
 			</div>
 		</div>
 		<!-- 活动详情 -->
+		<!-- 活动流程 -->
+		<div class="layui-form-item">
+		    <label class="layui-form-label">活动流程</label>
+		    <div class="layui-input-block" id='review'>
+		      <input type="text" name="review[]" autocomplete="off" placeholder="请输入活动流程" class="layui-input">
+		    </div>
+		    <br>
+		    <div class="layui-inline">
+		    	<label class="layui-form-label"> </label>
+		    	<div lay-filter='activityForm' data-ele='review'  class="layui-btn addInput">增加活动流程</div>
+		    </div>
+		</div>
+		<!-- 活动流程 -->
+		<!-- 注意事项 -->
+		<div class="layui-form-item">
+		    <label class="layui-form-label">注意事项</label>
+		    <div class="layui-input-block" id='filed6'>
+		      <input type="text" name="filed6[]" autocomplete="off" placeholder="请输入注意事项" class="layui-input">
+		    </div>
+		    <br>
+		    <div class="layui-inline">
+		    	<label class="layui-form-label"> </label>
+		    	<div lay-filter='activityForm' data-ele='filed6' class="layui-btn addInput">增加注意事项</div>
+		    </div>
+		</div>
+		<!-- 注意事项 -->
+		<!-- Tips -->
+		<div class="layui-form-item">
+		    <label class="layui-form-label">Tips</label>
+		    <div class="layui-input-block" id='filed2'>
+		      <input type="text" name="filed2[]" autocomplete="off" placeholder="请输入活动提示" class="layui-input">
+		    </div>
+		    <br>
+		    <div class="layui-inline">
+		    	<label class="layui-form-label"> </label>
+		    	<div lay-filter='activityForm' data-ele='filed2' class="layui-btn addInput">增加活动Tips</div>
+		    </div>
+		</div>
+		<!-- tips -->
 		<br>
 		<br>
 		<div>
@@ -331,9 +410,6 @@
 </div>
 <script type="text/javascript" src='/layui/js/modules/cropper.js'></script>
 <script type="text/javascript">
-//建立编辑器
-var layedit = layui.layedit;
-layedit.build('detail'); 
 var form = layui.form; 
 var dateHtml=layui.laydate;
 //日期时间选择器
@@ -347,7 +423,48 @@ dateHtml.render({
 });
 var $ = layui.$
 var _csrf = $('#_csrf').val();
+//上传活动图片
+var upload = layui.upload;
+//执行实例
+var imgIndex = 0;
+var uploadInst = upload.render({
+	elem: '#actImg' //绑定元素
+	,multiple: true
+	,url: '/back/upload/upload-image' //上传接口
+	,choose: function(obj){
+		//将每次选择的文件追加到文件队列
+		var files = obj.pushFile();
+		//预读本地文件，如果是多文件，则会遍历。(不支持ie8/9)
+		obj.preview(function(index, file, result){
+			if(file.size > 500*1000){
+				layer.msg('文件大小不得超过500kb', {icon: 2}); 
+				delete files[index];
+			}else{
+				$('.actImgBox img')[imgIndex].src=result
+				imgIndex++;
+			}
+			
+			// console.log(index); //得到文件索引
+			// console.log(file); //得到文件对象
+			// console.log(result); //得到文件base64编码，比如图片
+			//这里还可以做一些 append 文件列表 DOM 的操作
 
+			//obj.upload(index, file); //对上传失败的单个文件重新上传，一般在某个事件中使用
+			//delete files[index]; //删除列表中对应的文件，一般在某个事件中使用
+		});
+		console.log(files)
+	}
+	,before: function(obj){ //obj参数包含的信息，跟 choose回调完全一致，可参见上文。
+	    // console.log(obj)
+	}
+	,done: function(res){
+		//上传完毕回调
+		console.log(res)
+	}
+	,error: function(){
+		//请求异常回调
+	}
+});
 //图片上传
 layui.config({
     base: '/layui/js/' //layui自定义layui组件目录
@@ -378,29 +495,6 @@ layui.config({
         },
         extEle:''
     });
-    // croppers.render({
-    //     elem: '#posterUpload'
-    //     ,saveW:150     //保存宽度
-    //     ,saveH:150
-    //     ,mark:1/1    //选取比例
-    //     ,area:'900px'  //弹窗宽度
-    //     ,url: "/upload/upload-image"  //图片上传接口返回和（layui 的upload 模块）返回的JOSN一样
-    //     ,done: function(url){ //上传完毕回调
-    //         $("#poster").val(url);
-    //     }
-    // });
-    // croppers.render({
-    //     elem: '#groupCodeUpload'
-    //     ,saveW:150     //保存宽度
-    //     ,saveH:150
-    //     ,mark:1/1    //选取比例
-    //     ,area:'900px'  //弹窗宽度
-    //     ,url: "/upload/upload-image"  //图片上传接口返回和（layui 的upload 模块）返回的JOSN一样
-    //     ,done: function(url){ //上传完毕回调
-    //         // $("#inputimgurl").val(url);
-    //         $('#group_code').val(url);
-    //     }
-    // });
 });
 form.render();
 //是否有活动嘉宾
@@ -470,30 +564,48 @@ $('#searchFounder').click(function(){
 form.on('submit(activityForm)', function(data){
 	console.log(data.field)
 	console.log(JSON.stringify(data.field))
+	data.field.detail = layedit.getContent(detailIndex);
 	return false;
 });
+//监听增加注意事项的事件
+$('.addInput').click(function(){
+	var ele = $(this).data('ele');
+	var str = '<input type="text" name="'+ele+'[]" autocomplete="off" class="layui-input" placeholder="请输入文本内容">';
+	$('#'+ele).append(str)
+})
 function httpRequest(data){
 	$.ajax({
 		url:data.url,
 		type:data.type,
 		data:data.data,
 		success:function(res){
-			if(data.act == 'sequence'){
-				var str ='<option value="0">未找到系列</option>';
-			}else{
-				var str ='<option value="0">选择确认的选项</option>';
-			}
+			// if(data.act == 'sequence'){
+			// 	var str ='<option value="0">未找到系列</option>';
+			// }else{
+			// 	var str ='<option value="0">选择确认的选项</option>';
+			// }
+			var str = '';
 			$(data.obj).html(str)
 			str = '';
 			$.each(res.data,function(index,val){
 				if(data.act == 'typeAndTag'){
 					str+='<option value="'+val.id+'">'+val.name+'</option>'
 				}else if(data.act == 'sequence'){
-					console.log(val)
+					str+='<option value="'+val.sequence_id+'">'+val.title+'</option>'
 				}else if(data.act == 'founder'){
 
 					if(index == 0){
-						str+='<option value="'+val.id+'">'+val.username+'</option>'
+						str+='<option selected="selected" value="'+val.id+'">'+val.username+'</option>'
+						var dataForXl ={
+								data:{
+									user_id:297962
+							  	},
+							  	obj:'#sequence',
+							  	type:'get',
+							  	url:'/back/activity/get-sequence',
+								act:'sequence'
+							}
+						httpRequest(dataForXl);
 					}else{
 						str+='<option value="'+val.id+'">'+val.username+'</option>'
 					}
