@@ -2,6 +2,7 @@
 namespace app\common\service;
 use app\common\service\BaseService;
 use app\models\Activity;
+use app\models\ActivityAlbum;
 use yii\web\Response;
 use Yii;
 use yii\db\ActiveQuery;
@@ -32,7 +33,7 @@ class ActivityService extends BaseService{
 				break;
 		}
 		$count = $query->count();
-		$page = new Pagination(['totalCount' => $count,'pageSize'=>'30']);
+		$page = new Pagination(['totalCount' => $count,'pageSize'=>$data['limit']]);
 		$list['data'] = $query->asArray()->offset($page->offset)->limit($page->limit)->all();
 		$list['count'] = $count;
 		return $list;
@@ -74,4 +75,96 @@ class ActivityService extends BaseService{
 
         return $activities;
 	}
+	/**
+	 * 创建一个新活动
+	 */
+	public static function createAct($data){
+		$data['start_time'] = strtotime($data['start_time']);
+		$data['end_time'] = strtotime($data['end_time']);
+		$data['group_code'] = 'http://img.someet.cc/FpyzpZ09e26yoFnwIy3LlYqwmVCk';
+		if(isset($data['review']) && $data['review'])  $data['review'] = serialize($data['review']);
+		if(isset($data['field6']) && $data['field6'])  $data['field6'] = serialize($data['field6']);
+		if(isset($data['field2']) && $data['field2'])  $data['field2'] = serialize($data['field2']);
+		if(isset($data['field7']) && $data['field7'])  $data['field7'] = serialize($data['field7']);
+		if(isset($data['co_founder1']) && $data['co_founder1']) $data['is_rfounder'] = 1;
+		unset($data['file']);
+		unset($data['_csrf']);
+
+		if($data['haveGuest']) $data['is_rfounder'] = 1;
+		unset($data['haveGuest']);
+
+		$data['detail_header'] = json_encode([$data['header_title'],$data['header_people']]);
+
+		unset($data['header_title']);
+		unset($data['header_people']);
+		//活动图片
+		$actImg = $data['actImg'];
+		unset($data['actImg']);
+		
+		$data['details'] = $data['detail'];
+		unset($data['detail']);
+		//获取场地
+		if($data['space_spot_id']){
+			$space = SpaceService::getSpace($data['space_spot_id']);
+			if($space){
+				$data['address'] = $space['address']?$space['address']:'未设置';
+				$data['area'] = $space['area']?$space['area']:'未设置';
+				$data['longitude'] = $space['longitude']?$space['longitude']:0;
+				$data['latitude'] = $space['latitude']?$space['latitude']:0;
+			}
+		}
+		//设置问题
+		$question = $data['question'];
+		unset($data['question']);
+
+		$model = new Activity();
+		foreach ($data as $key=>$row) {
+			$model->$key = $row;
+		}
+		$model->display_order = 99;
+		$model->is_new = 1;
+		if($model->save()){
+			//保存图片
+			if(!empty($actImg)){
+				foreach ($actImg as $row) {
+					$actImg = new ActivityAlbum();
+					$actImg->activity_id = $model->id;
+					$actImg->img = $row;
+					$actImg->save();
+				}
+			}
+			return ['status'=>1,'msg'=>'ok'];
+		}
+		return ['status'=>0,'msg'=>$model->getErrors()];
+	}
+	/**
+	 * 获取活动详情
+	 */
+	public static function getView($id){
+		$model = Activity::find()->where(['id'=>$id])->asArray()->one();
+		//获取该活动的类型详情
+		$type = ActivityType::find()->select(['id','icon_img','name'])->where(['id'=>$model['type_id']])->asArray()->one();
+		$model['type'] = $type;
+		//判断是否被收藏
+		$is_collect  = CollectAct::find()->where(['user_id'=>$user_id,'activity_id'=>$id])->exists();
+		$model['is_collect'] = $is_collect?1:0;
+		//判断是否拉黑此活动
+		$is_black = ActivityBlack::find()->where(['sequence_id'=>$model['sequence_id']])->orWhere(['id'=>$id])->exists();
+		$model['is_black'] = $is_balck;
+		//获取该活动发起人的详细信息,标签,头像,昵称,简介
+		$profile = Profile::find()->select(['headimgurl'])->where(['user_id'=>$model['created_by']])->asArray()->one();
+		$user = User::find()->select(['username','founder_desc'])->where(['id'=>$model['created_by']])->asArray()->one();
+		$tags = CommonFunction::getUserTags(['user_id'=>$model['created_by']],[],10);
+		$model['profile'] = $profile;
+		$model['user'] = $user;
+		$model['tags'] = $tags;
+		//获取哪些用户也参加了这场活动
+		$answers = Answer::find()->select(['answer.id','answer.activity_id','answer.user_id'])->joinWith(['profile','user'])->where(['activity_id'=>$model['id']])->asArray()->all();
+		$model['answers'] = $answers;
+		return $model;
+	}
+
+
+
+
 }

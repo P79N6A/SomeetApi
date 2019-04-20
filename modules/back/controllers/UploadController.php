@@ -15,7 +15,8 @@ class UploadController extends BaseController{
             'access' => [
                 'class' => 'app\component\AccessControl',
                 'allowActions' => [
-                    'upload-image'
+                    'upload-image',
+                    'upload-file'
                 ],
             ],
         ];
@@ -30,6 +31,25 @@ class UploadController extends BaseController{
         Yii::$app->controller->enableCsrfValidation = false;
         return parent::beforeAction($action);
     }
+    public function actionUploadFile(){
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $file = $_FILES["file"];
+        $qiniu = Yii::$app->qiniu;
+        // $res = $qiniu->uploadFile($file['tmp_name']);
+        // return $res;
+        if(isset($res['hash'])){
+            return [
+                'url'=>'http://img.someet.cc/FpyzpZ09e26yoFnwIy3LlYqwmVCk',
+                'status'=>200,
+                'data'=>$res['hash']
+            ];
+        }
+        return [
+            'url'=>'http://img.someet.cc/FpyzpZ09e26yoFnwIy3LlYqwmVCk',
+            'status'=>200,
+            'data'=>'1234'
+        ];
+    }
     /**
      * 上传图片
      */
@@ -37,7 +57,7 @@ class UploadController extends BaseController{
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         return [
             'url'=>'http://img.someet.cc/FpyzpZ09e26yoFnwIy3LlYqwmVCk',
-            'status'=>200
+            'status'=>200,
         ];
         $request = Yii::$app->request;
         //获取七牛上传token

@@ -57,7 +57,8 @@ return [
 		'extraPatterns' => [
 			'GET index' => 'index',
 			'GET get-tag'=>'get-tag',
-			'GET get-sequence'=>'get-sequence'
+			'GET get-sequence'=>'get-sequence',
+			'POST create-act'=>'create-act'
 		]
 	],
 	[
@@ -81,6 +82,16 @@ return [
 		],
 		'extraPatterns' => [
 			'POST upload-image' => 'upload-image',
+			'POST upload-file' => 'upload-file'
+		]
+	],
+	[
+		'class' => 'yii\rest\UrlRule',
+		'controller' => [
+			'back/space'
+		],
+		'extraPatterns' => [
+			'GET get-space' => 'get-space',
 		]
 	],
 ];

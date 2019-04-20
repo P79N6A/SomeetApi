@@ -79,7 +79,7 @@ var options = {
 	  ,{field:'desc', title:'描述', width:180,edit: 'text'}
 	  ,{fixed: 'right', title:'操作', toolbar: '#barDemo',width:400}
 	]]
-	,page: true,
+	,page: {'limit':20},
 	done:function(res, curr, count){
 		layer.close(index);
 	}

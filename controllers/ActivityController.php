@@ -5,6 +5,7 @@ use app\component\BaseController;
 use yii\web\Response;
 use app\models\Activity;
 use app\common\service\ActivityService;
+use app\common\service\SpaceService;
 use app\common\service\ActivityTagService;
 use app\models\User;
 use app\common\service\MemberService;
@@ -23,7 +24,8 @@ class ActivityController extends BaseController{
                     'add',
                     'msg',
                     'check',
-                    'get-tag'
+                    'get-tag',
+                    'create-act'
                 ],
             ],
         ];
@@ -67,11 +69,14 @@ class ActivityController extends BaseController{
         $data['founder'] = MemberService::getFounders(71904);
         //获取所有可用的活动类型
         $data['typelist'] = ActivityTypeService::GetList();
+        //获取场地信息
+        $data['space'] = SpaceService::getList(297962,'someet');
         // echo '<pre>';
-        // var_dump($data['tags']);
+        // var_dump($data['space']);
         // die;
         return $this->render('add',['data'=>$data]);
     }
+
 
 	public function actionSignUp(){
 		$prefix = '/' . Yii::$app->id . '/';

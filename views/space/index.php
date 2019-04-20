@@ -1,27 +1,9 @@
 <div class="layui-tab layui-tab-brief" lay-filter="demoTitle">
     <div class="site-demo-title">
-    	<div class="layui-container" style="width:100%;">  
-		<div class="layui-row">
-		<div class="layui-col-md10">
-			<button class="layui-btn" id="addNew">新建活动</button>
-			<button class="layui-btn layui-btn-normal">本周活动</button>
-			<button class="layui-btn layui-btn-normal">历史活动</button>
-			<button class="layui-btn layui-btn-normal">预发布活动</button>
-			<button class="layui-btn layui-btn-danger">一键预发布活动</button>
-		</div>
-    </div>
     <hr>
     <table class="layui-hide" id="test" lay-filter="test"></table>
 	<script type="text/html" id="barDemo">
 		<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-		<a class="layui-btn layui-btn-xs" lay-event="edit">报名管理</a>
-		<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
-		<a class="layui-btn layui-btn-danger layui-btn-xs">
-			发布
-		</a>
-		<a class="layui-btn layui-btn-danger layui-btn-xs">
-			群二维码
-		</a>
 	</script>
 	
 </div>
@@ -37,16 +19,28 @@ console.log(data);
 var table = layui.table;  
 table.render({
 elem: '#test'
-,url:'/demo.json'
-,title: '用户数据表'
+,url:'/back/space/get-list'
+,title: '发起人场地数据表'
+,where:{
+	type:'founder'
+}
+,parseData: function(res){ //res 即为原始返回的数据
+    return {
+      "code": 0, //解析接口状态
+      "msg": res.status_code, //解析提示文本
+      "count": res.data.count, //解析数据长度
+      "data": res.data.data //解析数据列表
+    };
+}
 ,cols: [[
   {field:'id', title:'ID编号', width:100,sort: true}
-  ,{field:'username', title:'用户名',width:100 ,edit: 'text'}
-  ,{field:'title', title:'标题', width:120 }
-  ,{field:'desc', title:'描述', width:180,edit: 'text'}
-  ,{fixed: 'right', title:'操作', toolbar: '#barDemo',width:400}
+  ,{field:'name', title:'名称',width:100 ,edit: 'text'}
+  ,{field:'area', title:'商圈',width:100 ,edit: 'text'}
+  ,{field:'address', title:'地址名称', width:120 }
+  ,{field:'detail', title:'详细地址', width:380,edit: 'text'}
+  ,{fixed: 'right', title:'操作', toolbar: '#barDemo',width:100}
 ]]
-,page: true
+,page: {'limit':20}
 });
 //监听行工具事件
 table.on('tool(test)', function(obj){

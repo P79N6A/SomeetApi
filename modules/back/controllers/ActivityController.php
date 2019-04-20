@@ -40,7 +40,8 @@ class ActivityController extends BaseController
 				'index',
 				'view',
 				'get-tag',
-				'get-sequence'
+				'get-sequence',
+				'create-act'
 			]
 		];
 		$behaviors['access'] = [
@@ -49,15 +50,18 @@ class ActivityController extends BaseController
                     'index',
 					'view',
 					'get-tag',
-					'get-sequence'
+					'get-sequence',
+					'create-act'
                 ],
             ];
 		return $behaviors;
 	}
-	public function actionIndex($page=1,$status=20,$is_history=0){
+
+	public function actionIndex($page=1,$status=20,$limit=10,$is_history=0){
 		Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 		$data['page'] = $page;
         $data['status'] = $status;
+        $data['limit'] = $limit;
         $data['is_history'] = $is_history;
         if($data['is_history'] == 0){
             unset($data['status']);
@@ -79,26 +83,7 @@ class ActivityController extends BaseController
 	 */
 	public function actionView($id=0){
 		if(intval($id) == 0) return false;
-		$model = Activity::find()->where(['id'=>$id])->asArray()->one();
-		//获取该活动的类型详情
-		$type = ActivityType::find()->select(['id','icon_img','name'])->where(['id'=>$model['type_id']])->asArray()->one();
-		$model['type'] = $type;
-		//判断是否被收藏
-		$is_collect  = CollectAct::find()->where(['user_id'=>$user_id,'activity_id'=>$id])->exists();
-		$model['is_collect'] = $is_collect?1:0;
-		//判断是否拉黑此活动
-		$is_black = ActivityBlack::find()->where(['sequence_id'=>$model['sequence_id']])->orWhere(['id'=>$id])->exists();
-		$model['is_black'] = $is_balck;
-		//获取该活动发起人的详细信息,标签,头像,昵称,简介
-		$profile = Profile::find()->select(['headimgurl'])->where(['user_id'=>$model['created_by']])->asArray()->one();
-		$user = User::find()->select(['username','founder_desc'])->where(['id'=>$model['created_by']])->asArray()->one();
-		$tags = CommonFunction::getUserTags(['user_id'=>$model['created_by']],[],10);
-		$model['profile'] = $profile;
-		$model['user'] = $user;
-		$model['tags'] = $tags;
-		//获取哪些用户也参加了这场活动
-		$answers = Answer::find()->select(['answer.id','answer.activity_id','answer.user_id'])->joinWith(['profile','user'])->where(['activity_id'=>$model['id']])->asArray()->all();
-		$model['answers'] = $answers;
+		$model = ActivityService::getView($id);       
 		return $model;
 	}
 
@@ -116,4 +101,12 @@ class ActivityController extends BaseController
     	return ActivityService::getSequence($user_id);
     }
 
+    /**
+     * 创建新的活动
+     */
+    public function actionCreateAct(){
+    	$data = Yii::$app->request->post();
+		$res = ActivityService::createAct($data);
+		return $res;
+    }
 }

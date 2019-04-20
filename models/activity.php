@@ -156,6 +156,15 @@ class Activity extends \yii\db\ActiveRecord
             [['act_tag_id', 'district'], 'string', 'max' => 100],
         ];
     }
+    public function beforeSave($insert)
+    {
+        if(parent::beforeSave($insert)){
+            if($insert){
+                $this->created_at  = time();
+            }
+        }
+         return true;
+    }
 
     /**
      * {@inheritdoc}
