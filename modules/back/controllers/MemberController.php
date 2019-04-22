@@ -36,6 +36,7 @@ class MemberController extends BaseController
 			],
 			//暂时解除限制或者未登录就可以访问的方法
 			'optional' => [
+				'login',
 				'get-list',
 				'update-status',
 				'get-info',
@@ -46,6 +47,7 @@ class MemberController extends BaseController
 		$behaviors['access'] = [
                 'class' => 'app\component\AccessControl',
                 'allowActions' => [
+                	'login',
                     'get-list',
                     'update-status',
                     'get-info',
@@ -138,6 +140,7 @@ class MemberController extends BaseController
 		return MemberService::getUserBySearch($data);
 	}
 
+	
 
 
 

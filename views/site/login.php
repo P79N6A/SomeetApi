@@ -56,11 +56,14 @@ function login(data){
     var csrf = $('#_csrf').val();
     console.log(csrf)
     $.ajax({
-        url:'/site/login',
+        url:'/site/login-user',
         type:'post',
         data:data,
         success:function(res){
-            console.log(res)
+          console.log(res)
+            // if(res.data.status == 1){
+            //   window.location.href = '/activity/index'
+            // }
         },
         error:function(){
             layer.msg('网络错误，请稍后再试');

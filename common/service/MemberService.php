@@ -332,14 +332,14 @@ class MemberService extends BaseService{
 
     protected static function pushUserInRedis($user_id){
     	$redis = Yii::$app->redis;
-    	$founder = AuthAssignment::find()->select(['user_id'])->where(['user_id'=>$user_id])->asArray()->all(); 
+    	$founder = AuthAssignment::find()->select(['user_id','item_name'])->where(['user_id'=>$user_id])->asArray()->all(); 
     	if($founder){
     		foreach ($founder as $row) {
     			if($row['item_name'] == 'founder' && !$redis->exists('founder-'.$user_id)){
-    				$redis->set('founder-'.$user_id);
+    				$redis->set('founder-'.$user_id,$user_id);
     			}
     			if($row['item_name'] == 'admin' && !$redis->exists('admin-'.$user_id)){
-    				$redis->set('admin-'.$user_id);
+    				$redis->set('admin-'.$user_id,$user_id);
     			}
     		}
     	}

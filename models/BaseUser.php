@@ -4,11 +4,11 @@ use yii\db\ActiveRecord;
 use yii;
 class BaseUser extends ActiveRecord implements \yii\web\IdentityInterface
 {
-		public $id;
-		public $username;
-		public $password;
-		public $authKey;
-		public $accessToken;
+		// public $id;
+		// public $username;
+		// public $password;
+		// public $authKey;
+		// public $accessToken;
 		
 		/**
 	     * {@inheritdoc}
@@ -54,7 +54,7 @@ class BaseUser extends ActiveRecord implements \yii\web\IdentityInterface
 	     */
 	    public function getId()
 	    {
-	        return $this->id;
+	        // return $this->id;
 	    }
 	
 	    /**
@@ -62,7 +62,7 @@ class BaseUser extends ActiveRecord implements \yii\web\IdentityInterface
 	     */
 	    public function getAuthKey()
 	    {
-	        return $this->authKey;
+	        // return $this->authKey;
 	    }
 	
 	    /**
@@ -70,7 +70,7 @@ class BaseUser extends ActiveRecord implements \yii\web\IdentityInterface
 	     */
 	    public function validateAuthKey($authKey)
 	    {
-	        return $this->authKey === $authKey;
+	        // return $this->authKey === $authKey;
 	    }
 	
 	    /**
@@ -81,6 +81,6 @@ class BaseUser extends ActiveRecord implements \yii\web\IdentityInterface
 	     */
 	    public function validatePassword($password)
 	    {
-	        return $this->password === $password;
+	        // return $this->password === $password;
 	    }
 }

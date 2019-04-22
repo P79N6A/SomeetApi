@@ -17,7 +17,8 @@ class MemberController extends BaseController{
                 'class' => 'app\component\AccessControl',
                 'allowActions' => [
                     'index',
-                    'view'
+                    'view',
+                    'login'
                 ],
             ],
         ];
@@ -38,4 +39,5 @@ class MemberController extends BaseController{
         $data = MemberService::getInfo($id,['profile','tags','is_admin','is_founder','yellowCard','answers','activity']);
         return $this->render('view',['data'=>$data]);
     }
+    
 }

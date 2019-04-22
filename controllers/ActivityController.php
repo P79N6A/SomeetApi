@@ -20,7 +20,7 @@ class ActivityController extends BaseController{
             'access' => [
                 'class' => 'app\component\AccessControl',
                 'allowActions' => [
-                    'index',
+                    // 'index',
                     'add',
                     'msg',
                     'check',
@@ -34,10 +34,11 @@ class ActivityController extends BaseController{
 	/**
      * 活动列表首页
      */
-	public function actionIndex($page=1,$status=20,$is_history=0){
+	public function actionIndex($page=1,$status=20,$is_history=0,$limit =30){
         $data['page'] = $page;
         $data['status'] = $status;
         $data['is_history'] = $is_history;
+        $data['limit'] =$limit;
         if($data['is_history'] == 0){
             unset($data['status']);
         }

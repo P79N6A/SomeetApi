@@ -14,6 +14,7 @@ class User extends BaseUser
     public $activity;
     public $yellowCard;
     public $realname;
+
     /** * 用户状态是删除 */
     const STATUS_DELETED = 0;
     /** * 用户状态是正常 */
@@ -29,6 +30,10 @@ class User extends BaseUser
     const BLACK_LIST_YES = 1;
     /** * 用户不在黑名单 */
     const BLACK_LIST_NO = 0;
+    protected $_password;
+    public $password_reset_token;
+    public $email_confirmation_token;
+    public $access_token;
 	/**
      * @inheritdoc
      */
@@ -53,7 +58,8 @@ class User extends BaseUser
             ['password_reset_token', 'string', 'max' => 60],
             ['email_confirmation_token', 'string', 'max' => 60],
 
-            ['access_token', 'default', 'value' => Yii::$app->security->generateRandomString(), 'on' => ['register', 'create']],
+            ['access_token', 'default', 'value' => Yii::$app->security->generateRandomString(), 'on' => ['register', 'create','login']],
+            ['last_login_at', 'default', 'value' => time(), 'on' => ['login']],
             [['last_login_at', 'password_reset_token', 'email_confirmation_token'], 'safe'],
         ];
     }
@@ -84,7 +90,21 @@ class User extends BaseUser
        $user = User::find()->select(['username','password_hash'])->where(['username'=>trim($data['username'])])->one();
        return $user?$user->password_hash== self::validatePassword($data['password'],$user->password_hash):false;
     }
-	
+	/**
+     * @inheritdoc
+     */
+    public function beforeSave($insert)
+    {
+        if ($this->isNewRecord) {
+            $this->generateAuthKey();
+            $this->generateEmailConfirmationToken();
+        }
+
+        return parent::beforeSave($insert);
+    }
+    public function generateAccessToken(){
+        $this->access_token = Yii::$app->security->generateRandomString();
+    }
 	/**
      * @inheritdoc
      */

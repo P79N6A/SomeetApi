@@ -9,6 +9,7 @@ use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\User;
 use app\component\BaseController;
+use app\common\service\MemberService;
 
 class SiteController extends Controller
 {
@@ -18,10 +19,19 @@ class SiteController extends Controller
                 'class' => 'app\component\AccessControl',
                 'allowActions' => [
                     'login',
+                    'login-user'
                 ],
             ],
         ];
 
+    }
+    /**
+     * {@inheritdoc}
+     */
+    public function beforeAction($action)
+    {
+        Yii::$app->controller->enableCsrfValidation = false;
+        return parent::beforeAction($action);
     }
     /**
      * Displays homepage.
@@ -60,6 +70,7 @@ class SiteController extends Controller
      */
     public function actionLogin($uid=1)
     {
+
         $request = Yii::$app->request;
         if(!$request->isPost){
             return $this->renderpartial('login');
@@ -67,12 +78,6 @@ class SiteController extends Controller
             Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
             $data = $request->post();
             return intval(User::checkUser($data));
-            // $admin = User::findOne($uid);
-            // Yii::$app->user->login($admin);
-            // if(Yii::$app->user->getId()){
-            //     return true;
-            // }
-            // return false;
         }
     }
 
@@ -90,34 +95,27 @@ class SiteController extends Controller
     }
 
     /**
-     * Displays contact page.
-     *
-     * @return Response|string
+     * 处理登录
      */
-    public function actionContact()
-    {
-        $model = new ContactForm();
-        if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
-            Yii::$app->session->setFlash('contactFormSubmitted');
-
-            return $this->refresh();
+    public function actionLoginUser(){
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $request = Yii::$app->request;
+        $data = $request->post();
+        if(!isset($data['password']) || !isset($data['username'])){
+            return ['status'=>0,'data'=>'登陆失败'];
         }
-        return $this->render('contact', [
-            'model' => $model,
-        ]);
+        $user = User::find()->where(['username'=>$data['username']])->one();
+        if($user->id && $user->validatePassword($data['password'],$user->password_hash)){
+            $auth = MemberService::checkRole($user->id);
+            if(!$auth['is_admin'] && !$auth['is_founder']){
+                return ['status'=>0,'data'=>'你没有权限登陆'];
+            }
+            $user->generateAccessToken();
+            $user->last_login_at = time();
+            $user->save();
+            Yii::$app->user->login($user,7200);
+            return ['status'=>1,'data'=>'登陆成功','access-token'=>$user->access_token];
+        }
+        return ['status'=>0,'data'=>'登陆失败'];
     }
-
-    /**
-     * Displays about page.
-     *
-     * @return string
-     */
-    public function actionAbout()
-    {
-        return $this->render('about');
-    }
-	
-	public function actionSay($message = 'hello'){
-		return $this->render('say',['message' => $message]);
-	}
 }
