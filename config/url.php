@@ -91,7 +91,15 @@ return [
 			'back/space'
 		],
 		'extraPatterns' => [
-			'GET get-space' => 'get-space',
+			//获取发起人场地的列表
+			'GET get-space-list' => 'get-space-list',
+			//获取单个场地的详细信息
+			'GET get-info' => 'get-info',
+			//获取场地列表
+			'GET get-list' => 'get-list',
+			//添加修改场地
+			'POST add'=>'add',
+			'PUT add'=>'add'
 		]
 	],
 ];

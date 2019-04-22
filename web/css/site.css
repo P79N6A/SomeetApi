@@ -142,5 +142,18 @@ h1,h2,h3{font-size: 14px;}
 	border:1px solid red;
 }
 
-
-
+.space-div{
+	width: 70%;
+	min-width: 20rem;
+	height: 100%;
+	margin:0 auto;
+}
+.space-map{
+	height: 30rem;
+}
+#space-info{
+	display: none;
+}
+#subSpace{
+	/*display: none;*/
+}

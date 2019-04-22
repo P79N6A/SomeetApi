@@ -322,7 +322,7 @@
 		    <br>
 		    <div class="layui-inline">
 		    	<label class="layui-form-label"> </label>
-		    	<div lay-filter='activityForm' data-ele='question'  class="layui-btn addInput">增加筛选问题</div>
+		    	<div  data-ele='question'  class="layui-btn addInput">增加筛选问题</div>
 		    </div>
 		</div>
 		<!-- 设置问题 -->
@@ -335,7 +335,7 @@
 		    <br>
 		    <div class="layui-inline">
 		    	<label class="layui-form-label"> </label>
-		    	<div lay-filter='activityForm' data-ele='review'  class="layui-btn addInput">增加活动流程</div>
+		    	<div  data-ele='review'  class="layui-btn addInput">增加活动流程</div>
 		    </div>
 		</div>
 		<!-- 活动流程 -->
@@ -348,7 +348,7 @@
 		    <br>
 		    <div class="layui-inline">
 		    	<label class="layui-form-label"> </label>
-		    	<div lay-filter='activityForm' data-ele='field6' class="layui-btn addInput">增加注意事项</div>
+		    	<div data-ele='field6' class="layui-btn addInput">增加注意事项</div>
 		    </div>
 		</div>
 		<!-- 注意事项 -->
@@ -361,7 +361,7 @@
 		    <br>
 		    <div class="layui-inline">
 		    	<label class="layui-form-label"> </label>
-		    	<div lay-filter='activityForm' data-ele='field2' class="layui-btn addInput">增加活动Tips</div>
+		    	<div  data-ele='field2' class="layui-btn addInput">增加活动Tips</div>
 		    </div>
 		</div>
 		<!-- tips -->
@@ -397,6 +397,7 @@ var upload = layui.upload;
 //执行实例
 var imgIndex = 0;
 var files;
+var isSub = 0;
 //存储上传活动图片的地址
 var actImg = [];
 var uploadInst = upload.render({
@@ -530,29 +531,33 @@ $('#searchFounder').click(function(){
 //监听提交
 form.on('submit(activityForm)', function(data){
 	data.field.actImg = actImg;
-	console.log(actImg+'-------actImg')
 	data.field._csrf = _csrf;
-	console.log($('#haveGuestCheck').val()+'------');
-	if($('#haveGuestCheck').val()){
-		var jname = $('#jname').val()
-		var jheadimgurl = $('#jheadimgurl').val();
-		var jdesc = $('#jdesc').val()
-		if(!jname || !jheadimgurl || !jdesc){
-			layer.msg('选择了嘉宾就得填信息啊');
-			return false;
+	if(isSub == 0){
+		isSub == 1;
+		if($('#haveGuestCheck').val()){
+			var jname = $('#jname').val()
+			var jheadimgurl = $('#jheadimgurl').val();
+			var jdesc = $('#jdesc').val()
+			if(!jname || !jheadimgurl || !jdesc){
+				layer.msg('选择了嘉宾就得填信息啊');
+				return false;
+			}
 		}
+		$.ajax({
+			url:'/back/activity/create-act',
+			type:'post',
+			data:data.field,
+			success:function(res){
+				console.log(res)
+				window.lcoation.href = '/activity/index'
+			},
+			error:function(){
+				isSub == 0;
+				console.log('error')
+			}
+		})
 	}
-	$.ajax({
-		url:'/back/activity/create-act',
-		type:'post',
-		data:data.field,
-		success:function(res){
-			console.log(res)
-		},
-		error:function(){
-			console.log('error')
-		}
-	})
+	
 	return false;
 });
 //监听增加注意事项的事件
@@ -588,7 +593,7 @@ function httpRequest(data){
 						str+='<option selected="selected" value="'+val.id+'">'+val.username+'</option>'
 						var dataForXl ={
 								data:{
-									user_id:297962
+									user_id:val.id
 							  	},
 							  	obj:'#sequence',
 							  	type:'get',
@@ -597,12 +602,12 @@ function httpRequest(data){
 						}
 						var dataForSpace ={
 								data:{
-									user_id:297962,
+									user_id:val.id,
 									type:'founder'
 							  	},
 							  	obj:'#space_spot_id',
 							  	type:'get',
-							  	url:'/back/space/get-space',
+							  	url:'/back/space/get-space-list',
 								act:'space'
 						}
 						//获取该发起人的系列名称

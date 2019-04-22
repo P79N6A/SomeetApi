@@ -25,9 +25,9 @@ class SpaceService extends BaseService{
 	 */
 	public static function getListByPage($data){
 		if($data['type']=='founder'){
-			$query = FounderSpaceSpot::find()->select(['id','name','area','address','detail','longitude','latitude']);
+			$query = FounderSpaceSpot::find()->select(['id','name','area','address','detail','longitude','latitude','user_id'])->orderBy('id desc');
 		}else{
-			$query = SpaceSpot::find()->select(['id','name','area','address','detail','longitude','latitude'])->limit(30)->orderBy('id desc');
+			$query = SpaceSpot::find()->select(['id','name','area','address','detail','longitude','latitude','user_id'])->limit(30)->orderBy('id desc');
 		}
 
 		$count = $query->count();
@@ -41,9 +41,9 @@ class SpaceService extends BaseService{
 	 */
 	public static function getSpace($id,$type='founder'){
 		if($type=='founder'){
-			$list = FounderSpaceSpot::find()->select(['id','name','area','address','detail','longitude','latitude'])->where(['id'=>$id])->asArray()->one();
+			$list = FounderSpaceSpot::find()->select(['id','name','area','district','address','detail','longitude','latitude','user_id','detail'])->where(['id'=>$id])->asArray()->one();
 		}else{
-			$list = SpaceSpot::find()->select(['id','name','area','address','detail','longitude','latitude'])->where(['id'=>$id])->asArray()->one();
+			$list = SpaceSpot::find()->select(['id','name','area','address','district','detail','longitude','latitude','user_id','detail'])->where(['id'=>$id])->asArray()->one();
 		}
 		return $list;
 	}
@@ -70,5 +70,68 @@ class SpaceService extends BaseService{
         }
 
         return array('longitude'=>0,'latitude'=>0);
+    }
+    /**
+     * 修改场地信息
+     */
+    public static function edit($data,$type='isPut'){
+    	if($type=='isPut'){
+			//修改场地
+			$isEdit = 0;
+			if($data['type'] == 'founder'){
+				$query = FounderSpaceSpot::find()->where(['id'=>$data['id']])->one();
+			}else{
+				$query = SpaceSpot::find()->where(['id'=>$data['id']])->one();
+			}
+			if($query->name != $data['name']){
+				$query->name = $data['name'];
+				$isEdit = 1;
+			}
+			if($query->area != $data['area']){
+				$query->area = $data['area'];
+				$isEdit = 1;
+			}
+			if($query->address != $data['address']){
+				$query->address = $data['address'];
+				$isEdit = 1;
+			}
+			if($query->detail != $data['detail']){
+				$query->detail = $data['detail'];
+				$isEdit = 1;
+			}
+			if($query->district != $data['district']){
+				$query->district = $data['district'];
+				$isEdit = 1;
+			}
+			if($query->longitude != $data['longitude']){
+				$query->longitude = $data['longitude'];
+				$isEdit = 1;
+			}
+			if($query->latitude != $data['latitude']){
+				$query->latitude = $data['latitude'];
+				$isEdit = 1;
+			}
+		}elseif($type=='isPost'){
+			//添加一个个场地
+			unset($data['id']);
+			if($data['type'] == 'founder'){
+				$query = new FounderSpaceSpot();
+			}else{
+				$query = new SpaceSpot();
+			}
+			$isEdit = 1;
+			unset($data['type']);
+			foreach ($data as $key => $row) {
+				$query->$key = $row;
+			}
+
+		}
+		if($isEdit == 0){
+			return true;
+		}
+		if($query->save()){
+			return true;
+		}
+		return $query->getErrors();
     }
 }

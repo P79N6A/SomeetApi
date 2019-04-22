@@ -137,17 +137,12 @@ class MemberService extends BaseService{
 			$user['tags'] = $tags;
 		}
 		if(in_array('is_admin', $fields) || in_array('is_founder', $fields)){
-			$role = AuthAssignment::find()->where(['user_id'=>$id])->asArray()->all();
-			if($role){
-				foreach($role as $row){
-					if($row['item_name'] == 'admin'){
-						$user['is_admin'] = 1;
-					}
-					if($row['item_name'] == 'founder'){
-						$user['is_founder'] = 1;
-					}
-				}
-			}
+			$auth = Yii::$app->authManager;
+        	$role = $auth->getAssignments($user_id);
+        	if($role){
+        		if(array_key_exists('admin', $role)) $user['is_admin'] = 1;
+        		if(array_key_exists('founder', $role)) $user['is_founder'] = 1;
+        	}
 		}
 		if(in_array('answers', $fields)){
 			$aid = [];
@@ -315,9 +310,40 @@ class MemberService extends BaseService{
     	return $user->asArray()->all();
     	
     }
+    /**
+     * 判断是否为发起人或者管理员
+     */
+    public static function checkRole($user_id){
+    	$redis = Yii::$app->redis;
+    	$is_admin = $redis->exists('admin-'.$user_id);
+    	$is_founder = $redis->exists('founder-'.$user_id);
+    	if(!$is_admin && !$is_founder){
+    		self::pushUserInRedis($user_id);
+    		$is_admin = $redis->exists('admin-'.$user_id);
+    		$is_founder = $redis->exists('founder-'.$user_id);
+    	}
+    	return ['is_admin'=>intval($is_admin),'is_founder'=>$is_founder];
+    }
 
 
+    /**
+     * 把发起人和管理员信息塞入redis
+     */
 
+    protected static function pushUserInRedis($user_id){
+    	$redis = Yii::$app->redis;
+    	$founder = AuthAssignment::find()->select(['user_id'])->where(['user_id'=>$user_id])->asArray()->all(); 
+    	if($founder){
+    		foreach ($founder as $row) {
+    			if($row['item_name'] == 'founder' && !$redis->exists('founder-'.$user_id)){
+    				$redis->set('founder-'.$user_id);
+    			}
+    			if($row['item_name'] == 'admin' && !$redis->exists('admin-'.$user_id)){
+    				$redis->set('admin-'.$user_id);
+    			}
+    		}
+    	}
+    }
 
 
 
