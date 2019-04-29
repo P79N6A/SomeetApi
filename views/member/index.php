@@ -14,26 +14,6 @@
 			    <div class="layui-tab-item layui-show">
 			    	<table class="layui-hide" id="all" lay-filter="all"></table>
 			    </div>
-			    <!-- 管理员列表 -->
-			    <!-- <div class="layui-tab-item">
-			    	<table class="layui-hide" id="admin" lay-filter="admin"></table>
-			    </div> -->
-			    <!-- 发起人列表 -->
-			    <!-- <div class="layui-tab-item">
-			    	<table class="layui-hide" id="founder" lay-filter="founder"></table>
-			    </div> -->
-			    <!-- 黑名单列表 -->
-			    <!-- <div class="layui-tab-item">
-			    	<table class="layui-hide" id="black" lay-filter="black"></table>
-			    </div> -->
-			    <!-- 封禁人员名单 -->
-			    <!-- <div class="layui-tab-item">
-			    	<table class="layui-hide" id="lock" lay-filter="lock"></table>
-			    </div> -->
-			    <!-- 申诉用户列表 -->
-			    <!-- <div class="layui-tab-item">
-			    	<table class="layui-hide" id="apply" lay-filter="apply"></table>
-			    </div> -->
 			</div>
 			<script type="text/html" id="switchTplForBlack">
 			  <input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-text="拉黑|解除" lay-filter="switchTplForBlack" {{ d.black_label == 1 ? 'checked' : '' }} {{ d.id == 1 ? 'disabled' : '' }}>
@@ -47,6 +27,10 @@
 </div>
 <script>
 var $ = layui.jquery
+var token = $('#access_token').val();
+$.ajaxSettings.beforeSend = function(xhr,request){
+    xhr.setRequestHeader('Authorization','Bearer '+token);
+}
 var form = layui.form 
 var _csrf = $('#csrf').val();
 // 设置一个记录操作状态的值

@@ -2,6 +2,8 @@
 namespace app\common\service;
 use app\common\service\BaseService;
 use app\models\Activity;
+use app\models\Question;
+use app\models\QuestionItem;
 use app\models\ActivityAlbum;
 use yii\web\Response;
 use Yii;
@@ -15,10 +17,9 @@ class ActivityService extends BaseService{
 	 * 历史，预发布
 	 */
 	public static function getActlist($data=[]){
-		$data['status'] = isset($data['status'])?$data['status']:0;
+		$data['status'] = isset($data['status']) && $data['status']?$data['status']:0;
 		$data['is_history'] = isset($data['is_history'])?$data['is_history']:0;
-		$query = Activity::find()->select(['id','title','created_by','desc','group_code','status','start_time','end_time']);
-		// $query = $data['is_history']==0?$query->where("status >8")->andWhere(['>=','start_time',getLastEndTime()]):$query->where("status >8")->andFilterWhere(['between','start_time',getWeekBefore(),getLastEndTime()]);
+		$query = Activity::find()->select(['id','title','created_by','desc','group_code','status','start_time','end_time','reject_reason']);
 		switch ($data['status']) {
 			case 0:
 				if($data['is_history'] == 0){
@@ -29,8 +30,15 @@ class ActivityService extends BaseService{
 				break;
 			
 			default:
-				$query->where(['status'=>$data['status']]);
+				if($data['is_history'] == 0){
+					$query->where(['status'=>$data['status']])->andWhere(['>=','start_time',getLastEndTime()]);
+				}else{
+					$query->where(['status'=>$data['status']]);
+				}
 				break;
+		}
+		if(isset($data['user_id'])){
+			$query->andWhere(['created_by'=>$data['user_id']]);
 		}
 		$count = $query->count();
 		$page = new Pagination(['totalCount' => $count,'pageSize'=>$data['limit']]);
@@ -100,8 +108,6 @@ class ActivityService extends BaseService{
 		//活动图片
 		$actImg = $data['actImg'];
 		unset($data['actImg']);
-		
-		$data['details'] = $data['detail'];
 		unset($data['detail']);
 		//获取场地
 		if($data['space_spot_id']){
@@ -116,26 +122,50 @@ class ActivityService extends BaseService{
 		//设置问题
 		$question = $data['question'];
 		unset($data['question']);
-
 		$model = new Activity();
-		foreach ($data as $key=>$row) {
-			$model->$key = $row;
-		}
-		$model->display_order = 99;
-		$model->is_new = 1;
-		if($model->save()){
-			//保存图片
-			if(!empty($actImg)){
-				foreach ($actImg as $row) {
-					$actImg = new ActivityAlbum();
-					$actImg->activity_id = $model->id;
-					$actImg->img = $row;
-					$actImg->save();
-				}
+		$transaction = $model->getDb()->beginTransaction();
+		try{
+			foreach ($data as $key=>$row) {
+				$model->$key = $row;
 			}
-			return ['status'=>1,'msg'=>'ok'];
+			$model->display_order = 99;
+			$model->is_new = 1;
+			$model->status = Activity::STATUS_CHECK;
+			if($model->save()){
+				if(!empty($question)){
+					$q = new Question();
+					$q->activity_id = $model->id;
+					$q->created_at = time();
+					$q->status = 10;
+					if($q->save()){
+						$qid = $q->id;
+						foreach ($question as $row) {
+							//创建活动问题
+							$qitem = new QuestionItem();
+							$qitem->question_id = $qid;
+							$qitem->label = $row;
+							$qitem->save();
+						}
+					}
+
+				}
+				//保存图片
+				if(!empty($actImg)){
+					foreach ($actImg as $row) {
+						$actImg = new ActivityAlbum();
+						$actImg->activity_id = $model->id;
+						$actImg->img = $row;
+						$actImg->save();
+					}
+				}
+				return ['status'=>1,'msg'=>'ok'];
+			}
+		}catch (\Exception $e) {
+		    $transaction->rollBack();
+		    return ['status'=>0,'msg'=>$model->getErrors()];
 		}
-		return ['status'=>0,'msg'=>$model->getErrors()];
+		
+		
 	}
 	/**
 	 * 获取活动详情
@@ -163,6 +193,48 @@ class ActivityService extends BaseService{
 		$model['answers'] = $answers;
 		return $model;
 	}
+
+	/**
+	 * 更改活动状态
+	 */
+	public static function updateStatus(){
+		$request = Yii::$app->request;
+		$data = $request->post();
+		if($request->isPut){
+			//检查该活动的所有者
+			$own = Activity::find()->where(['created_by'=>$data['user_id'],'id'=>$data['id']])->exists();
+			if(!$own){
+				return ['status'=>0,'data'=>'活动拥有者错误'];
+			}
+			$status = 10;
+			switch ($data['status']) {
+				case 'check':
+					$status = Activity::STATUS_CHECK;
+					break;
+				case 'pass':
+					$status = Activity::STATUS_PASS;
+					break;
+				case 'reject':
+					$status = Activity::STATUS_REFUSE;
+					break;
+				case 'release':
+					$status = Activity::STATUS_RELEASE;
+					break;
+				
+				default:
+					# code...
+					break;
+			}
+			if(!isset($data['reject_resason'])) $data['reject_resason'] = '';
+			if(Activity::updateAll(['status'=>$status,'reject_resason'=>$data['reject_resason']],['id'=>$data['id']])){
+				return ['status'=>1,'data'=>'操作成功'];
+			}
+		}
+		return ['status'=>0,'data'=>'error'];
+	}
+
+
+
 
 
 

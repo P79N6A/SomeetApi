@@ -157,3 +157,27 @@ h1,h2,h3{font-size: 14px;}
 #subSpace{
 	/*display: none;*/
 }
+.useridcard-upload{
+	display: flex;
+	box-sizing: border-box;
+}
+.useridcard-upload div{
+	width: 50%;
+	min-width: 15rem;
+	/*height: 16rem;*/
+	border: 1px solid red;
+	margin:1rem;
+}
+.classify-img{
+	width: 6rem;height: 6rem;margin-bottom: 10px;
+}
+.classify-btn{
+	max-width: 6rem;
+	width: 6rem;
+	height: 2.2rem;
+	text-align: center;
+	color:white;
+	/*border: 1px solid yellow;*/
+	padding: 0;
+	line-height: 2.2rem;
+}

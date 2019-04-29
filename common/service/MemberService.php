@@ -4,6 +4,7 @@ use app\common\service\BaseService;
 use app\models\Activity;
 use app\models\User;
 use app\models\Answer;
+use app\models\FounderBlock;
 use app\models\profile;
 use app\models\UserIdcardCheck;
 use app\models\UserSelectTags;
@@ -138,7 +139,7 @@ class MemberService extends BaseService{
 		}
 		if(in_array('is_admin', $fields) || in_array('is_founder', $fields)){
 			$auth = Yii::$app->authManager;
-        	$role = $auth->getAssignments($user_id);
+        	$role = $auth->getAssignments($id);
         	if($role){
         		if(array_key_exists('admin', $role)) $user['is_admin'] = 1;
         		if(array_key_exists('founder', $role)) $user['is_founder'] = 1;
@@ -285,10 +286,20 @@ class MemberService extends BaseService{
     	$redis = Yii::$app->redis;
     	$data = $redis->get('founder-'.$id);
     	if(!$data){
+    		$role = self::checkRole($user_id);
+    		if(!$role['is_admin'] && !$role['is_founder']){
+    			return false;
+    		}
     		$user = User::find()->select(['wechat_id','mobile','id','founder_desc','username'])->where(['id'=>$id])->asArray()->one();
     		$profile = Profile::find()->select(['headimgurl','sex','birth_year','birth_month','birth_day','bio','occupation'])->where(['user_id'=>$id])->asArray()->one();
     		$user['profile'] = $user;
-    		$redis->set('founder-'.$id,serialize($user));
+    		if($role['is_founder']){
+    			$redis->set('founder-'.$id,serialize($user));
+    		}
+    		if($role['is_admin']){
+    			$redis->set('admin-'.$id,serialize($user));
+    		}
+    		
     		$data = $redis->get('founder-'.$id);
     	}
     	return unserialize($data);
@@ -336,7 +347,7 @@ class MemberService extends BaseService{
     	if($founder){
     		foreach ($founder as $row) {
     			if($row['item_name'] == 'founder' && !$redis->exists('founder-'.$user_id)){
-    				$redis->set('founder-'.$user_id,$user_id);
+    				self::getFounders($user_id);
     			}
     			if($row['item_name'] == 'admin' && !$redis->exists('admin-'.$user_id)){
     				$redis->set('admin-'.$user_id,$user_id);
@@ -345,7 +356,42 @@ class MemberService extends BaseService{
     	}
     }
 
-
+    /**
+     * 获取发起人是否处于活动暂缓期，是否实名认证
+     */
+    public static function getFounderStatus($user_id){
+    	$user_id = $user_id > 0?$user_id:Yii::$app->user->id;
+        $founder_block = FounderBlock::find()
+                        ->where(['user_id' => $user_id])
+                        ->andWhere(['status' => FounderBlock::STATUS_BLOCK])
+                        ->orderBy('id DESC')
+                        ->one();
+        $founder_block_array = FounderBlock::find()
+                        ->select(['created_at','status', 'block_reason'])
+                        ->where(['user_id' => $user_id])
+                        ->asArray()
+                        ->all();
+        foreach ($founder_block_array as $blockKey => $blockValue) {
+            $str = $blockValue['block_reason'];
+            $result = substr($str,0,strrpos($str,"#"));
+            $founder_block_array[$blockKey]['act_id'] = trim($result);
+        }
+        $idinfo = UserIdcardCheck::find()->where(['user_id'=>$user_id])->one();
+        $status = -1;
+        if($idinfo){
+            $status = $idinfo->status;
+        }  
+        $is_manager = AuthAssignment::find()->where(['user_id'=>$user_id,'item_name'=>'admin'])->one();  
+        if($is_manager){
+            $status = 1;
+        }            
+        return [
+                'founderBlockInfo' => $founder_block,
+                'founderBlockArray' => $founder_block_array,
+                'idcard_status'=>$status,
+                'idcard_info'=>$idinfo
+                ];
+    }
 
 
 

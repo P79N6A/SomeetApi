@@ -28,12 +28,9 @@ class SpaceController extends BaseController{
      * 活动列表首页
      */
 	public function actionIndex(){
-        $user = User::findOne(2961);
-        $pass = $user->setPassword('123456');
-        echo '<pre>';
-        var_dump($pass);
-        die;
-		return $this->render('index');
+        $user_id = Yii::$app->user->id;
+        $data['user_id'] = $user_id;
+		return $this->render('index',$data);
 	}
     /**
      * =添加一个个场地

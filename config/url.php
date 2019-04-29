@@ -58,7 +58,8 @@ return [
 			'GET index' => 'index',
 			'GET get-tag'=>'get-tag',
 			'GET get-sequence'=>'get-sequence',
-			'POST create-act'=>'create-act'
+			'POST create-act'=>'create-act',
+			'GET index-by-founder'=>'index-by-founder'
 		]
 	],
 	[
@@ -72,6 +73,7 @@ return [
 			'POST get-info' => 'get-info',
 			'POST role-update'=>'role-update',
 			'GET get-user-search'=>'get-user-search',
+			'GET founder-check'=>'founder-check'
 			
 		]
 	],

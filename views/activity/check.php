@@ -35,6 +35,10 @@
 <script type="text/javascript" src='/layui/js/modules/cropper.js'></script>
 <script>
 var $ = layui.jquery
+var token = $('#access_token').val();
+$.ajaxSettings.beforeSend = function(xhr,request){
+    xhr.setRequestHeader('Authorization','Bearer '+token);
+}
 // //注意：导航 依赖 element 模块，否则无法进行功能性操作
 var element = layui.element;
 var cropper = layui.croppers;

@@ -33,7 +33,7 @@ class User extends BaseUser
     protected $_password;
     public $password_reset_token;
     public $email_confirmation_token;
-    public $access_token;
+    // public $access_token;
 	/**
      * @inheritdoc
      */
@@ -50,8 +50,6 @@ class User extends BaseUser
             ['black_label', 'default', 'value' => self::BLACK_LIST_NO],
 
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
-            ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
-
             ['mobile', 'unique'],
             [['wechat_id'], 'unique'],
             [['last_login_at','black_time', 'black_label'], 'integer'],
@@ -105,6 +103,7 @@ class User extends BaseUser
     public function generateAccessToken(){
         $this->access_token = Yii::$app->security->generateRandomString();
     }
+   
 	/**
      * @inheritdoc
      */

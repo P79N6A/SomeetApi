@@ -46,7 +46,6 @@ layui.use('form', function(){
   
   //监听提交
   form.on('submit(login)', function(data){
-    layer.msg(JSON.stringify(data.field));
     login(data.field);
     return false;
   });
@@ -54,16 +53,15 @@ layui.use('form', function(){
 function login(data){
     var $ = layui.$
     var csrf = $('#_csrf').val();
-    console.log(csrf)
     $.ajax({
         url:'/site/login-user',
         type:'post',
         data:data,
         success:function(res){
-          console.log(res)
-            // if(res.data.status == 1){
-            //   window.location.href = '/activity/index'
-            // }
+            layer.msg('登录成功，正在跳转，请稍后');
+            if(res.data.status == 1){
+              location.reload()
+            }
         },
         error:function(){
             layer.msg('网络错误，请稍后再试');

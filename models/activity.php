@@ -161,6 +161,7 @@ class Activity extends \yii\db\ActiveRecord
         if(parent::beforeSave($insert)){
             if($insert){
                 $this->created_at  = time();
+                $this->push_check_time  = time();
             }
         }
          return true;

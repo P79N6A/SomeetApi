@@ -35,33 +35,14 @@ $query = Yii::$app->request->getQueryParam('status')?Yii::$app->request->getQuer
             </a>
             <div class="layui-form component" lay-filter="LAY-site-header-component"></div>
             <ul class="layui-nav">
-                <li class="layui-nav-item">
-                    <a href="javascript:;">活动分类</a> 
-                    <dl class="layui-nav-child">
-                      <dd><a href="/classify/index">一级分类</a></dd>
-                      <dd><a href="/classify/sub-list">二级分类</a></dd>
-                    </dl>
-                </li>
                 <li class="layui-nav-item <?php echo $controller == 'activity' && $query == 1?'layui-this':'';?>">
-                    <a href="/activity/index?status=1">活动</a>
-                </li>
-                <li class="layui-nav-item layui-hide-xs <?php echo $controller == 'activity' && $query == 8?'layui-this':'';?>">
-                    <a href="/activity/check?status=8">活动审核</a>
-                </li>
-                <li class="layui-nav-item <?php echo $controller == 'member'?'layui-this':'';?>">
-                    <a href="/member/index?status=1">用户</a>
+                    <a href="/founder/index">活动</a>
                 </li>
                 <li class="layui-nav-item layui-hide-xs <?php echo $controller == 'space'?'layui-this':'';?>" lay-unselect>
-                    <a href="/space/index">场地<span class="layui-badge-dot" style="margin-top: -5px;"></span></a>
+                    <a href="/founder/space">场地<span class="layui-badge-dot" style="margin-top: -5px;"></span></a>
                 </li>
-                <li class="layui-nav-item <?php echo $controller == 'dts'?'layui-this':'';?>">
-                    <a href="/dts/index">DTS</a> 
-                </li>
-                <li class="layui-nav-item <?php echo $controller == 'feedback'?'layui-this':'';?>">
-                    <a href="/feedback/index">举报</a> 
-                </li>
-                <li class="layui-nav-item <?php echo $controller == 'chat'?'layui-this':'';?>">
-                    <a href="/activity/msg" target="_blank">人工客服</a>
+               <li class="layui-nav-item layui-hide-xs <?php echo $controller == 'space'?'layui-this':'';?>" lay-unselect>
+                    <a href="/founder/member">个人信息<span class="layui-badge-dot" style="margin-top: -5px;"></span></a>
                 </li>
             </ul>
         </div>
@@ -86,10 +67,6 @@ $query = Yii::$app->request->getQueryParam('status')?Yii::$app->request->getQuer
     </div>
 </div>
 </body>
-<script type="text/javascript">
-    var element = layui.element
-    element.render();
-</script>
 <?php $this->beginBody() ?>
 <div class="container">
         <?= $content ?>

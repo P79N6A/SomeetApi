@@ -56,6 +56,10 @@
 <script type="text/javascript" src="http://webapi.amap.com/maps?v=1.3&key=00033c85024ea0a8caf745e5d01915f8&plugin=AMap.Autocomplete,AMap.Geocoder"></script>
 <script type="text/javascript">
 	var $ = layui.jquery
+	var token = $('#access_token').val();
+	$.ajaxSettings.beforeSend = function(xhr,request){
+	    xhr.setRequestHeader('Authorization','Bearer '+token);
+	}
 	var id = "<?php echo $id;?>";
 	console.log(id)
 	var user_id = $('#user_id').val();

@@ -17,6 +17,7 @@ use app\models\CollectAct;
 use app\models\ActivityType;
 use app\common\service\MemberService;
 use app\models\UserSelectTags;
+use app\models\UserIdcardCheck;
 use Yii;
 use yii\filters\VerbFilter;
 use yii\data\Pagination;
@@ -34,14 +35,15 @@ class MemberController extends BaseController
 				HttpBearerAuth::className(),
 				QueryParamAuth::className(),
 			],
-			//暂时解除限制或者未登录就可以访问的方法
+			//暂时解除限制不需要token就可以访问的方法
 			'optional' => [
 				'login',
-				'get-list',
-				'update-status',
-				'get-info',
-				'role-update',
-				'get-user-search'
+				// 'get-list',
+				// 'update-status',
+				// 'get-info',
+				// 'role-update',
+				// 'get-user-search',
+				// 'founder-check'
 			]
 		];
 		$behaviors['access'] = [
@@ -52,7 +54,8 @@ class MemberController extends BaseController
                     'update-status',
                     'get-info',
                     'role-update',
-                    'get-user-search'
+                    'get-user-search',
+                    'founder-check'
                 ],
             ];
 		return $behaviors;
@@ -140,6 +143,37 @@ class MemberController extends BaseController
 		return MemberService::getUserBySearch($data);
 	}
 
+	/**
+	 * 发起人审核身份证
+	 */
+	public function actionFounderCheck(){
+		$request = Yii::$app->request;
+		$data = $request->post();
+		$user_id = Yii::$app->user->id;
+		//查询是否存在该发起人的身份审核信息
+		$idcheck = UserIdcardCheck::find()->where(['user_id'=>$user_id])->one();
+		if(!$idcheck){
+				$idcheck = new UserIdcardCheck();
+			}
+		$transaction = $idcheck->getDb()->beginTransaction();
+		try{
+			$idcheck->realname = $data['real_name'];
+			$idcheck->idcard = $data['idcard'];
+			$idcheck->idcards_A = $data['idcard_A'];
+			$idcheck->idcards_B = $data['idcard_B'];
+			$idcheck->user_id = $user_id;
+			$idcheck->created_at = time();
+			$idcheck->status = 0;
+			if($idcheck->save()){
+				return ['status'=>1,'data'=>'更新成功'];
+			}
+		}catch (\Exception $e){
+			$transaction->rollBack();
+		    return ['status'=>0,'msg'=>$idcheck->getErrors()];
+		}
+
+		return ['status'=>1,'data'=>'更新失败'];
+	}
 	
 
 

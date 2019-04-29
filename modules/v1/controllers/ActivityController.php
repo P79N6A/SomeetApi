@@ -100,6 +100,7 @@ class ActivityController extends BaseController
 	 * 获取单个活动的详细内容
 	 */
 	public function actionView($id=0){
+		$user_id = 2961;
 		if(intval($id) == 0) return false;
 		$model = Activity::find()->where(['id'=>$id])->asArray()->one();
 		//获取该活动的类型详情
@@ -110,7 +111,7 @@ class ActivityController extends BaseController
 		$model['is_collect'] = $is_collect?1:0;
 		//判断是否拉黑此活动
 		$is_black = ActivityBlack::find()->where(['sequence_id'=>$model['sequence_id']])->orWhere(['id'=>$id])->exists();
-		$model['is_black'] = $is_balck;
+		$model['is_black'] = $is_black;
 		//获取该活动发起人的详细信息,标签,头像,昵称,简介
 		$profile = Profile::find()->select(['headimgurl'])->where(['user_id'=>$model['created_by']])->asArray()->one();
 		$user = User::find()->select(['username','founder_desc'])->where(['id'=>$model['created_by']])->asArray()->one();

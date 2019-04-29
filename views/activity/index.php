@@ -5,8 +5,8 @@
 		<div class="layui-col-md10 active-index-menu-button">
 			<button class="layui-btn" id="addNew">新建活动</button>
 			<button id='week-act-button' class="layui-btn layui-btn-normal activity-index-button-active">本周活动</button>
-			<button id='history-act-button' class="layui-btn layui-btn-normal">历史活动</button>
-			<button id='release-act-button' class="layui-btn layui-btn-normal">预发布活动</button>
+			<button id='history-act-button' class="layui-btn layui-btn-primary">历史活动</button>
+			<button id='release-act-button' class="layui-btn layui-btn-warm">预发布活动</button>
 			<button style='display:none;' id='uploadImage'>上传</button>
 		</div>
     </div>
@@ -22,9 +22,6 @@
 		<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event='release'>
 			发布
 		</a>
-		<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event='group_code'>
-			群二维码
-		</a>
 	</script>
 	
 </div>
@@ -32,6 +29,10 @@
 <script type="text/javascript" src='/layui/js/modules/cropper.js'></script>
 <script>
 var $ = layui.jquery
+var token = $('#access_token').val();
+$.ajaxSettings.beforeSend = function(xhr,request){
+    xhr.setRequestHeader('Authorization','Bearer '+token);
+}
 // //注意：导航 依赖 element 模块，否则无法进行功能性操作
 var element = layui.element;
 var cropper = layui.croppers;
@@ -96,33 +97,12 @@ table.on('tool(actList)', function(obj){
 		});
 		break;
 		case 'edit':
-			layer.prompt({
-				formType: 2
-				,value: data.email
-			}, function(value, index){
-					obj.update({
-					email: value
-				});
-				layer.close(index);
-			});
+			window.open('/activity/add?id='+data.id);
 		break;
 		case 'release':
 		layer.confirm('大兄弟你可想好了', {icon: 6, title:'提示'}, function(index){
 			layer.close(index);
 		});
-		break;
-		case 'group_code':
-			$('#groupCodeId').val(obj.data.id);
-			if(!$('#groupCodeId').val()){
-				layer.msg('抱歉我反应慢了,没设置上数据', {icon: 6}); 
-				return false;
-			}else{
-				var code = $('#groupCodeId').val();
-				layer.msg(code, {icon: 6}); 
-				if($('#groupCodeId').val()){
-					$('#uploadImage').click()
-				}
-			}
 		break;
 	}
 });

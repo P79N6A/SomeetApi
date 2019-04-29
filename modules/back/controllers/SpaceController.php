@@ -41,10 +41,11 @@ class SpaceController extends BaseController
 			],
 			//暂时解除限制或者未登录就可以访问的方法
 			'optional' => [
-				'get-space-list',
-				'get-list',
-				'get-info',
-				'add'
+				// 'get-space-list',
+				// 'get-list',
+				// 'get-info',
+				// 'add',
+				// 'get-list-by-founder'
 			]
 		];
 		$behaviors['access'] = [
@@ -63,11 +64,11 @@ class SpaceController extends BaseController
 	 * 获取发起人场地信息
 	 */
 	public function actionGetSpaceList($user_id,$type='founder'){
+		$user_id = Yii::$app->user->id;
 		if($user_id == 1) $type = 'admin';
 		$list = SpaceService::getList($user_id,$type);
 		return $list;
 	}
-
 	/**
 	 * 分页获取场地列表
 	 */
@@ -75,6 +76,7 @@ class SpaceController extends BaseController
 		$data['page'] = $page;
 		$data['type'] = $type;
 		$data['limit'] = $limit;
+		$data['user_id'] = Yii::$app->user->id;
 		$list = SpaceService::getListByPage($data);
 		return $list;
 	}

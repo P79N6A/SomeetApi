@@ -1,7 +1,4 @@
 <div class="view-detail">
-	<div class="view-detail-button">
-		<button class="layui-btn">保存修改</button>
-	</div>
 	<div class="view-detail-info-box">
 		<ul class="layui-timeline">
 			<li class="layui-timeline-item">
@@ -121,23 +118,6 @@
 			<li class="layui-timeline-item">
 				<i class="layui-icon layui-timeline-axis">&#xe63f;</i>
 				<div class="layui-timeline-content layui-text">
-					<h3 class="layui-timeline-title">设置用户身份</h3>
-					<div class="layui-form">
-						<input type="hidden" value="297962" id='user_id'  name="id">
-						<div class="layui-form-item">
-						    <label class="layui-form-label">用户身份</label>
-						    <input value="founder" <?php echo $data['is_founder']?'checked':'';?> lay-filter='founder' type="checkbox" name="" title="发起人">
-						    <input value="admin" <?php echo $data['is_admin']?'checked':'';?> lay-filter='founder' type="checkbox" name="" title="管理员"> 
-						</div>
-					</div>
-					<div class="view-detail-left">
-						发起人简介：<?php echo $data['founder_desc'];?>
-					</div>
-				</div>
-			</li>
-			<li class="layui-timeline-item">
-				<i class="layui-icon layui-timeline-axis">&#xe63f;</i>
-				<div class="layui-timeline-content layui-text">
 					<h3 class="layui-timeline-title">发起人备注</h3>
 					<p>
 						1、职人/达人：</p><p>
@@ -148,7 +128,7 @@
 						6、需要特别注意的（如：控制活动的价格/活动数/理想人数/发起人是否被用户投诉过）</p><p>
 					</p>
 					<div>
-						<textarea name="" required lay-verify="required" placeholder="请输入" class="layui-textarea"></textarea>
+						<textarea name="" required lay-verify="required" readonly="readonly" class="layui-textarea"></textarea>
 					</div>
 				</div>
 			</li>
@@ -214,46 +194,4 @@ $.ajaxSettings.beforeSend = function(xhr,request){
 var _csrf = $('#_csrf').val()
 var user_id = $('#user_id').val();
 form.render();
-//监听用户身份按钮操作
-form.on('checkbox(founder)', function(data){
-  var obj = {
-  	_csrf:_csrf,
-  	user_id:user_id
-  }
-  obj.type= data.value
-  if(data.elem.checked){
-  		obj.status = 'auth'
-  	}else{
-  		obj.status = 'cancel'
-  	}
-  	$.ajax({
-  		url:'/back/member/role-update',
-  		type:'post',
-  		data:obj,
-  		success:function(res){
-  			console.log(res)
-  		},
-  		error:function(){
-  			console.log('error')
-  		}
-  	})
-});
-//向服务器请求数据
-$(function(){
-	var data = {
-		_csrf:_csrf,
-		user_id:user_id
-	}
-	// $.ajax({
-	// 	url:'/back/member/get-info',
-	// 	type:'post',
-	// 	data:data,
-	// 	success:function(res){
-	// 		console.log(res)
-	// 	},
-	// 	error:function(){
-	// 		layui.msg('出错了')
-	// 	}
-	// })
-})
 </script>

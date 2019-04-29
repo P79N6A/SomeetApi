@@ -3,19 +3,10 @@
 		<div>
 			<!-- dts开始 -->
 			<div class="layui-form-item">
+			   	<!-- //获取上一场活动的dts -->
+			   	<input type="hidden" name='updated_by' value="2961">
 			    <div class="layui-inline">
-			      <label class="layui-form-label">DTS:</label>
-			      <div class="layui-input-inline">
-			        <select name="updated_by" lay-verify="required" lay-search="">
-			          <option value="">选择DTS</option>
-			          <?php if($data['xhb']){foreach($data['xhb'] as $row){?>
-				          <option value="<?php echo $row['id'];?>"><?php echo $row['username'];?></option>
-				      <?php }}?>
-			        </select>
-			      </div>
-			    </div>
-			    <div class="layui-inline">
-			      <label class="layui-form-label">PMA类型:</label>
+			      <label class="layui-form-label">活动类型:</label>
 			      <div class="layui-input-inline">
 			        <select name="pma_type" lay-verify="required" lay-search="">
 			          <option value="1">线上</option>
@@ -28,25 +19,7 @@
 		</div>
 		<!-- 发起人开始 -->
 		<div>
-			<div class="layui-form-item">
-			    <div class="layui-inline">
-			      <label class="layui-form-label">发起人:</label>
-			      <div class="layui-input-inline">
-			        <select name="created_by" lay-verify="required" lay-filter='founder' id="founder" lay-search="">
-			          <option value="">选择发起人</option>
-			        </select>
-			      </div>
-			    </div>
-			    <div class="layui-inline">
-			      <label class="layui-form-label">搜索发起人:</label>
-			      <div class="layui-input-block">
-				      <input type="text" id='searchFounderInput' autocomplete="off" placeholder="昵称,ID,手机号,微信ID" class="layui-input" style='max-width: 10rem;'>
-				  </div>
-			    </div>
-			    <div class="layui-inline">
-			    	<div class="layui-btn" id='searchFounder'>搜索</div>
-			    </div>
-			</div>
+			<input type="hidden" name="created_by" id='founder_id' value="<?php echo $data['user_id'];?>">
 		</div>
 		<!-- 发起人结束 -->
 		<!-- 联合发起人开始 -->
@@ -131,10 +104,11 @@
 		<!-- 开始上传活动图片 -->
 		<div>
 			<label class="layui-form-label"></label>
-			<div class="layui-btn demoMore uploadButton" data-type='poster' id='posterUpload'>上传活动海报</div>
+			<div class="layui-upload-list" style="margin:0">
+                <img src="" id="posterBox" class="layui-upload-img">
+                <div class="layui-btn demoMore uploadButton" data-type='poster' id='posterUpload'>上传活动海报</div>
+            </div>
 			<input type="hidden" name="poster" id='poster' value="">
-			<!-- <div class="layui-btn demoMore uploadButton" data-type='group_code'  id='groupCodeUpload'>上传群二维码</div>
-			<input type="hidden" name="group_code" id='group_code' value=""> -->
 		</div>
 		<br>
 		<!-- 开始上传活动图片结束 -->
@@ -429,7 +403,6 @@ var uploadInst = upload.render({
 				return false;
 			}else{
 				$('.actImgBox img')[imgIndex].src=result
-				
 			}
 		});
 	}
@@ -469,6 +442,7 @@ layui.config({
             	$("#headimgurl").attr('src',url);
         	}else if(type == 'poster'){
         		$("#poster").val(url);
+        		$('#posterBox').attr('src',url);
         	}else if(type == 'group_code'){
         		$('#group_code').val(url);
         	}
@@ -517,28 +491,18 @@ form.on('select(founder)', function(data){
 	}
 	httpRequest(data);  
 });
-//监听搜索发起人信息
-$('#searchFounder').click(function(){
-	var val = $('#searchFounderInput').val();
-	var data ={
-		  	data:{
-		  		type:'founder',
-				val:val
-		  	},
-		  	obj:'#founder',
-		  	type:'get',
-		  	url:'/back/member/get-user-search',
-		  	act:'founder'
-		  }
-	httpRequest(data);  
-})
 //监听提交
 form.on('submit(activityForm)', function(data){
 	data.field.actImg = actImg;
 	data.field._csrf = _csrf;
+	if(!data.field.poster){
+		layer.msg('请上传活动头图')
+		return false;
+	}
+	console.log($('#haveGuestCheck').val())
 	if(isSub == 0){
 		isSub == 1;
-		if($('#haveGuestCheck').val()){
+		if($('#haveGuestCheck').val() == '1'){
 			var jname = $('#jname').val()
 			var jheadimgurl = $('#jheadimgurl').val();
 			var jdesc = $('#jdesc').val()
@@ -553,7 +517,7 @@ form.on('submit(activityForm)', function(data){
 			data:data.field,
 			success:function(res){
 				console.log(res)
-				window.lcoation.href = '/activity/index'
+				window.location.href = '/activity/index'
 			},
 			error:function(){
 				isSub == 0;
@@ -572,17 +536,37 @@ $('.addInput').click(function(){
 	var str = '<input type="text" name="'+ele+'['+index+']" autocomplete="off" class="layui-input" placeholder="请输入文本内容">';
 	$('#'+ele).append(str)
 })
+//获取发起人系列和场地
+var founder_id = $('#founder_id').val();
+var dataForXl ={
+		data:{
+			user_id:founder_id
+	  	},
+	  	obj:'#sequence',
+	  	type:'get',
+	  	url:'/back/activity/get-sequence',
+		act:'sequence'
+}
+var dataForSpace ={
+		data:{
+			user_id:founder_id,
+			type:'founder'
+	  	},
+	  	obj:'#space_spot_id',
+	  	type:'get',
+	  	url:'/back/space/get-space-list',
+		act:'space'
+}
+//获取该发起人的系列名称
+httpRequest(dataForXl);
+//获取发起人的场地名称
+httpRequest(dataForSpace);
 function httpRequest(data){
 	$.ajax({
 		url:data.url,
 		type:data.type,
 		data:data.data,
 		success:function(res){
-			// if(data.act == 'sequence'){
-			// 	var str ='<option value="0">未找到系列</option>';
-			// }else{
-			// 	var str ='<option value="0">选择确认的选项</option>';
-			// }
 			var str = '';
 			$(data.obj).html(str)
 			str = '';
@@ -595,29 +579,7 @@ function httpRequest(data){
 
 					if(index == 0){
 						str+='<option selected="selected" value="'+val.id+'">'+val.username+'</option>'
-						var dataForXl ={
-								data:{
-									user_id:val.id
-							  	},
-							  	obj:'#sequence',
-							  	type:'get',
-							  	url:'/back/activity/get-sequence',
-								act:'sequence'
-						}
-						var dataForSpace ={
-								data:{
-									user_id:val.id,
-									type:'founder'
-							  	},
-							  	obj:'#space_spot_id',
-							  	type:'get',
-							  	url:'/back/space/get-space-list',
-								act:'space'
-						}
-						//获取该发起人的系列名称
-						httpRequest(dataForXl);
-						//获取发起人的场地名称
-						httpRequest(dataForSpace);
+						
 					}else{
 						str+='<option value="'+val.id+'">'+val.username+'</option>'
 					}

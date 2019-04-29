@@ -12,7 +12,7 @@ class CommonFunction extends Component
 	public static function getUserTags(array $search =[],array $select =[],$limit = 0){
 		$model = UserSelectTags::find();
 		if(is_array($search) && !empty($search)){
-			$model->where($where)->asArray();
+			$model->where($search)->asArray();
 			
 		}
 		if(is_array($select) && !empty($select)){

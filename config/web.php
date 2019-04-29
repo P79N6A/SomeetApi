@@ -84,6 +84,9 @@ $config = [
             'password' => 'Someet',
             'database' => 0,
         ],
+        'session' => [
+            'class' => 'yii\redis\Session',
+        ],
         'user' => [
             'identityClass' => 'app\models\User',
             'enableAutoLogin' => true,

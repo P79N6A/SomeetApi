@@ -25,7 +25,7 @@ class SpaceService extends BaseService{
 	 */
 	public static function getListByPage($data){
 		if($data['type']=='founder'){
-			$query = FounderSpaceSpot::find()->select(['id','name','area','address','detail','longitude','latitude','user_id'])->orderBy('id desc');
+			$query = FounderSpaceSpot::find()->select(['id','name','area','address','detail','longitude','latitude','user_id'])->where(['user_id'=>$data['user_id']])->orderBy('id desc');
 		}else{
 			$query = SpaceSpot::find()->select(['id','name','area','address','detail','longitude','latitude','user_id'])->limit(30)->orderBy('id desc');
 		}

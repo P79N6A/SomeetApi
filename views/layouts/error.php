@@ -19,14 +19,10 @@ $query = Yii::$app->request->getQueryParam('status')?Yii::$app->request->getQuer
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <title>Someet</title>
-  <link rel="stylesheet" href="/layui/css/layui.css">
-  <link rel="stylesheet" type="text/css" href="/css/site.css">
-  <link rel="stylesheet" type="text/css" href="/layui/css/cropper.css">
-  <script src="/layui/layui.all.js"></script>
+  <link rel="stylesheet" href="/css/error.css">
 </head>
 <body>
-    <input type="hidden" id='_csrf' value="<?= Yii::$app->request->csrfToken ?>" name="">
-    <input type="hidden" id='access_token' value="<?php echo Yii::$app->session->get('access_token');?>">
+  
 </body>
 <?php $this->beginBody() ?>
 

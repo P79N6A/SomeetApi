@@ -41,7 +41,8 @@ class ActivityController extends BaseController
 				'view',
 				'get-tag',
 				'get-sequence',
-				'create-act'
+				'create-act',
+				// 'index-by-founder'
 			]
 		];
 		$behaviors['access'] = [
@@ -51,7 +52,8 @@ class ActivityController extends BaseController
 					'view',
 					'get-tag',
 					'get-sequence',
-					'create-act'
+					'create-act',
+					'index-by-founder'
                 ],
             ];
 		return $behaviors;
@@ -63,9 +65,28 @@ class ActivityController extends BaseController
         $data['status'] = $status;
         $data['limit'] = $limit;
         $data['is_history'] = $is_history;
-        if($data['is_history'] == 0){
-            unset($data['status']);
+        $list = ActivityService::getActlist($data);
+        if(!empty($list)){
+            foreach ($list['data'] as $key=>$row) {
+                //获取活动的发起人姓名
+                $user = User::find()->select(['username','id'])->where(['id'=>$row['created_by']])->asArray()->one();
+                if($user && isset($user['username'])){
+                    $list['data'][$key]['username'] = $user['username'];
+                }
+            }
         }
+        return $list;
+	}
+	/**
+	 * 获取发起人的活动列表
+	 */
+	public function actionIndexByFounder($page=1,$status=20,$limit=10,$is_history=0){
+		Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+		$data['page'] = $page;
+        $data['status'] = $status;
+        $data['limit'] = $limit;
+        $data['is_history'] = $is_history;
+        $data['user_id'] = Yii::$app->user->id;
         $list = ActivityService::getActlist($data);
         if(!empty($list)){
             foreach ($list['data'] as $key=>$row) {
