@@ -3,6 +3,7 @@ namespace app\common\service;
 use app\common\service\BaseService;
 use app\models\Activity;
 use app\models\Question;
+use app\models\User;
 use app\models\QuestionItem;
 use app\models\ActivityAlbum;
 use yii\web\Response;
@@ -25,7 +26,8 @@ class ActivityService extends BaseService{
 				if($data['is_history'] == 0){
 					$query->where("status >8")->andWhere(['>=','start_time',getLastEndTime()]);
 				}else{
-					$query->where("status >8")->andFilterWhere(['between','start_time',getWeekBefore(),getLastEndTime()]);
+					// $query->where("status >8")->andFilterWhere(['between','start_time',getWeekBefore(),getLastEndTime()]);
+					$query->andWhere(['<','start_time',getLastEndTime()]);
 				}
 				break;
 			
@@ -101,7 +103,7 @@ class ActivityService extends BaseService{
 		if($data['haveGuest']) $data['is_rfounder'] = 1;
 		unset($data['haveGuest']);
 
-		$data['detail_header'] = json_encode([$data['header_title'],$data['header_people']]);
+		$data['detail_header'] = serialize([$data['header_title'],$data['header_people']]);
 
 		unset($data['header_title']);
 		unset($data['header_people']);
@@ -138,6 +140,8 @@ class ActivityService extends BaseService{
 					$q->created_at = time();
 					$q->status = 10;
 					if($q->save()){
+						$model->is_set_question = 1;
+						$model->save();
 						$qid = $q->id;
 						foreach ($question as $row) {
 							//创建活动问题
@@ -233,7 +237,29 @@ class ActivityService extends BaseService{
 		return ['status'=>0,'data'=>'error'];
 	}
 
-
+	/**
+	 * 获取活动的详情
+	 */
+	public static function getDetail($id){
+		if(!$id) return false;
+		//基本信息
+		$info = Activity::find()->asArray()->where(['id'=>$id])->one();
+		//查询活动发起人姓名
+		$user = User::find()->select(['username'])->where(['id'=>$info['created_by']])->asArray()->one();
+		$info['username'] = $user['username'];
+		//获取图片列表
+		$actImg = ActivityAlbum::find()->select(['img'])->where(['activity_id'=>$info['id']])->asArray()->all();
+		$info['actImg'] = $actImg;
+		//获取活动问题
+		$question = [];
+		$qid = Question::find()->select(['id'])->where(['activity_id'=>$info['id']])->one();
+		$qitem = QuestionItem::find()->select(['label','id'])->where(['question_id'=>$qid])->asArray()->all();
+		$info['question'] = $qitem;
+		$header = unserialize($info['detail_header']);
+		$info['header_title'] = $header[0];
+		$info['header_people'] = $header[1];
+		return $info;
+	}
 
 
 

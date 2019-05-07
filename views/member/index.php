@@ -58,35 +58,55 @@ element.on('tab(userType)', function(res){
 			var obj = {};
 				obj.title='管理员数据表'
 				obj.where = {
-					is_admin:1
+					is_admin:1,
+					is_founder:0,
+					is_black:0,
+					is_lock:0,
+					is_apply:0
 				}
 		break;
 		case 'founder':
 			var obj = {};
 			obj.title='发起人数据表'
 			obj.where = {
-				is_founder:1
+				is_founder:1,
+				is_admin:0,
+				is_lock:0,
+				is_black:0,
+				is_apply:0
 			}
 		break;
 		case 'black':
 			var obj = {};
 			obj.title='拉黑用户数据表'
 			obj.where = {
-				is_black:1
+				is_black:1,
+				is_admin:0,
+				is_founder:0,
+				is_lock:0,
+				is_apply:0
 			}
 		break;
 		case 'block':
 			var obj = {};
 			obj.title='封禁用户数据表'
 			obj.where = {
-				is_lock:1
+				is_lock:1,
+				is_admin:0,
+				is_founder:0,
+				is_black:0,
+				is_apply:0
 			}
 		break;
 		case 'apply':
 			var obj = {};
 			obj.title='申诉用户数据表'
 			obj.where = {
-				is_apply:1
+				is_apply:1,
+				is_admin:0,
+				is_founder:0,
+				is_black:0,
+				is_lock:0
 			}
 		break;
 	}
@@ -249,7 +269,7 @@ $('#addNew').click(function(){
 	window.open('/activity/add');
 })
 //点击单行数据
-table.on('row(all)', function(obj){
+table.on('rowDouble(all)', function(obj){
   console.log(obj.data) //得到当前行数据
   window.location.href='/member/'+obj.data.id
 });

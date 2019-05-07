@@ -6,7 +6,7 @@
 			    <div class="layui-inline">
 			      <label class="layui-form-label">DTS:</label>
 			      <div class="layui-input-inline">
-			        <select name="updated_by" lay-verify="required" lay-search="">
+			        <select name="updated_by" lay-filter='dtsSelect' lay-verify="required" lay-search="">
 			          <option value="">选择DTS</option>
 			          <?php if($data['xhb']){foreach($data['xhb'] as $row){?>
 				          <option value="<?php echo $row['id'];?>"><?php echo $row['username'];?></option>
@@ -537,7 +537,7 @@ form.on('submit(activityForm)', function(data){
 	data.field.actImg = actImg;
 	data.field._csrf = _csrf;
 	if(isSub == 0){
-		isSub == 1;
+		isSub = 1;
 		if($('#haveGuestCheck').val()){
 			var jname = $('#jname').val()
 			var jheadimgurl = $('#jheadimgurl').val();
@@ -556,7 +556,7 @@ form.on('submit(activityForm)', function(data){
 				window.lcoation.href = '/activity/index'
 			},
 			error:function(){
-				isSub == 0;
+				isSub = 0;
 				console.log('error')
 			}
 		})

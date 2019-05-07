@@ -15,36 +15,34 @@
 					      <input type="text" name="name" lay-verify="required" id='name' autocomplete="off" value="<?php echo isset($c->name)?$c->name:'';?>" placeholder="请输入名称" class="layui-input">
 					    </div>
 					</div>
+					<div class="layui-form-item">
+					    <label class="layui-form-label">选择父类</label>
+					    <div class="layui-input-block">
+					      <select name="pid" id='parentTop' lay-verify="required">
+					        <option value="<?php echo $p->id;?>"><?php echo $p->name;?></option>
+					      </select>
+					    </div>
+				  	</div>
 				  	<div class="layui-form-item">
 				  		<label class="layui-form-label">分类图片</label>
 					  	<div class="layui-input-inline layui-btn-container" style="display: flex;">
 			                <div>
-			                	<img src="<?php echo isset($c->share_img)?$c->share_img:'http://backend.someet.cc/static/image/wechat.jpg';?>" id='share_img' class="classify-img">
-			                	<div style="" class="uploadButton layui-btn classify-btn"  data-type='share_img'>上传分享图片</div>
-			                	<input type="hidden" name='share_img' id='share_img_input' value="<?php echo isset($c->share_img)?$c->share_img:'';?>">
-			                </div>
-			                <div>
-			                	<img src="<?php echo isset($c->type_img)?$c->type_img:'http://backend.someet.cc/static/image/wechat.jpg';?>" id='type_img' class="classify-img">
-			                	<div style="" class="uploadButton layui-btn classify-btn" data-type='type_img'>上传专题图片</div>
-			                	<input type="hidden" name='type_img' id='type_img_input' value="<?php echo isset($c->type_img)?$c->type_img:'';?>">
-			                </div>
-			                <div>
-			                	<img src="<?php echo isset($c->icon_img)?$c->icon_img:'http://backend.someet.cc/static/image/wechat.jpg';?>" id='icon_img' class="classify-img">
-			                	<div style="" class="uploadButton layui-btn classify-btn" data-type='icon_img'>上传icon图片</div>
-			                	<input type="hidden" name='icon_img' id='icon_img_input' value="<?php echo isset($c->icon_img)?$c->icon_img:'';?>">
+			                	<img src="<?php echo isset($c->image)?$c->image:'http://backend.someet.cc/static/image/wechat.jpg';?>" id='image' class="classify-img">
+			                	<div style="" class="uploadButton layui-btn classify-btn"  data-type='image'>上传分享图片</div>
+			                	<input type="hidden" name='image' id='image_input' value="<?php echo isset($c->image)?$c->image:'';?>">
 			                </div>
 			            </div>
 			        </div>
 			        <div class="layui-form-item">
-					    <label class="layui-form-label">分享标题</label>
+					    <label class="layui-form-label">标题</label>
 					    <div class="layui-input-block">
-					      <input type="text" id='address' name="share_title" autocomplete="off" placeholder="请输入分享标题" value="<?php echo isset($c->share_title)?$c->share_title:'';?>" class="layui-input">
+					      <input type="text" id='address' name="name" autocomplete="off" placeholder="请输入分享标题" value="<?php echo isset($c->name)?$c->name:'';?>" class="layui-input">
 					    </div>
 					</div>
 					<div class="layui-form-item">
-					    <label class="layui-form-label">分享文案</label>
+					    <label class="layui-form-label">英文标题</label>
 					    <div class="layui-input-block">
-					      <input type="text" id='address' value="<?php echo isset($c->share_desc)?$c->share_desc:'';?>" name="share_desc" autocomplete="off" placeholder="请输入信息" class="layui-input">
+					      <input type="text" id='english_name' value="<?php echo isset($c->english_name)?$c->english_name:'';?>" name="english_name" autocomplete="off" placeholder="请输入信息" class="layui-input">
 					    </div>
 					</div>
 					<input type="hidden" id='classify_id' value="<?php echo $id;?>" name="id">
@@ -66,6 +64,7 @@
 <script type="text/javascript">
 	var $ = layui.$
 	var form = layui.form; 
+	var id = $('#id').val();
 	form.render();
 	//上传活动图片
 	var upload = layui.upload;
@@ -103,15 +102,35 @@
 	$.ajaxSettings.beforeSend = function(xhr,request){
 	    xhr.setRequestHeader('Authorization','Bearer '+token);
 	}
+	if(id == 0){
+		//获取父类id
+		$.ajax({
+			url:'/back/classify/get-top',
+			type:'get',
+			success:function(res){
+				var str ='';
+				if(res.data == 'error') return false;
+				$.each(res.data,function(index,val){
+					str+='<option value="'+val.id+'">'+val.name+'</option>'
+				})
+				$('#parentTop').append(str)
+				form.render('select');
+			},
+			error:function(){
+				console.log('error')
+			}
+		})
+	}
 	form.on('submit(classifyForm)', function(data){
 		console.log(data.field)
 		if(isSub == 0){
 			isSub = 1;
 			$.ajax({
-				url:'/back/classify/create-top',
+				url:'/back/classify/create-sub',
 				type:'post',
 				data:data.field,
 				success:function(res){
+					console.log(res)
 					window.location.href = '/classify/index'
 				},
 				error:function(){

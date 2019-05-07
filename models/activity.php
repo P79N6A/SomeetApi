@@ -89,6 +89,10 @@ class Activity extends \yii\db\ActiveRecord
 	public $is_collect;
 	public $is_black;
     public $username;
+    public $actImg;
+    public $question;
+    public $header_title;
+    public $header_people;
     /* 删除 */
     const STATUS_DELETE   = 0;
     /* 不通过的发起人创建的活动 */

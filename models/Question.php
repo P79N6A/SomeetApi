@@ -58,17 +58,6 @@ class Question extends \yii\db\ActiveRecord
         ];
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        return [
-            'timestamp' => [
-                'class' => behaviors\TimestampBehavior::className(),
-            ],
-        ];
-    }
 
     /**
      * 可以通过 expand 获取的数据

@@ -41,5 +41,14 @@ $query = Yii::$app->request->getQueryParam('status')?Yii::$app->request->getQuer
 </div>
 <?php $this->endBody() ?>
 </body>
+<script type="text/javascript">
+  var $ = layui.jquery
+  var token = $('#access_token').val();
+  if(!token){
+      layer.alert('登录失效');
+      window.location.href = '/site/login';  
+      return false;
+  }
+</script>
 </html>
 <?php $this->endPage() ?>

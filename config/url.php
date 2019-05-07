@@ -80,6 +80,19 @@ return [
 	[
 		'class' => 'yii\rest\UrlRule',
 		'controller' => [
+			'back/classify'
+		],
+		'extraPatterns' => [
+			'POST create-top' => 'create-top',
+			'POST create-sub' => 'create-sub',
+			'GET get-top' => 'get-top',
+			'POST update-status' => 'update-status',
+			'POST update-sub-status' => 'update-sub-status',
+		]
+	],
+	[
+		'class' => 'yii\rest\UrlRule',
+		'controller' => [
 			'back/upload'
 		],
 		'extraPatterns' => [

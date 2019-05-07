@@ -27,7 +27,7 @@ class SpaceService extends BaseService{
 		if($data['type']=='founder'){
 			$query = FounderSpaceSpot::find()->select(['id','name','area','address','detail','longitude','latitude','user_id'])->where(['user_id'=>$data['user_id']])->orderBy('id desc');
 		}else{
-			$query = SpaceSpot::find()->select(['id','name','area','address','detail','longitude','latitude','user_id'])->limit(30)->orderBy('id desc');
+			$query = SpaceSpot::find()->select(['id','name','area','address','detail','longitude','latitude'])->limit(30)->orderBy('id desc');
 		}
 
 		$count = $query->count();
@@ -43,7 +43,7 @@ class SpaceService extends BaseService{
 		if($type=='founder'){
 			$list = FounderSpaceSpot::find()->select(['id','name','area','district','address','detail','longitude','latitude','user_id','detail'])->where(['id'=>$id])->asArray()->one();
 		}else{
-			$list = SpaceSpot::find()->select(['id','name','area','address','district','detail','longitude','latitude','user_id','detail'])->where(['id'=>$id])->asArray()->one();
+			$list = SpaceSpot::find()->select(['id','name','area','address','district','detail','longitude','latitude','detail'])->where(['id'=>$id])->asArray()->one();
 		}
 		return $list;
 	}

@@ -15,7 +15,7 @@ layui.config({
         "            </label>\n" +
         "            <input class=\"layui-upload-file\" id=\"cropper_avatarImgUpload\" type=\"file\" value=\"选择图片\" name=\"file\">\n" +
         "        </div>\n" +
-        "        <div class=\"layui-form-mid layui-word-aux\">图片的尺寸限定150x150px,大小在100kb以内</div>\n" +
+        "        <div class=\"layui-form-mid layui-word-aux\">图片的大小在100kb以内</div>\n" +
         "    </div>\n" +
         "    <div class=\"layui-row layui-col-space15\">\n" +
         "        <div class=\"layui-col-xs9\">\n" +

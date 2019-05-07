@@ -39,7 +39,7 @@ $query = Yii::$app->request->getQueryParam('status')?Yii::$app->request->getQuer
                     <a href="javascript:;">活动分类</a> 
                     <dl class="layui-nav-child">
                       <dd><a href="/classify/index">一级分类</a></dd>
-                      <dd><a href="/classify/sub-list">二级分类</a></dd>
+                      <dd><a href="/classify/sub-index">二级分类</a></dd>
                     </dl>
                 </li>
                 <li class="layui-nav-item <?php echo $controller == 'activity' && $query == 1?'layui-this':'';?>">
@@ -89,6 +89,13 @@ $query = Yii::$app->request->getQueryParam('status')?Yii::$app->request->getQuer
 <script type="text/javascript">
     var element = layui.element
     element.render();
+    var $ = layui.jquery
+    var token = $('#access_token').val();
+    if(!token){
+        layer.alert('登录失效');
+        window.location.href = '/site/login';  
+        return false;
+    }
 </script>
 <?php $this->beginBody() ?>
 <div class="container">

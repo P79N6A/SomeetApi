@@ -1,5 +1,8 @@
 <div class="layui-tab layui-tab-brief" lay-filter="demoTitle">
     <div class="site-demo-title">
+      <div class="layui-col-md10 active-index-menu-button">
+        <button class="layui-btn" id="addNew">新建场地</button>
+      </div>
     <hr>
     <table class="layui-hide" id="test" lay-filter="test"></table>
 	<script type="text/html" id="barDemo">
@@ -26,7 +29,7 @@ elem: '#test'
 ,url:'/back/space/get-list'
 ,title: '发起人场地数据表'
 ,where:{
-	type:'founder'
+	type:'admin'
 }
 ,parseData: function(res){ //res 即为原始返回的数据
     return {
@@ -55,6 +58,6 @@ table.on('tool(test)', function(obj){
 });
 //新增活动按钮
 $('#addNew').click(function(){
-	window.open('/activity/add');
+  location.href='/space/add'
 })
 </script>

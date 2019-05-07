@@ -28,17 +28,6 @@ class TagAct extends \yii\db\ActiveRecord
         return 'tag_act';
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        return [
-            'timestamp' => [
-                'class' => behaviors\TimestampBehavior::className(),
-            ],
-        ];
-    }
     
     /**
      * @inheritdoc

@@ -33,6 +33,8 @@ var token = $('#access_token').val();
 $.ajaxSettings.beforeSend = function(xhr,request){
     xhr.setRequestHeader('Authorization','Bearer '+token);
 }
+//设置一个变量判断是否切换到历史活动
+var is_history = 0;
 // //注意：导航 依赖 element 模块，否则无法进行功能性操作
 var element = layui.element;
 var cropper = layui.croppers;
@@ -75,10 +77,10 @@ var options = {
 	,title: '用户数据表'
 	,cols: [[
 	  {field:'id', title:'ID编号', width:100,sort: true}
-	  ,{field:'username', title:'用户名',width:100 ,edit: 'text'}
-	  ,{field:'title', title:'标题', width:120 }
-	  ,{field:'desc', title:'描述', width:180,edit: 'text'}
-	  ,{fixed: 'right', title:'操作', toolbar: '#barDemo',width:400}
+	  ,{field:'username', title:'用户名',width:100}
+	  ,{field:'title', title:'标题', width:160 }
+	  ,{field:'desc', title:'描述', width:200}
+	  ,{fixed: 'right', title:'操作', toolbar: '#barDemo',width:300}
 	]]
 	,page: {'limit':20},
 	done:function(res, curr, count){
@@ -100,6 +102,10 @@ table.on('tool(actList)', function(obj){
 			window.open('/activity/add?id='+data.id);
 		break;
 		case 'release':
+		if(is_history == 1){
+			layer.msg('历史活动无法发布')
+			return false;
+		}
 		layer.confirm('大兄弟你可想好了', {icon: 6, title:'提示'}, function(index){
 			layer.close(index);
 		});
@@ -117,6 +123,7 @@ $('.active-index-menu-button button').click(function(){
 })
 //切换本周活动
 $('#week-act-button').click(function(){
+	is_history = 0;
 	var index4 = layer.load(4);
 	table.reload('actList',{
 		where:{
@@ -134,6 +141,7 @@ $('#week-act-button').click(function(){
 })
 //切换历史活动
 $('#history-act-button').click(function(){
+	is_history = 1;
 	var index4 = layer.load(4);
 	table.reload('actList',{
 		where:{
@@ -151,6 +159,7 @@ $('#history-act-button').click(function(){
 })
 //预发布活动
 $('#release-act-button').click(function(){
+	is_history = 0;
 	var index4 = layer.load(4);
 	table.reload('actList',{
 		where:{
