@@ -63,12 +63,16 @@ class AccessControl extends \yii\base\ActionFilter
 
     /**
      * @inheritdoc
-     */
+    */
     public function beforeAction($action)
     {
+        $session = Yii::$app->session;
         $prefix = '/' . Yii::$app->id . '/';
         $actionId = $action->getUniqueId();
         $user = $this->getUser();
+        if($user->id){
+            $session->set('access_token',$user->identity->access_token);
+        }
         if ($user->can($prefix . $actionId)) {
             return true;
         }

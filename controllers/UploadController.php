@@ -29,7 +29,7 @@ class UploadController extends BaseController{
     public function actionUploadImage(){
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         return [
-            'url'=>'http://img.someet.cc/FpyzpZ09e26yoFnwIy3LlYqwmVCk',
+            'url'=>'http://img.someet.cc/Fh8n2ij-_xq4D7HUPyHIFfy629F7',
             'status'=>200
         ];
         $request = Yii::$app->request;

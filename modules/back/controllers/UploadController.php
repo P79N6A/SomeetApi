@@ -39,13 +39,13 @@ class UploadController extends BaseController{
         // return $res;
         if(isset($res['hash'])){
             return [
-                'url'=>'http://img.someet.cc/FpyzpZ09e26yoFnwIy3LlYqwmVCk',
+                'url'=>'http://img.someet.cc/Fh8n2ij-_xq4D7HUPyHIFfy629F7',
                 'status'=>200,
                 'data'=>$res['hash']
             ];
         }
         return [
-            'url'=>'http://img.someet.cc/FpyzpZ09e26yoFnwIy3LlYqwmVCk',
+            'url'=>'http://img.someet.cc/Fh8n2ij-_xq4D7HUPyHIFfy629F7',
             'status'=>200,
             'data'=>'1234'
         ];
@@ -53,10 +53,10 @@ class UploadController extends BaseController{
     /**
      * 上传图片
      */
-    public function actionUploadImage(){
+    public function actionUploadImage($type='normal'){
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         return [
-            'url'=>'http://img.someet.cc/FpyzpZ09e26yoFnwIy3LlYqwmVCk',
+            'url'=>'http://img.someet.cc/Fh8n2ij-_xq4D7HUPyHIFfy629F7',
             'status'=>200,
         ];
         $request = Yii::$app->request;
@@ -66,6 +66,16 @@ class UploadController extends BaseController{
         //获取上传过来的图片数据
         $fetch =$request->post('imgData');
         if(!$fetch){
+            if($type=='text'){
+                return [
+                    'code'=>1,
+                    'msg'=>'error',
+                    'data'=>[
+                        'src'=>'',
+                        'title'=>''
+                    ]
+                ];
+            }
             return [
                 'url'=>'',
                 'status'=>0

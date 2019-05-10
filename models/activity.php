@@ -89,6 +89,7 @@ class Activity extends \yii\db\ActiveRecord
 	public $is_collect;
 	public $is_black;
     public $username;
+    public $co_username;
     public $actImg;
     public $question;
     public $header_title;

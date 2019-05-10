@@ -42,6 +42,7 @@ class ActivityController extends BaseController
 				'get-tag',
 				'get-sequence',
 				'create-act',
+				'update-status'
 				// 'index-by-founder'
 			]
 		];
@@ -53,7 +54,8 @@ class ActivityController extends BaseController
 					'get-tag',
 					'get-sequence',
 					'create-act',
-					'index-by-founder'
+					'index-by-founder',
+					'update-status'
                 ],
             ];
 		return $behaviors;
@@ -129,5 +131,51 @@ class ActivityController extends BaseController
     	$data = Yii::$app->request->post();
 		$res = ActivityService::createAct($data);
 		return $res;
+    }
+
+    /**
+     * 修改活动状态
+     */
+    public function actionUpdateStatus(){
+    	Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+    	$data = Yii::$app->request->post();
+    	$status = $data['status'];
+    	$id = $data['id'];
+    	$reject = $data['reject'];
+    	$statusArray = [
+            0 => '已删除的活动',
+            3 => '审核不通过活动',
+            5 => '发起人创建的草稿',
+            8 => '发起人待审核活动',
+            10 => '草稿',
+            12 => '发起人已通过审核活动',
+            15 => '预发布',
+            20 => '发布',
+            30 => '已关闭',
+            40 => '取消',
+        ];
+        
+        $activity = Activity::findOne($id);
+        $oldStatus = $activity->status;
+        $activity->status = $status;
+        if ($status == Activity::STATUS_PASS) {
+            $activity->updated_by = Yii::$app->user->id;
+        }
+        if ($status == Activity::STATUS_REFUSE) {
+            $activity->reject_reason = $reject;
+        }
+        if($status == Activity::STATUS_CHECK){
+            $activity->push_check_time = time();
+        }
+        if($status == Activity::STATUS_RELEASE){
+            //首次发布时间
+            if($activity->first_publish_date == 0){
+                $activity->first_publish_date = time();
+            }
+        }
+        if (!$activity->save()) {
+        	return ['status'=>0,'data'=>$activity->getErrors()];
+        }
+        return ['status'=>1,'data'=>'ok'];
     }
 }

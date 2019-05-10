@@ -66,7 +66,7 @@ $query = Yii::$app->request->getQueryParam('status')?Yii::$app->request->getQuer
             </ul>
         </div>
     </div>
-    <div class="layui-side layui-bg-black">
+    <div class="layui-side layui-bg-black" style="width: 120px;">
         <div class="layui-side-scroll">
             <ul class="layui-nav layui-nav-tree site-demo-nav">
                 <li class="layui-nav-item layui-nav-itemed">
@@ -92,9 +92,19 @@ $query = Yii::$app->request->getQueryParam('status')?Yii::$app->request->getQuer
     var $ = layui.jquery
     var token = $('#access_token').val();
     if(!token){
-        layer.alert('登录失效');
-        window.location.href = '/site/login';  
-        return false;
+        layer.open({
+          content: '登录失效',
+          yes: function(index, layero){
+            //do something
+            layer.close(index); //如果设定了yes回调，需进行手工关闭
+            window.location.href = '/site/login';
+          },
+          cancel: function(index, layero){ 
+              window.location.href = '/site/login';
+            } 
+        });        
+     
+        
     }
 </script>
 <?php $this->beginBody() ?>

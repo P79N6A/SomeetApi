@@ -1,6 +1,19 @@
 <div class="site-demo-title">
-	<form class="layui-form" action="/">
+	<form class="layui-form" lay-filter='activity' action="/">
+		<input type="hidden" value="<?php echo $data['id'];?>" id='aid' name="aid">
 		<div>
+			<!-- 开始上传活动图片 -->
+			<div>
+				<label class="layui-form-label"></label>
+				<div class="uploadButton" data-width='400' data-height='277' data-type='poster' id='posterUpload'>
+					<img src="<?php echo isset($data['detail']['poster']) && $data['detail']['poster']?$data['detail']['poster']:'http://img.someet.cc/Fh8n2ij-_xq4D7HUPyHIFfy629F7'; ?>" width="100%">
+				</div>
+				<input type="hidden" name="poster" id='poster' value="">
+				<!-- <div class="layui-btn demoMore uploadButton" data-type='group_code'  id='groupCodeUpload'>上传群二维码</div>
+				<input type="hidden" name="group_code" id='group_code' value=""> -->
+			</div>
+			<br>
+			<!-- 开始上传活动图片结束 -->
 			<!-- dts开始 -->
 			<div class="layui-form-item">
 			    <div class="layui-inline">
@@ -54,25 +67,49 @@
 			<div class="layui-form-item">
 			    <div class="layui-inline">
 			      <label class="layui-form-label">联合发起人:</label>
+			      <div class="layui-input-inline">
+			        <select name="co_founder1" lay-filter='co_founder' id="co_founder" lay-search="">
+			          <option value="">选择发起人</option>
+			        </select>
+			      </div>
+			    </div>
+			    <div class="layui-inline">
+			      <label class="layui-form-label">搜索联合发起人:</label>
 			      <div class="layui-input-block">
-				      <input type="text" name="co_founder1"  lay-verify="title" autocomplete="off" placeholder="请输入联合发起人" class="layui-input" style='max-width: 10rem;'>
+				      <input type="text" id='searchCoFounderInput' autocomplete="off" placeholder="昵称,ID,手机号,微信ID" class="layui-input" style='max-width: 10rem;'>
 				  </div>
+			    </div>
+			    <div class="layui-inline">
+			    	<div class="layui-btn" id='searchFounderForCo'>搜索</div>
 			    </div>
 			</div>
 		</div>
+		<!-- 发起人主动填写 -->
+		<!-- <div>
+			<div class="layui-form-item">
+			    <div class="layui-inline">
+			      <label class="layui-form-label">联合发起人:</label>
+			      <div class="layui-input-block">
+				      <input type="text" name="field8"  lay-verify="title" autocomplete="off" placeholder="请输入联合发起人" class="layui-input" style='max-width: 10rem;'>
+				  </div>
+			    </div>
+			</div>
+		</div> -->
+		<!-- 发起人主动填写 -->
 		<!-- 联合发起人结束 -->
 		<!-- 添加活动嘉宾开始 -->
 		<div class="layui-form-item">
 		    <div class="layui-form-item" pane="">
 			    <label class="layui-form-label"></label>
 			    <div class="layui-input-block">
-			      <input type="checkbox" name="haveGuest" id='haveGuestCheck' lay-filter='haveGuest' lay-skin="primary" title="添加活动嘉宾">
+			      <input type="checkbox" checked="<?php echo isset($data['detail']['field7'][0])?'checked':'';?>" name="haveGuest" id='haveGuestCheck' lay-filter='haveGuest' lay-skin="primary" title="添加活动嘉宾">
 			    </div>
-			    <div id="haveGuest" style="display: none;">
+			    <div id="haveGuest" style="<?php echo isset($data['detail']['field7'][0])?'':'display:none;';?>">
 			    	<div class="layui-form-item">
 					    <label class="layui-form-label">嘉宾昵称:</label>
 					    <div class="layui-input-block">
-					      <input type="text" name="field7[]" id='jname' autocomplete="off" placeholder="请输入嘉宾昵称" class="layui-input" style='max-width: 10rem;'>
+					      <input type="text" name="field7[]" id='jname' autocomplete="off" placeholder="请输入嘉宾昵称"
+					      value="<?php echo isset($data['detail']['field7'][0])?$data['detail']['field7'][0]:'';?>" class="layui-input" style='max-width: 10rem;'>
 					    </div>
 					</div>
 					<div class="layui-form-item">
@@ -80,20 +117,20 @@
 						 <div class="layui-form-item">
 	                        <label class="layui-form-label"></label>
 	                        <div class="layui-input-inline">
-	                            <div class="layui-upload-list" style="margin:0">
-	                                <img src="" id="headimgurl" class="layui-upload-img">
+	                            <div class="layui-upload-list" style="margin:0;">
+	                                <img src="<?php echo isset($data['detail']['field7'][1])?$data['detail']['field7'][1]:'';?>" id="headimgurl" width="100%" class="layui-upload-img">
 	                            </div>
 	                            <!-- 上传头像后需要给此隐藏输入框赋值----上传头像值 -->
-	                            <input id='jheadimgurl' type="hidden" name="field7[]"  value=''>
+	                            <input id='jheadimgurl' type="hidden" name="field7[]"  value="<?php echo isset($data['detail']['field7'][1])?$data['detail']['field7'][1]:'';?>">
 	                            <br>
 	                            <div class="layui-input-inline layui-btn-container">
-		                            <div class="layui-btn layui-btn-primary uploadButton" data-type='jiabin' id="editimg">上传头像</div>
+		                            <div class="layui-btn layui-btn-primary uploadButton" data-width='150' data-height='150' data-type='jiabin' id="editimg">上传头像</div>
 		                        </div>
 	                        </div>
 	                        <div class="layui-form-item layui-form-text">
 							    <label class="layui-form-label">嘉宾介绍:</label>
 							    <div class="layui-input-block">
-							      <textarea id='jdesc' name="field7[]" placeholder="请输入内容" class="layui-textarea" name="desc"></textarea>
+							      <textarea id='jdesc' name="field7[]" placeholder="请输入内容" class="layui-textarea" name="desc"><?php echo isset($data['detail']['field7'][2])?trim($data['detail']['field7'][2]):'';?></textarea>
 							    </div>
 							</div>
 	                        
@@ -122,29 +159,23 @@
 			      <div class="layui-input-inline">
 			        <select name="tag_id" lay-verify="required" id='childType' lay-filter='childType' lay-search="">
 			          <option value="">选择二级分类</option>
+			          <?php if($data['tagName']){?>
+				          <option value="<?php echo $data['tagName']['id'];?>"><?php echo $data['tagName']['name'];?></option>
+				      <?php }?>
 			        </select>
 			      </div>
 			    </div>
 			</div>
 		</div>
 		<!-- 开始选择分类结束 -->
-		<!-- 开始上传活动图片 -->
-		<div>
-			<label class="layui-form-label"></label>
-			<div class="layui-btn demoMore uploadButton" data-type='poster' id='posterUpload'>上传活动海报</div>
-			<input type="hidden" name="poster" id='poster' value="">
-			<!-- <div class="layui-btn demoMore uploadButton" data-type='group_code'  id='groupCodeUpload'>上传群二维码</div>
-			<input type="hidden" name="group_code" id='group_code' value=""> -->
-		</div>
-		<br>
-		<!-- 开始上传活动图片结束 -->
+		
 		<!-- 选择系列开始 -->
 		<div>
 			<div class="layui-form-item">
 				<label class="layui-form-label">活动系列:</label>
 				<div class="layui-input-block">
 					<select name="sequence_id" id='sequence' lay-filter='sequence' lay-filter="aihao">
-						<option value="">选择活动系列</option>
+						<option value="0">选择活动系列</option>
 					</select>
 				</div>
 			</div>
@@ -268,37 +299,52 @@
 		<div>
 			<label class="layui-form-label">活动详情:</label>
 			<div class="layui-input-block">
-				<textarea lay-verify="required" placeholder="请输入内容" class="layui-textarea" name="details"></textarea>
+				<textarea class="detail-editor" lay-verify="required" placeholder="请输入内容" class="layui-textarea" name="details"><?php echo isset($data['detail']['details'])?$data['detail']['details']:'';?></textarea>
 			</div>
 			<div>
 				<div class="layui-row actImgBoxDiv">
-				    <div class="actImgBox grid-demo-bg1">
-				    	<img src="" width="100%">
-				    </div>
-				    <div class="actImgBox grid-demo-bg1">
-				    	<img src="" width="100%">
-				    </div>
-				    <div class="actImgBox grid-demo-bg1">
-				    	<img src="" width="100%">
-				    </div>
-				    <div class="actImgBox grid-demo-bg1">
-				    	<img src="" width="100%">
-				    </div>
-				    <div class="actImgBox grid-demo-bg1">
-				    	<img src="" width="100%">
-				    </div>
-				    <div class="actImgBox grid-demo-bg1">
-				    	<img src="" width="100%">
-				    </div>
-				    <div class="actImgBox grid-demo-bg1">
-				    	<img src="" width="100%">
-				    </div>
-				    <div class="actImgBox grid-demo-bg1">
-				    	<img src="" width="100%">
-				    </div>
-				    <div class="actImgBox grid-demo-bg1">
-				    	<img src="" width="100%">
-				    </div>
+				    <?php if($data['detail']['actImg']){?>
+				    	<?php foreach(json_decode($data['detail']['actImg'],true) as $row){?>
+				    		<div class="actImgBox grid-demo-bg1">
+						    	<img src="<?php echo $row['img'];?>" width="100%">
+						    </div>
+				    	<?php }?>
+				    	<?php if(count(json_decode($data['detail']['actImg'],true))<9){?>
+					    	<?php for($i=0;$i<9-count(json_decode($data['detail']['actImg']));$i++){?>
+					    		<div class="actImgBox grid-demo-bg1">
+							    	<img src="" width="100%">
+							    </div>
+					    	<?php }?>
+					    <?php }?>
+				    <?php }else{?>
+				    	<div class="actImgBox grid-demo-bg1">
+					    	<img src="" width="100%">
+					    </div>
+					    <div class="actImgBox grid-demo-bg1">
+					    	<img src="" width="100%">
+					    </div>
+					    <div class="actImgBox grid-demo-bg1">
+					    	<img src="" width="100%">
+					    </div>
+					    <div class="actImgBox grid-demo-bg1">
+					    	<img src="" width="100%">
+					    </div>
+					    <div class="actImgBox grid-demo-bg1">
+					    	<img src="" width="100%">
+					    </div>
+					    <div class="actImgBox grid-demo-bg1">
+					    	<img src="" width="100%">
+					    </div>
+					    <div class="actImgBox grid-demo-bg1">
+					    	<img src="" width="100%">
+					    </div>
+					    <div class="actImgBox grid-demo-bg1">
+					    	<img src="" width="100%">
+					    </div>
+					    <div class="actImgBox grid-demo-bg1">
+					    	<img src="" width="100%">
+					    </div>
+				    <?php }?>
 				</div>
 			</div>
 			<br>
@@ -316,9 +362,18 @@
 		<!-- 设置问题 -->
 		<div class="layui-form-item">
 		    <label class="layui-form-label">筛选问题</label>
-		    <div class="layui-input-block" id='question'>
-		      <input type="text" name="question[]" autocomplete="off" placeholder="请输入活动流程" class="layui-input">
-		    </div>
+		    <?php if($data['detail']['question']){?>
+		    	<div class="layui-input-block" id='question'>
+		    	<?php foreach ($data['detail']['question'] as $row) {?>
+		    		
+				      <input type="text" name="question[<?php echo $row['id'];?>]" autocomplete="off" placeholder="请输入活动流程" value="<?php echo $row['label'];?>" class="layui-input">
+		    	<?php }?>
+		    	</div>
+		    <?php }else{?>
+		    	<div class="layui-input-block" id='question'>
+			      <input type="text" name="question[]" autocomplete="off" placeholder="请输入活动流程" class="layui-input">
+			    </div>
+		    <?php }?>
 		    <br>
 		    <div class="layui-inline">
 		    	<label class="layui-form-label"> </label>
@@ -329,9 +384,20 @@
 		<!-- 活动流程 -->
 		<div class="layui-form-item">
 		    <label class="layui-form-label">活动流程</label>
-		    <div class="layui-input-block" id='review'>
+		    <!-- <div class="layui-input-block" id='review'>
 		      <input type="text" name="review[]" autocomplete="off" placeholder="请输入活动流程" class="layui-input">
-		    </div>
+		    </div> -->
+		    <?php if($data['detail']['review']){?>
+		    	<div class="layui-input-block" id='review'>
+		    	<?php foreach ($data['detail']['review'] as $row) {?>
+				      <input type="text" name="review[]" autocomplete="off" placeholder="请输入活动流程" value="<?php echo $row;?>" class="layui-input">
+		    	<?php }?>
+		    	</div>
+		    <?php }else{?>
+		    	<div class="layui-input-block" id='review'>
+			      <input type="text" name="review[]" autocomplete="off" placeholder="请输入活动流程" class="layui-input">
+			    </div>
+		    <?php }?>
 		    <br>
 		    <div class="layui-inline">
 		    	<label class="layui-form-label"> </label>
@@ -342,9 +408,20 @@
 		<!-- 注意事项 -->
 		<div class="layui-form-item">
 		    <label class="layui-form-label">注意事项</label>
-		    <div class="layui-input-block" id='field6'>
+		    <!-- <div class="layui-input-block" id='field6'>
 		      <input type="text" name="field6[]" autocomplete="off" placeholder="请输入注意事项" class="layui-input">
-		    </div>
+		    </div> -->
+		    <?php if($data['detail']['field6']){?>
+		    	<div class="layui-input-block" id='field6'>
+		    	<?php foreach ($data['detail']['field6'] as $row) {?>
+				      <input type="text" name="field6[]" autocomplete="off" placeholder="请输入注意事项" value="<?php echo $row;?>" class="layui-input">
+		    	<?php }?>
+		    	</div>
+		    <?php }else{?>
+		    	<div class="layui-input-block" id='review'>
+			      <input type="text" name="review[]" autocomplete="off" placeholder="请输入活动流程" class="layui-input">
+			    </div>
+		    <?php }?>
 		    <br>
 		    <div class="layui-inline">
 		    	<label class="layui-form-label"> </label>
@@ -355,9 +432,21 @@
 		<!-- Tips -->
 		<div class="layui-form-item">
 		    <label class="layui-form-label">Tips</label>
-		    <div class="layui-input-block" id='field2'>
+<!-- 		    <div class="layui-input-block" id='field2'>
 		      <input type="text" name="field2[]" autocomplete="off" placeholder="请输入活动提示" class="layui-input">
-		    </div>
+		    </div> -->
+		    <?php if($data['detail']['field2']){?>
+		    	<div class="layui-input-block" id='field2'>
+		    	<?php foreach ($data['detail']['field2'] as $row) {?>
+		    		
+				      <input type="text" name="field2[]" autocomplete="off" placeholder="请输入注意事项" value="<?php echo $row;?>" class="layui-input">
+		    	<?php }?>
+		    	</div>
+		    <?php }else{?>
+		    	<div class="layui-input-block" id='review'>
+			      <input type="text" name="review[]" autocomplete="off" placeholder="请输入活动流程" class="layui-input">
+			    </div>
+		    <?php }?>
 		    <br>
 		    <div class="layui-inline">
 		    	<label class="layui-form-label"> </label>
@@ -391,6 +480,8 @@ dateHtml.render({
 	,type: 'datetime'
 });
 var $ = layui.$
+//活动的ID用于编辑活动 
+var id = $('#aid').val();
 var token = $('#access_token').val();
 $.ajaxSettings.beforeSend = function(xhr,request){
     xhr.setRequestHeader('Authorization','Bearer '+token);
@@ -428,6 +519,7 @@ var uploadInst = upload.render({
 				layer.msg('最多上传9张图片', {icon: 2}); 
 				return false;
 			}else{
+
 				$('.actImgBox img')[imgIndex].src=result
 				
 			}
@@ -441,6 +533,7 @@ var uploadInst = upload.render({
 		delete files[index];
 		layer.closeAll('loading');
 		imgIndex++;
+		console.log(actImg)
 	}
 	,error: function(){
 		//请求异常回调
@@ -454,13 +547,10 @@ layui.config({
         ,form = layui.form
         ,croppers = layui.croppers
         ,layer= layui.layer;
-
     //创建一个头像上传组件
     croppers.render({
          elem: '.uploadButton'
-        ,saveW:150     //保存宽度
-        ,saveH:150
-        ,mark:1/1    //选取比例
+       
         ,area:'900px'  //弹窗宽度
         ,url: "/back/upload/upload-image"  //图片上传接口返回和（layui 的upload 模块）返回的JOSN一样
         ,done: function(url,type){ //上传完毕回调
@@ -469,9 +559,11 @@ layui.config({
             	$("#headimgurl").attr('src',url);
         	}else if(type == 'poster'){
         		$("#poster").val(url);
+        		$('#posterUpload').children('img').attr('src',url)
         	}else if(type == 'group_code'){
         		$('#group_code').val(url);
         	}
+        	layer.closeAll();
             
         },
         extEle:''
@@ -532,6 +624,21 @@ $('#searchFounder').click(function(){
 		  }
 	httpRequest(data);  
 })
+//搜索联合发起人
+$('#searchFounderForCo').click(function(){
+	var val = $('#searchCoFounderInput').val();
+	var data ={
+		  	data:{
+		  		type:'co_founder',
+				val:val
+		  	},
+		  	obj:'#co_founder',
+		  	type:'get',
+		  	url:'/back/member/get-user-search',
+		  	act:'founder'
+		  }
+	httpRequest(data);  
+})
 //监听提交
 form.on('submit(activityForm)', function(data){
 	data.field.actImg = actImg;
@@ -543,6 +650,7 @@ form.on('submit(activityForm)', function(data){
 			var jheadimgurl = $('#jheadimgurl').val();
 			var jdesc = $('#jdesc').val()
 			if(!jname || !jheadimgurl || !jdesc){
+				isSub = 0;
 				layer.msg('选择了嘉宾就得填信息啊');
 				return false;
 			}
@@ -553,7 +661,9 @@ form.on('submit(activityForm)', function(data){
 			data:data.field,
 			success:function(res){
 				console.log(res)
-				window.lcoation.href = '/activity/index'
+				isSub = 0;
+				return false;
+				window.location.href = '/activity/index'
 			},
 			error:function(){
 				isSub = 0;
@@ -568,7 +678,6 @@ form.on('submit(activityForm)', function(data){
 $('.addInput').click(function(){
 	var ele = $(this).data('ele');
 	var index = $('#'+ele).children('input').length;
-	console.log(index)
 	var str = '<input type="text" name="'+ele+'['+index+']" autocomplete="off" class="layui-input" placeholder="请输入文本内容">';
 	$('#'+ele).append(str)
 })
@@ -624,6 +733,12 @@ function httpRequest(data){
 					
 				}else if(data.act == 'space'){
 					str+='<option value="0">选择活动场地</option><option value="'+val.id+'">'+val.name+'</option>'
+				}else if(data.act == 'co_founder'){
+					if(index == 0){
+						str+='<option selected="selected" value="'+val.id+'">'+val.username+'</option>'
+					}else{
+						str+='<option value="'+val.id+'">'+val.username+'</option>'
+					}
 				}
 				
 			})
@@ -636,5 +751,42 @@ function httpRequest(data){
 			layer.msg('抱歉，出错了', {icon: 2}); 
 		}
 	})
-}     
+} 
+//预设赋值‘
+if(id>0){
+	$("select[name='updated_by']").val("<?php echo $data['detail']['updated_by'];?>")
+	$("select[name='address']").val("<?php echo $data['detail']['space_spot_id'];?>")
+	$("select[name='created_by']").append('<option selected="selected" value="'+"<?php echo $data['detail']['created_by'];?>"+'">'+"<?php echo $data['detail']['username'];?>"+'</option>');
+	$("select[name='co_founder1']").append('<option selected="selected" value="'+"<?php echo $data['detail']['co_founder1'];?>"+'">'+"<?php echo $data['detail']['co_username'];?>"+'</option>');
+	$("select[name='type_id']").val("<?php echo $data['detail']['type_id'];?>")
+	$("select[name='tag_id']").val("<?php echo $data['detail']['tag_id'];?>")
+	$("select[name='space_spot_id']").append('<option selected="selected" value="'+"<?php echo $data['detail']['space_spot_id'];?>"+'">'+"<?php echo $data['detail']['spacename'];?>"+'</option>');
+	var actImgList = '<?php echo $data['detail']['actImg'];?>'
+	if(actImgList){
+		var actImgList = JSON.parse(actImgList)
+		for (var i = 0; i < actImgList.length; i++) {
+			actImg.push(actImgList[i].img)
+			imgIndex++;
+		}
+	}
+	//默认分类
+	$("select[name='created_by']").val("<?php echo $data['detail']['created_by'];?>")
+	form.val("activity", {
+		'title':"<?php echo $data['detail']['title'];?>",
+		'poster':"<?php echo $data['detail']['poster'];?>",
+		'desc':"<?php echo $data['detail']['desc'];?>",
+		'content':"<?php echo $data['detail']['content'];?>",
+		'peoples':"<?php echo $data['detail']['peoples'];?>",
+		'ideal_number':"<?php echo $data['detail']['ideal_number'];?>",
+		'ideal_number_limit':"<?php echo $data['detail']['ideal_number_limit'];?>",
+		'start_time':"<?php echo date('Y-m-d H:i:s',$data['detail']['start_time']);?>",
+		'end_time':"<?php echo date('Y-m-d H:i:s',$data['detail']['end_time']);?>",
+		'cost_list':"<?php echo $data['detail']['cost_list'];?>",
+		'cost':"<?php echo $data['detail']['cost'];?>",
+		'header_title':"<?php echo $data['detail']['header_title'];?>",
+		'header_people':"<?php echo $data['detail']['header_people'];?>",
+		'co_founder1':'<?php echo $data['detail']['co_founder1'];?>'
+	})
+	form.render();
+}    
 </script>

@@ -53,7 +53,7 @@ layui.config({
                 elem = e.elem,
                 saveW = e.saveW,
                 saveH = e.saveH,
-                mark = e.mark,
+                mark = saveW/saveH,
                 area = e.area,
                 url = e.url,
                 done = e.done;
@@ -61,23 +61,35 @@ layui.config({
             var content = $('.showImgEdit')
                 ,image = $(".showImgEdit .readyimg img")
                 ,preview = '.showImgEdit .img-preview'
-                ,file = $(".showImgEdit input[name='file']")
-                , options = {aspectRatio: mark,preview: preview,viewMode:1};
+                ,file = $(".showImgEdit input[name='file']");
+                var options = {aspectRatio: mark,preview: preview,viewMode:1,width:saveW,height:saveH};
             var index = 0;
             var type='';
             $(elem).on('click',function () {
                 type = $(this).data('type');
-                image.cropper('destroy')
+                saveW = $(this).data('width')
+                saveH = $(this).data('height')
+                mark = saveW/saveH
+                options = {aspectRatio: mark,preview: preview,viewMode:1,width:saveW,height:saveH};
                 index = layer.open({
                     type: 1
                     , content: content
                     , area: area
                     , success: function () {
+                        image.attr('src','')
                         image.cropper(options);
+                        image.cropper('setCropBoxData',{
+                            width:150,
+                            height:150
+                        })
                     }
                     , cancel: function (index) {
                         layer.close(index);
-                        image.cropper('destroy');
+                        image.cropper('setCropBoxData',{
+                            width:150,
+                            height:150
+                        })
+                        // image.cropper('destroy');
                     }
                 });
             });
@@ -110,7 +122,7 @@ layui.config({
                             if(result.status == 200){
                                 layer.msg('上传成功',{icon: 1});
                                 layer.close(index);
-                                image.cropper('destroy')
+                                // image.cropper('destroy')
                                 return done(result.url,type);
                             }else if(result.status == 0){
                                 layer.alert('上传失败',{icon: 2});
@@ -118,7 +130,7 @@ layui.config({
 
                         }
                     });
-                    image.cropper('destroy');
+                    // image.cropper('destroy');
                     //监听旋转
                 }else if(event === 'rotate'){
                     var option = $(this).attr('data-option');

@@ -94,6 +94,7 @@ class SiteController extends Controller
     public function actionLogin($uid=1)
     {
 
+
         if(!Yii::$app->user->isGuest){
             $user_id = Yii::$app->user->id;
             $role = MemberService::checkRole($user_id);

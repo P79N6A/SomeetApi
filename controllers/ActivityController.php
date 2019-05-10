@@ -25,11 +25,19 @@ class ActivityController extends BaseController{
                     'msg',
                     'check',
                     'get-tag',
-                    'create-act'
+                    'create-act',
+                    'answer'
                 ],
             ],
         ];
 
+    }
+    /**
+     * 报名管理
+     */
+    public function actionAnswer(){
+        $this->layout = "view";
+        return $this->render('answer');
     }
 	/**
      * 活动列表首页
@@ -65,6 +73,7 @@ class ActivityController extends BaseController{
      */
     public function actionAdd($id = 0){
         $data['id'] = $id;
+
         //获取所有小海豹的信息 2961,45388,50575,71887,71904
         $data['xhb'] = MemberService::getServiceMan();
         //获取所有发起人的信息
@@ -76,9 +85,8 @@ class ActivityController extends BaseController{
         //获取活动详情
         $detail = ActivityService::getDetail($id);
         $data['detail'] = $detail;
-        // echo '<pre>';
-        // var_dump($data['detail']);
-        // die;
+        //二级分类
+        $data['tagName'] = ActivityTypeService::GetTag($detail['tag_id']);
         return $this->render('old_add',['data'=>$data]);
     }
 

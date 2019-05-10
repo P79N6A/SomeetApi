@@ -25,26 +25,6 @@ class ActivityTypeService extends BaseService{
             ])
             ->asArray()
             ->all();
-        $weekWhere = ['>', 'start_time', getLastEndTime()];
-        for ($i = 0; $i < count($types); ++$i) {
-            $types[$i]['type_number'] = Activity::find()
-                    ->where(
-                            ['and',
-                                ['in', 'status', [
-                                    Activity::STATUS_DRAFT,
-                                    Activity::STATUS_RELEASE,
-                                    Activity::STATUS_PREVENT,
-                                    Activity::STATUS_SHUT,
-                                    Activity::STATUS_CANCEL,
-                                    Activity::STATUS_PASS,
-
-                                ]],
-                                ['=', 'type_id', $types[$i]['id']],
-                                $weekWhere,
-                            ]
-                        )
-                    ->count();
-        }
 
         return $types;
 	}
@@ -54,6 +34,13 @@ class ActivityTypeService extends BaseService{
 	public static function getTopList(){
 		$list = ActivityType::find()->select(['name','id'])->asArray()->all();
 		return $list;
+	}
+	/**
+	 * 获取二级分类单个详情
+	 */
+	public static function GetTag($id){
+		$info = TagAct::find()->select(['id','name'])->where(['id'=>$id])->asArray()->one();
+		return $info;
 	}
 	/**
 	 * 
