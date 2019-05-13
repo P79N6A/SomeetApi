@@ -59,7 +59,8 @@ return [
 			'GET get-tag'=>'get-tag',
 			'GET get-sequence'=>'get-sequence',
 			'POST create-act'=>'create-act',
-			'GET index-by-founder'=>'index-by-founder'
+			'GET index-by-founder'=>'index-by-founder',
+			'GET get-more-answer'=>'get-more-answer'
 		]
 	],
 	[

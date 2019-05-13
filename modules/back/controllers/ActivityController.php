@@ -42,7 +42,8 @@ class ActivityController extends BaseController
 				'get-tag',
 				'get-sequence',
 				'create-act',
-				'update-status'
+				'update-status',
+				'get-more-answer'
 				// 'index-by-founder'
 			]
 		];
@@ -55,7 +56,8 @@ class ActivityController extends BaseController
 					'get-sequence',
 					'create-act',
 					'index-by-founder',
-					'update-status'
+					'update-status',
+					'get-more-answer'
                 ],
             ];
 		return $behaviors;
@@ -177,5 +179,12 @@ class ActivityController extends BaseController
         	return ['status'=>0,'data'=>$activity->getErrors()];
         }
         return ['status'=>1,'data'=>'ok'];
+    }
+    /**
+     * 获取报名列表
+     */
+    public function actionGetMoreAnswer($id,$page,$limit){
+    	$data = ActivityService::getAnswersByPage($id,$page,$limit);
+    	return $data;
     }
 }

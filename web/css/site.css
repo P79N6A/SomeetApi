@@ -53,7 +53,7 @@ h1,h2,h3{font-size: 14px;}
 .site-demo-title{
 	/*width: 60%;*/
     position: absolute;
-    left: 130px;
+    left: 17%;
     top: 5rem;
 }
 .site-demo-code{position: absolute; left: 0; top: 0; width: 100%; height: 100%; border: none; padding: 10px; resize: none; font-size: 12px; background-color: #F7FBFF; color: #881280; font-family: Courier New;}
@@ -213,4 +213,38 @@ h1,h2,h3{font-size: 14px;}
 }
 .answer-reject{
 	background-color: #FFB800;
+}
+.answer-title{
+	height: 2rem;
+    line-height: 2rem;
+    text-align: left;
+    padding: 2rem;
+    color: red;
+    font-size: 2rem;
+}
+.answer-button-box{
+	text-align: right;
+	padding-right: 1rem;
+	margin-bottom: 1rem;
+}
+.layui-card-body{
+	color:black;
+	display: none;
+}
+.answer-more-box-div{
+	width: 80%;
+    margin: 0 auto;
+    margin-top: 1rem;
+}
+.answer-more-box{
+	height: auto;
+	line-height: 38px;
+	color:white;
+	background-color: #009688;
+}
+#answer-list-more{
+	width: 100%;
+	margin:0 auto;
+	text-align: center;
+	margin-top: 1rem;
 }

@@ -240,6 +240,13 @@ class Answer extends \yii\db\ActiveRecord
      */
     public function getUser()
     {
-        return $this->hasOne(User::className(), ['id' => 'user_id'])->select(['id','username']);
+        return $this->hasOne(User::className(), ['id' => 'user_id'])->select(['id','username','mobile','wechat_id']);
+    }
+    /**
+     * 问题列表
+     */
+    public function getQuestionItem()
+    {
+        return $this->hasMany(AnswerItem::className(),['question_id'=>'question_id','user_id'=>'user_id']);
     }
 }

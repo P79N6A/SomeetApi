@@ -5,6 +5,7 @@ use app\common\service\QuestionService;
 use app\models\Activity;
 use app\models\Question;
 use app\models\User;
+use app\models\Answer;
 use app\models\FounderSpaceSpot;
 use app\models\SpaceSpot;
 use app\models\QuestionItem;
@@ -396,6 +397,35 @@ class ActivityService extends BaseService{
 		return $info;
 	}
 
+	/**
+	 * 获取指定活动的报名用户
+	 */
+	public static function getAnswersCount($id){
+		$list = Answer::find()->select(['id','activity_id','user_id','status','arrive_status','leave_status','is_feedback','question_id'])->count();
+
+		if($list){
+			//获取问题列表
+
+			return $list;
+		}
+		return [];
+	}
+	/**
+	 * 分页获取指定活动的报名用户
+	 */
+	public static function getAnswersByPage($id,$page,$limit){
+		$query = Answer::find()->select(['id','activity_id','user_id','status','arrive_status','leave_status','is_feedback','question_id'])->with(['profile','user','questionItem'])->where(['activity_id'=>$id])->asArray();
+		$count = $query->count();
+		$page = new Pagination(['totalCount' => $count,'pageSize'=>$limit]);
+		$list['data'] = $query->asArray()->offset($page->offset)->limit($page->limit)->all();
+		$list['count'] = $count;
+		if($list){
+			//获取问题列表
+
+			return $list;
+		}
+		return [];
+	}
 
 
 

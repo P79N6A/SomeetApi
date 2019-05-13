@@ -35,9 +35,16 @@ class ActivityController extends BaseController{
     /**
      * 报名管理
      */
-    public function actionAnswer(){
+    public function actionAnswer($id=0){
         $this->layout = "view";
-        return $this->render('answer');
+        if($id){
+            //查询所有报名的用户
+            $count = ActivityService::getAnswersCount($id);
+            // echo '<pre>';
+            // var_dump($list);
+            // die;
+        }
+        return $this->render('answer',['count'=>$count,'aid'=>$id]);
     }
 	/**
      * 活动列表首页

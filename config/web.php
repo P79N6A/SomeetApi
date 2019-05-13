@@ -86,6 +86,7 @@ $config = [
         ],
         'session' => [
             'class' => 'yii\redis\Session',
+            'timeout'=>7200,
         ],
         'user' => [
             'identityClass' => 'app\models\User',
