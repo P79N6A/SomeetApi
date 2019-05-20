@@ -43,7 +43,8 @@ class ActivityController extends BaseController
 				'get-sequence',
 				'create-act',
 				'update-status',
-				'get-more-answer'
+				'get-more-answer',
+				'update-answer'
 				// 'index-by-founder'
 			]
 		];
@@ -57,13 +58,14 @@ class ActivityController extends BaseController
 					'create-act',
 					'index-by-founder',
 					'update-status',
-					'get-more-answer'
+					'get-more-answer',
+					'update-answer'
                 ],
             ];
 		return $behaviors;
 	}
 
-	public function actionIndex($page=1,$status=20,$limit=10,$is_history=0){
+	public function actionIndex($page=1,$status=0,$limit=10,$is_history=0){
 		Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 		$data['page'] = $page;
         $data['status'] = $status;
@@ -186,5 +188,47 @@ class ActivityController extends BaseController
     public function actionGetMoreAnswer($id,$page,$limit){
     	$data = ActivityService::getAnswersByPage($id,$page,$limit);
     	return $data;
+    }
+    /**
+     * 修改报名状态
+     */
+    public function actionUpdateAnswer(){
+    	$data = Yii::$app->request->post();
+    	if(!Yii::$app->request->isPut){
+    		return ['status'=>0,'data'=>'error'];
+    	}
+    	$leave = ['cancelType','normalType'];
+    	$arrive = ['orderType','laterType','awayType'];
+    	$pass = ['passType','rejectType'];
+    	$id = $data['id'];
+    	$answer = Answer::findOne($id);
+    	if(!$answer){
+    		return ['status'=>0,'data'=>'数据获取错误'];
+    	}
+    	if($data['reject']) $answer->reject_reason = $data['reject'];
+    	switch ($data['type']) {
+    		case in_array($data['type'],$pass):
+    			$status = $data['status'] == 'pass'?Answer::STATUS_REVIEW_PASS:Answer::STATUS_REVIEW_REJECT;
+    			$answer->status = $status;
+    			break;
+    		
+    		case in_array($data['type'],$arrive):
+    			$status = Answer::STATUS_ARRIVE_NOT_SET;
+    			if($data['status'] == 'order') $status = Answer::STATUS_ARRIVE_ON_TIME;
+    			if($data['status'] == 'later') $status = Answer::STATUS_ARRIVE_LATE;
+    			if($data['status'] == 'away') $status = Answer::STATUS_ARRIVE_YET;
+    			$answer->arrive_status = $status;
+    			// return $answer->save();
+    			break;
+    		case in_array($data['type'],$leave):
+    			$status = $data['status'] == 'cancel'?Answer::STATUS_LEAVE_YES:Answer::STATUS_LEAVE_YET;
+    			$answer->leave_status = $status;
+    			break;
+    	}
+    	if($answer->save()){
+    		return ['status'=>1,'data'=>'ok'];		
+    	}
+    	return ['status'=>0,'data'=>$answer->getErrors()];
+    	
     }
 }

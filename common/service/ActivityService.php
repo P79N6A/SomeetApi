@@ -28,24 +28,26 @@ class ActivityService extends BaseService{
 		switch ($data['status']) {
 			case 0:
 				if($data['is_history'] == 0){
-					$query->where("status >= 8")->andWhere(['>=','start_time',getLastEndTime()]);
+					$query->where("status >= 15")->andWhere(['>=','start_time',getLastEndTime()]);
 				}else{
 					// $query->where("status >8")->andFilterWhere(['between','start_time',getWeekBefore(),getLastEndTime()]);
 					$query->andWhere(['<','start_time',getLastEndTime()]);
 				}
 				break;
 			case 15:
-				if($data['is_history'] == 0){
-					$query->where("status >= 8")->andWhere(['>=','start_time',getLastEndTime()]);
-				}else{
-					// $query->where("status >8")->andFilterWhere(['between','start_time',getWeekBefore(),getLastEndTime()]);
-					$query->where("status = ".Activity::STATUS_PREVENT)->andWhere(['<','start_time',getLastEndTime()]);
-				}
+				$query->where("status = 15");
+				// if($data['is_history'] == 0){
+				// 	$query->where("status = 15");
+				// }else{
+				// 	// $query->where("status >8")->andFilterWhere(['between','start_time',getWeekBefore(),getLastEndTime()]);
+				// 	$query->where("status = ".Activity::STATUS_PREVENT)->andWhere(['<','start_time',getLastEndTime()]);
+				// }
 				break;
 			case 12 || 3 || 8:
 				$query->where(['status'=>$data['status']]);
 				break;
 			default:
+
 				if($data['is_history'] == 0){
 					$query->where(['status'=>$data['status']])->andWhere(['>=','start_time',getLastEndTime()]);
 				}else{
@@ -60,6 +62,7 @@ class ActivityService extends BaseService{
 		$page = new Pagination(['totalCount' => $count,'pageSize'=>$data['limit']]);
 		$list['data'] = $query->asArray()->offset($page->offset)->limit($page->limit)->all();
 		$list['count'] = $count;
+		$list['params'] = $data;
 		return $list;
 	}
 
@@ -401,14 +404,14 @@ class ActivityService extends BaseService{
 	 * 获取指定活动的报名用户
 	 */
 	public static function getAnswersCount($id){
-		$list = Answer::find()->select(['id','activity_id','user_id','status','arrive_status','leave_status','is_feedback','question_id'])->count();
+		$list = Answer::find()->select(['id','activity_id','user_id','status','arrive_status','leave_status','is_feedback','question_id'])->where(['activity_id'=>$id])->count();
 
 		if($list){
 			//获取问题列表
 
 			return $list;
 		}
-		return [];
+		return 0;
 	}
 	/**
 	 * 分页获取指定活动的报名用户
@@ -427,7 +430,16 @@ class ActivityService extends BaseService{
 		return [];
 	}
 
-
+	/**
+	 * 获取活动某些字段
+	 */
+	public function getField($id,array $field=[]){
+		if(empty($field)){
+			$field = ['*'];
+		}
+		$info = Activity::find()->asArray()->select($field)->with(['user'])->where(['id'=>$id])->one();
+		return $info;
+	}
 
 
 }

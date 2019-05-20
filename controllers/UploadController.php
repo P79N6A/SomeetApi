@@ -15,7 +15,7 @@ class UploadController extends BaseController{
             'access' => [
                 'class' => 'app\component\AccessControl',
                 'allowActions' => [
-                    'upload-image'
+                    // 'upload-image'
                 ],
             ],
         ];

@@ -22,7 +22,7 @@ class FounderController extends BaseController{
                 'allowActions' => [
                     // 'index',
                     // 'add',
-                    'space',
+                    // 'space',
                     // 'member'
                 ],
             ],

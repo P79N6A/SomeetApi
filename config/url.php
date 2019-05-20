@@ -60,7 +60,8 @@ return [
 			'GET get-sequence'=>'get-sequence',
 			'POST create-act'=>'create-act',
 			'GET index-by-founder'=>'index-by-founder',
-			'GET get-more-answer'=>'get-more-answer'
+			'GET get-more-answer'=>'get-more-answer',
+			'PUT update-answer'=>'update-answer'
 		]
 	],
 	[
@@ -74,7 +75,8 @@ return [
 			'POST get-info' => 'get-info',
 			'POST role-update'=>'role-update',
 			'GET get-user-search'=>'get-user-search',
-			'GET founder-check'=>'founder-check'
+			'GET founder-check'=>'founder-check',
+
 			
 		]
 	],

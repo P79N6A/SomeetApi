@@ -80,6 +80,24 @@ var options = {
 	  ,{field:'username', title:'用户名',width:100}
 	  ,{field:'title', title:'标题', width:160 }
 	  ,{field:'desc', title:'描述', width:200}
+	  ,{field:'status', title:'状态', width:200,templet: function(d){
+	  	console.log(d.status)
+	        	if(d.status == 20){
+	        		return '<span style="color:#1E9FFF;">已发布</span>';
+	        	}else if(d.status == 15){
+	        		return '<span style="color:#FFB800;">预发布</span>';
+	        	}else if(d.status == 8){
+	        		return '<span style="color:#2F4056">待审核</span>';
+	        	}else if(d.status == 12){
+	        		return '<span style="color:#5FB878;">通过审核</span>';
+	        	}else if(d.status == 30){
+	        		return '<span style="color:#FF5722;">已关闭</span>';
+	        	}else if(d.status == 40){
+	        		return '<span style="color:#FF5722;">已取消</span>';
+	        	}else{
+	        		return '<span style="color:#5FB878;">'+d.status+'</span>';
+	        	}
+	      }}
 	  ,{fixed: 'right', title:'操作', toolbar: '#barDemo',width:300}
 	]]
 	,page: {'limit':20},
@@ -100,6 +118,9 @@ table.on('tool(actList)', function(obj){
 		break;
 		case 'edit':
 			window.open('/activity/add?id='+data.id);
+		break;
+		case 'answer':
+			window.open('/activity/answer?id='+data.id);
 		break;
 		case 'release':
 		if(is_history == 1){

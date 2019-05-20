@@ -21,12 +21,12 @@ class ActivityController extends BaseController{
                 'class' => 'app\component\AccessControl',
                 'allowActions' => [
                     // 'index',
-                    'add',
-                    'msg',
-                    'check',
-                    'get-tag',
-                    'create-act',
-                    'answer'
+                    // 'add',
+                    // 'msg',
+                    // 'check',
+                    // 'get-tag',
+                    // 'create-act',
+                    // 'answer'
                 ],
             ],
         ];
@@ -38,13 +38,14 @@ class ActivityController extends BaseController{
     public function actionAnswer($id=0){
         $this->layout = "view";
         if($id){
+            $activity = ActivityService::getField($id,['id','title','created_by']);
             //查询所有报名的用户
             $count = ActivityService::getAnswersCount($id);
             // echo '<pre>';
-            // var_dump($list);
+            // var_dump($activity);
             // die;
         }
-        return $this->render('answer',['count'=>$count,'aid'=>$id]);
+        return $this->render('answer',['count'=>$count,'aid'=>$id,'activity'=>$activity]);
     }
 	/**
      * 活动列表首页

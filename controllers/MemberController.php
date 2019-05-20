@@ -16,9 +16,9 @@ class MemberController extends BaseController{
             'access' => [
                 'class' => 'app\component\AccessControl',
                 'allowActions' => [
-                    'index',
-                    'view',
-                    'login'
+                    // 'index',
+                    // 'view',
+                    // 'login'
                 ],
             ],
         ];

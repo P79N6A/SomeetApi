@@ -31,7 +31,7 @@ $query = Yii::$app->request->getQueryParam('status')?Yii::$app->request->getQuer
     <div class="layui-header header header-demo" spring>
         <div class="layui-main">
             <a class="logo" href="/">
-                <img src="https://res.layui.com/static/images/layui/logo.png" alt="layui">
+                <img src="/image/login/11.jpg" style="width: 37px;height: 37px;" alt="layui">
             </a>
             <div class="layui-form component" lay-filter="LAY-site-header-component"></div>
             <ul class="layui-nav">

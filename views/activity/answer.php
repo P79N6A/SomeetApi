@@ -1,13 +1,14 @@
 <div class="view-detail">
 	<input type="hidden" value="<?php echo $aid;?>" id='aid' name="">
 	<div class="view-detail-button answer-title">
-		#187656 来一场王者荣耀吧  fine666
+		#<?php echo $activity['id'];?> <?php echo $activity['title'];?>  <?php echo $activity['user']['username'];?>
 	</div>
 	<div class="view-detail-info-box">
 		<div style="padding: 20px; background-color: #F2F2F2;">
 			<div class="layui-row layui-col-space15" id='answer-box-top'>
 				<!-- 卡片开始 -->
 			    <!-- 卡片结束 -->
+			    <?php echo $count == 0?'<h6 style="font-size: 3rem;">没有人报名</h6>':'';?>
 			</div>
 			<div id="answer-list-more">
 		    	
@@ -19,6 +20,7 @@
 <script type="text/javascript">
 	var $ = layui.$;
 	var count = "<?php echo $count;?>"
+if(Number(count) != 0){
 	var answer,layer= layui.layer;
 	var token = $('#access_token').val();
 	$.ajaxSettings.beforeSend = function(xhr,request){
@@ -37,6 +39,7 @@
 	    ,count: count //数据总数，从服务端得到
 	    ,limit:1
 	    ,jump: function(obj, first){
+	    	layer.load();
 		    //obj包含了当前分页的所有参数，比如：
 		    // console.log(obj.curr); //得到当前页，以便向服务端请求对应页的数据。
 		    // console.log(obj.limit); //得到每页显示的条数
@@ -56,6 +59,7 @@
 				limit:limit
 			},
 			success:function(res){
+				layer.closeAll();
 				renderAnswer(answer,res.data)
 			},
 			error:function(){
@@ -69,8 +73,8 @@
 		$('#answer-box-top').html(' ')
 		//创建一个头像上传组件
 	    answer.render({
-	         elem: '.uploadButton',
 	         data:data
 	    })
 	}
+}
 </script>

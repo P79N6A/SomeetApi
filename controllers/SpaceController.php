@@ -16,9 +16,9 @@ class SpaceController extends BaseController{
             'access' => [
                 'class' => 'app\component\AccessControl',
                 'allowActions' => [
-                    'index',
-                    'edit',
-                    'add'
+                    // 'index',
+                    // 'edit',
+                    // 'add'
                 ],
             ],
         ];

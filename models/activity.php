@@ -224,7 +224,7 @@ class Activity extends \yii\db\ActiveRecord
     // 发起人
     public function getUser()
     {
-        return $this->hasOne(User::className(), ['id' => 'created_by']);
+        return $this->hasOne(User::className(), ['id' => 'created_by'])->select(['id','username','mobile','wechat_id','founder_desc']);
     }
 
 

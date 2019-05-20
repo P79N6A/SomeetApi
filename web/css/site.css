@@ -248,3 +248,34 @@ h1,h2,h3{font-size: 14px;}
 	text-align: center;
 	margin-top: 1rem;
 }
+.button-order,.button-later,.button-away{
+	padding: 0px 10px;
+}
+.answer-arrive-box{
+	margin-left:0px;
+}
+.answer-arrive-label{
+	width: auto;
+}
+.activityTips{
+	border:1px solid red;
+	background: /*red*/;
+	width: 250px;
+	position: absolute;
+	right: 10px;
+	height: auto;
+	top:100px;
+	display: block;
+}
+.prompt{
+	padding: 10px;
+	font-size:12px;
+}
+.tipsDiv{
+	display: none;
+}
+
+
+
+
+

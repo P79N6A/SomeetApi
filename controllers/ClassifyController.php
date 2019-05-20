@@ -21,10 +21,10 @@ class ClassifyController extends BaseController{
             'access' => [
                 'class' => 'app\component\AccessControl',
                 'allowActions' => [
-                    'index',
-                    'edit',
-                    'sub',
-                    'sub-index'
+                    // 'index',
+                    // 'edit',
+                    // 'sub',
+                    // 'sub-index'
                 ],
             ],
         ];

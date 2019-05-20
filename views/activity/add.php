@@ -460,7 +460,7 @@
 			<div class="layui-form-item">
 				<label class="layui-form-label"> </label>
 				<div class="layui-inline">
-					<button lay-filter='activityForm' lay-submit class="layui-btn layui-btn-lg">提交审核</button>
+					<button lay-filter='activityForm' lay-submit class="layui-btn layui-btn-lg">提交审核ssss</button>
 				</div>
 			</div>
 		</div>
