@@ -121,17 +121,21 @@ class LarkService extends BaseService{
 								}
 						}
 					}
-					$floder = new AppPush();
-					$floder->user_id = 285;
-					$floder->jiguang_id = '285';
-					$floder->content = '所属目录';
-					$floder->from_type = $key;
-					$floder->created_at = time();
-					$floder->status = 0;
-					if(!$floder->save()){
-						var_dump($floder->getErrors());
+					$is_exists = AppPush::find()->where(['from_type'=>$key])->exists();
+					if(!$is_exists){
+						$floder = new AppPush();
+						$floder->user_id = 285;
+						$floder->jiguang_id = '285';
+						$floder->content = '所属目录';
+						$floder->from_type = $key;
+						$floder->created_at = time();
+						$floder->status = 0;
+						if(!$floder->save()){
+							var_dump($floder->getErrors());
+						}
+						$redis->set('child-'.$key,$key);
 					}
-					$redis->set('child-'.$key,$key);
+					
 				}
 				$index++;
 				if($index>5){

@@ -10,6 +10,7 @@ use yii\filters\VerbFilter;
 use app\models\User;
 use app\component\BaseController;
 use app\common\service\MemberService;
+use app\common\service\LarkService;
 
 class SiteController extends Controller
 {
@@ -22,7 +23,8 @@ class SiteController extends Controller
                     // 'logout',
                     'login-user',
                     'error',
-                    'block'
+                    'block',
+                    'index'
                 ],
             ],
         ];
@@ -63,6 +65,10 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
+        $list = LarkService::getLogList();
+        echo '<pre>';
+        var_dump($list);
+        die;
         return $this->render('index');
     }
     public function actionSetRole(){
