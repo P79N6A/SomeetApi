@@ -65,10 +65,10 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        $list = LarkService::getLogList();
-        echo '<pre>';
-        var_dump($list);
-        die;
+        // $list = LarkService::getLogList();
+        // echo '<pre>';
+        // var_dump($list);
+        // die;
         return $this->render('index');
     }
     public function actionSetRole(){
