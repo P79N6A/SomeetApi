@@ -101,15 +101,15 @@
 		<div class="layui-form-item">
 		    <div class="layui-form-item" pane="">
 			    <label class="layui-form-label"></label>
-			    <div class="layui-input-block">
-			      <input data-tips='tipsForJb' type="checkbox" <?php echo isset($data['detail']['field7'][0])?"checked='checked'":'';?> name="haveGuest" id='haveGuestCheck' lay-filter='haveGuest' lay-skin="primary" title="添加活动嘉宾">
+			    <div class="layui-input-block showTips" data-tips='tipsForJb'>
+			      <input  type="checkbox" <?php echo isset($data['detail']['field7'][0])?"checked='checked'":'';?> name="haveGuest" id='haveGuestCheck' lay-filter='haveGuest' lay-skin="primary" title="添加活动嘉宾">
 			    </div>
 			    <div id="haveGuest" style="<?php echo isset($data['detail']['field7'][0])?'':'display:none;';?>">
 			    	<div class="layui-form-item">
 					    <label class="layui-form-label">嘉宾昵称:</label>
 					    <div class="layui-input-block">
 					      <input type="text" name="field7[]" id='jname' autocomplete="off" placeholder="请输入嘉宾昵称"
-					      value="<?php echo isset($data['detail']['field7'][0])?$data['detail']['field7'][0]:'';?>" class="layui-input" style='max-width: 10rem;'>
+					      value="<?php echo isset($data['detail']['field7'][0])?$data['detail']['field7'][0]:'';?>" class="layui-input showTips" style='max-width: 10rem;' data-tips='tipsForJb'>
 					    </div>
 					</div>
 					<div class="layui-form-item">
@@ -298,7 +298,7 @@
 		<!-- 活动详情 -->
 		<div>
 			<label class="layui-form-label">活动详情:</label>
-			<div class="layui-input-block showTips" id='details' data-tips='tipsForDetail'>
+			<div class="layui-input-block showTips" data-tips='tipsForDetail'>
 				<textarea class="showTips" data-tips='tipsForDetail' name="details" id="details" style="display: none;"><?php echo isset($data['detail']['details'])?$data['detail']['details']:'';?></textarea>
 			</div>
 		</div>
@@ -411,7 +411,16 @@
 	</form>
 </div>
 <div class="activityTips">
-	<div class="tipsDiv tipsForTitle" style="display: block;">
+	<div class="tipsDiv tipsForPoster" style="display: block;">
+		<div class="prompt">
+            <span class="title-text-title">应该添加什么样的活动标题图片?</span><br/>
+            <span style="color:rgb(251,103,61);">
+                <p>标题图是给用户的第一活动印象，清晰美观最重要，不能带文字或logo哦~</p>
+                    <p>强烈建立上传800X455像素大小的横版图片</p>
+            </span>
+        </div>
+	</div>
+	<div class="tipsDiv tipsForTitle">
         <div class="title-text prompt" date-name='title'>
             <span class="title-text-title">怎样给活动取一个好的活动名称?</span><br/>
             <br/><span style="color:rgb(251,103,61);">
@@ -421,15 +430,6 @@
                 <p>互川一封：五环内外的两个世界，探秘北五环culb里的神奇故事-#帝都夜游指南#</p>
                 <p>阿汪：衣锦夜行之坐街夜谈聊聊红灯区女郎</p>
                 <p>德川亮：时间流逝感工作坊，关于个人时间管理的探讨和实践</p>
-            </span>
-        </div>
-	</div>
-	<div class="tipsDiv tipsForPoster">
-		<div class="prompt">
-            <span class="title-text-title">应该添加什么样的活动标题图片?</span><br/>
-            <span style="color:rgb(251,103,61);">
-                <p>标题图是给用户的第一活动印象，清晰美观最重要，不能带文字或logo哦~</p>
-                    <p>强烈建立上传800X455像素大小的横版图片</p>
             </span>
         </div>
 	</div>
@@ -449,7 +449,7 @@
 	        </span>
 	    </div>
 	</div>
-	<div class="tipsForDetail">
+	<div class="tipsDiv tipsForDetail">
 		<div class="title-text prompt" date-name='title'>
 			<p class="title-text-title"><strong>怎样描述活动详情?</strong></p>
 	        <br/>
@@ -493,7 +493,7 @@
 	        </span>
 	    </div>
 	</div>
-	<div class="tipsDiv tipsForCofounder">
+	<div class="tipsDiv tipsForJb">
 		<div class="title-text prompt" date-name='title'>
 			<span style="color:rgb(251,103,61);">
 	            <p class="title-text-title">什么是嘉宾？</p><br>
@@ -641,7 +641,6 @@ $('.showTips').focus(function(){
 function showTips(obj){
 	var height = obj.offset().top
 	height-=20;
-	console.log(height)
 	var tname = obj.data('tips');
 	$('.activityTips').css({'top':height+'px'})
 	$('.activityTips').show()
@@ -662,6 +661,7 @@ $("iframe[textarea=details]").contents().find("body").keyup(function(){
 	$('.tipsDiv').hide();
 	$('.'+tname).show();
 });
+console.log()
 layui.config({
     base: '/layui/js/' //layui自定义layui组件目录
 }).use(['form','croppers'], function () {

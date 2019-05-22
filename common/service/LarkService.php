@@ -98,11 +98,10 @@ class LarkService extends BaseService{
 				$fileList=[];
 				if(count($cdata['entities']['nodes'])>0){
 					foreach ($cdata['entities']['nodes'] as $key1 => $value) {
-						$is_exists = AppPush::find()->where(['from_type'=>$key])->exists();
-						if(!$redis->get('child-'.$key) && !$is_exists){
-							if($value['type'] == 2){
+						if($value['type'] == 2){
 								$is_exists = AppPush::find()->where(['from_type'=>$value['obj_token']])->exists();
 								if($is_exists){
+									//检测每个文件是否发送
 									continue;
 								}
 								$fileList['obj_token'] = $value['obj_token'];
@@ -120,35 +119,19 @@ class LarkService extends BaseService{
 								if(!$push->save()){
 									var_dump($push->getErrors());
 								}
-								$floder = new AppPush();
-								$floder->user_id = 285;
-								$floder->jiguang_id = '285';
-								$floder->content = '所属目录';
-								$floder->from_type = $key;
-								$floder->created_at = time();
-								$floder->status = 0;
-								if(!$floder->save()){
-									var_dump($floder->getErrors());
-								}
-								$redis->set('child-'.$key,$key);
-							}
-						}else{
-							if($value['type'] == 2 && !$redis->get('send-'.$value['obj_token'])){
-								$is_exists = AppPush::find()->where(['from_type'=>$value['obj_token']])->exists();
-								if($is_exists){
-									continue;
-								}else{
-									$fileList['obj_token'] = $value['obj_token'];
-									$fileList['name'] = $value['name'];
-									$fileList['url'] = $value['url'];
-									$fileList['create_time'] = $value['create_time'];
-									$redis->lpush('fileList',serialize($fileList));
-									$redis->set('send-'.$value['obj_token'],$value['obj_token']);
-								}
-							}
 						}
-						
 					}
+					$floder = new AppPush();
+					$floder->user_id = 285;
+					$floder->jiguang_id = '285';
+					$floder->content = '所属目录';
+					$floder->from_type = $key;
+					$floder->created_at = time();
+					$floder->status = 0;
+					if(!$floder->save()){
+						var_dump($floder->getErrors());
+					}
+					$redis->set('child-'.$key,$key);
 				}
 				$index++;
 				if($index>5){
