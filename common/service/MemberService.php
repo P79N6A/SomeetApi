@@ -286,7 +286,7 @@ class MemberService extends BaseService{
     	$redis = Yii::$app->redis;
     	$data = $redis->get('founder-'.$id);
     	if(!$data){
-    		$role = self::checkRole($user_id);
+    		$role = self::checkRole($id);
     		if(!$role['is_admin'] && !$role['is_founder']){
     			return false;
     		}

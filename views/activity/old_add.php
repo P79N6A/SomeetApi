@@ -255,9 +255,10 @@
 				<div class="layui-form-item">
 				<label class="layui-form-label">选择场地</label>
 				<div class="layui-input-block">
-					<select name="space_spot_id" id='space_spot_id' lay-filter="address">
+					<!-- <select name="space_spot_id" id='space_spot_id' lay-filter="address">
 						<option value="">选择活动场地</option>
-					</select>
+					</select> -->
+					<input data-tips='tipsForAddress' type="text" name="district" placeholder="未设置模糊地址" required value="" class="layui-input showTips">
 				</div>
 			</div>
 			</div>
@@ -638,6 +639,10 @@ $('.showTips').focus(function(){
 	// 获取对应点击的组件高度
 	showTips($(this))
 })
+
+var left = $('.site-demo-title').width()
+var menuLeft = $('.layui-side-scroll').width()
+$('.activityTips').css({'left':left+menuLeft+30+'px'})
 function showTips(obj){
 	var height = obj.offset().top
 	height-=20;
@@ -837,8 +842,6 @@ function httpRequest(data){
 					}
 					getFounderSpaceAndXl(val.id)
 					
-				}else if(data.act == 'space'){
-					str+='<option value="0">选择活动场地</option><option value="'+val.id+'">'+val.name+'</option>'
 				}else if(data.act == 'co_founder'){
 					if(index == 0){
 						str+='<option selected="selected" value="'+val.id+'">'+val.username+'</option>'
@@ -869,35 +872,22 @@ function getFounderSpaceAndXl(id){
 		  	url:'/back/activity/get-sequence',
 			act:'sequence'
 	}
-	var dataForSpace ={
-			data:{
-				user_id:id,
-				type:'founder'
-		  	},
-		  	obj:'#space_spot_id',
-		  	type:'get',
-		  	url:'/back/space/get-space-list',
-			act:'space'
-	}
 	//获取该发起人的系列名称
 	httpRequest(dataForXl);
-	//获取发起人的场地名称
-	httpRequest(dataForSpace);
 }
 //预设赋值‘
 if(id>0){
 	$("select[name='updated_by']").val("<?php echo $data['detail']['updated_by'];?>")
-	$("select[name='address']").val("<?php echo $data['detail']['space_spot_id'];?>")
 	$("select[name='created_by']").append('<option selected="selected" value="'+"<?php echo $data['detail']['created_by'];?>"+'">'+"<?php echo $data['detail']['username'];?>"+'</option>');
 	getFounderSpaceAndXl("<?php echo $data['detail']['created_by'];?>")
 	$("select[name='co_founder1']").append('<option selected="selected" value="'+"<?php echo $data['detail']['co_founder1'];?>"+'">'+"<?php echo $data['detail']['co_username'];?>"+'</option>');
 	$("select[name='type_id']").val("<?php echo $data['detail']['type_id'];?>")
 	$("select[name='tag_id']").val("<?php echo $data['detail']['tag_id'];?>")
-	$("select[name='space_spot_id']").append('<option selected="selected" value="'+"<?php echo $data['detail']['space_spot_id'];?>"+'">'+"<?php echo $data['detail']['spacename'];?>"+'</option>');
 	//默认分类
 	$("select[name='created_by']").val("<?php echo $data['detail']['created_by'];?>")
 	form.val("activity", {
 		'title':"<?php echo $data['detail']['title'];?>",
+		'district':"<?php echo $data['detail']['district'];?>",
 		'poster':"<?php echo $data['detail']['poster'];?>",
 		'desc':"<?php echo $data['detail']['desc'];?>",
 		'content':"<?php echo $data['detail']['content'];?>",

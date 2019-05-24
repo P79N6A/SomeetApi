@@ -69,6 +69,7 @@ class SiteController extends Controller
         // echo '<pre>';
         // var_dump($list);
         // die;
+        $this->redirect('/site/login');
         return $this->render('index');
     }
     public function actionSetRole(){

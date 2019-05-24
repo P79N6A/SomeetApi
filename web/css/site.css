@@ -53,8 +53,9 @@ h1,h2,h3{font-size: 14px;}
 .site-demo-title{
 	/*width: 60%;*/
     position: absolute;
-    left: 17%;
+    left: 9%;
     top: 5rem;
+    max-width: 50rem;
 }
 .site-demo-code{position: absolute; left: 0; top: 0; width: 100%; height: 100%; border: none; padding: 10px; resize: none; font-size: 12px; background-color: #F7FBFF; color: #881280; font-family: Courier New;}
 
