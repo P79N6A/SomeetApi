@@ -24,13 +24,15 @@ class WechatController extends BaseController
 			],
 			//暂时解除限制或者未登录就可以访问的方法
 			'optional' => [
-				'get-access-token'
+				'get-access-token',
+				'login'
 			]
 		];
 		$behaviors['access'] = [
                 'class' => 'app\component\AccessControl',
                 'allowActions' => [
                     'get-access-token',
+                    'login'
                 ],
             ];
 		return $behaviors;
@@ -40,4 +42,12 @@ class WechatController extends BaseController
 		return 11111;
 	}
 
+	//小程序微信登录
+	public function actionLogin($code){
+		if(!$code) return false;
+		$appid = 'wxec563ba322b19c02';
+		$secret = '20821b2f5b7b23deff18d18d590b4478';
+		$url = sprintf("https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code",$appid,$secret,$code);
+		return json_decode(file_get_contents($url),true);
+	}
 }

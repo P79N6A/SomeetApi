@@ -16,6 +16,7 @@ use app\models\ActivityBlack;
 use app\models\CollectAct;
 use app\models\ActivityType;
 use app\models\UserSelectTags;
+use app\common\service\ActivityService;
 use Yii;
 use yii\filters\VerbFilter;
 use yii\data\Pagination;
@@ -102,26 +103,7 @@ class ActivityController extends BaseController
 	public function actionView($id=0){
 		$user_id = 2961;
 		if(intval($id) == 0) return false;
-		$model = Activity::find()->where(['id'=>$id])->asArray()->one();
-		//获取该活动的类型详情
-		$type = ActivityType::find()->select(['id','icon_img','name'])->where(['id'=>$model['type_id']])->asArray()->one();
-		$model['type'] = $type;
-		//判断是否被收藏
-		$is_collect  = CollectAct::find()->where(['user_id'=>$user_id,'activity_id'=>$id])->exists();
-		$model['is_collect'] = $is_collect?1:0;
-		//判断是否拉黑此活动
-		$is_black = ActivityBlack::find()->where(['sequence_id'=>$model['sequence_id']])->orWhere(['id'=>$id])->exists();
-		$model['is_black'] = $is_black;
-		//获取该活动发起人的详细信息,标签,头像,昵称,简介
-		$profile = Profile::find()->select(['headimgurl'])->where(['user_id'=>$model['created_by']])->asArray()->one();
-		$user = User::find()->select(['username','founder_desc'])->where(['id'=>$model['created_by']])->asArray()->one();
-		$tags = CommonFunction::getUserTags(['user_id'=>$model['created_by']],[],10);
-		$model['profile'] = $profile;
-		$model['user'] = $user;
-		$model['tags'] = $tags;
-		//获取哪些用户也参加了这场活动
-		$answers = Answer::find()->select(['answer.id','answer.activity_id','answer.user_id'])->joinWith(['profile','user'])->where(['activity_id'=>$model['id']])->asArray()->all();
-		$model['answers'] = $answers;
+		$model = ActivityService::getView($id);
 		return $model;
 	}
 

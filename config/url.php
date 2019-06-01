@@ -20,6 +20,26 @@ return [
 			'GET index' => 'index'
 		]
 	],
+	//answer 控制器
+	[
+		'class' => 'yii\rest\UrlRule',
+		'controller' => [
+			'v1/answer'
+		],
+		'extraPatterns' => [
+			'GET check-answer' => 'check-answer'
+		]
+	],
+	//用户信息
+	[
+		'class' => 'yii\rest\UrlRule',
+		'controller' => [
+			'v1/user'
+		],
+		'extraPatterns' => [
+			'GET get-info' => 'get-info'
+		]
+	],
 	//前端微信sdk
 	[
 		'class' => 'yii\rest\UrlRule',

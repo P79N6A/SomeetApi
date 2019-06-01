@@ -9,6 +9,7 @@ use app\models\profile;
 use app\models\UserIdcardCheck;
 use app\models\UserSelectTags;
 use app\models\YellowCard;
+use app\models\SocialAccount;
 use app\models\AuthAssignment;
 use yii\web\Response;
 use Yii;
@@ -121,14 +122,22 @@ class MemberService extends BaseService{
 	/**
 	 * 获取用户详情
 	 */
-	public static function getInfo($id,$fields=[]){
+	public static function getInfo($id = 0,$fields=[],$unionid=''){
 		$auth = Yii::$app->authManager;
 		$user['answers'] =[];
 		$user['activity'] =[];
 		$user['tags'] =[];
 		$user['yellowCard']=[];
 		$user['profile']=[];
-		$user = User::find()->select(['id','username','wechat_id','mobile','created_at','last_login_at','founder_desc'])->where(['id'=>$id])->asArray()->one();
+        if(!$id){
+            $user = User::find()->select(['id','username','wechat_id','mobile','created_at','last_login_at','access_token','founder_desc'])->where(['unionid'=>$unionid])->asArray()->one();
+        }else{
+            $user = User::find()->select(['id','username','wechat_id','mobile','created_at','last_login_at','access_token','founder_desc'])->where(['id'=>$id])->asArray()->one();
+        }
+        if(!$user){
+            return [];
+        }
+		
 		if(in_array('profile', $fields)){
 			$profile = Profile::find()->select(['headimgurl','sex','birth_year','birth_month','birth_day'])->where(['user_id'=>$id])->asArray()->one();
 			$user['profile'] = $profile;

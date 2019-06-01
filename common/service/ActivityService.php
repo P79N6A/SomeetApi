@@ -3,8 +3,12 @@ namespace app\common\service;
 use app\common\service\BaseService;
 use app\common\service\QuestionService;
 use app\models\Activity;
+use app\models\ActivityType;
 use app\models\Question;
 use app\models\User;
+use app\models\Profile;
+use app\models\ActivityBlack;
+use app\models\CollectAct;
 use app\models\Answer;
 use app\models\FounderSpaceSpot;
 use app\models\SpaceSpot;
@@ -296,6 +300,7 @@ class ActivityService extends BaseService{
 	 * 获取活动详情
 	 */
 	public static function getView($id){
+		if(!isset($user_id) || !$user_id) $user_id = 2096;
 		$model = Activity::find()->where(['id'=>$id])->asArray()->one();
 		//获取该活动的类型详情
 		$type = ActivityType::find()->select(['id','icon_img','name'])->where(['id'=>$model['type_id']])->asArray()->one();
@@ -305,7 +310,7 @@ class ActivityService extends BaseService{
 		$model['is_collect'] = $is_collect?1:0;
 		//判断是否拉黑此活动
 		$is_black = ActivityBlack::find()->where(['sequence_id'=>$model['sequence_id']])->orWhere(['id'=>$id])->exists();
-		$model['is_black'] = $is_balck;
+		$model['is_black'] = $is_black;
 		//获取该活动发起人的详细信息,标签,头像,昵称,简介
 		$profile = Profile::find()->select(['headimgurl'])->where(['user_id'=>$model['created_by']])->asArray()->one();
 		$user = User::find()->select(['username','founder_desc'])->where(['id'=>$model['created_by']])->asArray()->one();
@@ -439,7 +444,6 @@ class ActivityService extends BaseService{
 		}
 		$info = Activity::find()->asArray()->select($field)->with(['user'])->where(['id'=>$id])->one();
 		return $info;
-	}
-
+	} 
 
 }

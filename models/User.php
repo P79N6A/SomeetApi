@@ -14,7 +14,7 @@ class User extends BaseUser
     public $activity;
     public $yellowCard;
     public $realname;
-
+    public $access_token;
     /** * 用户状态是删除 */
     const STATUS_DELETED = 0;
     /** * 用户状态是正常 */
